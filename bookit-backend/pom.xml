@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.fredrik</groupId>
+	<artifactId>bookit-backend</artifactId>
+	<version>0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>bookit-backend</name>
+	<description>Book IT Backend</description>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.1.8.RELEASE</version>
+		<relativePath /> <!-- lookup parent from repository -->
+	</parent>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+   		<org.apache.maven.plugins.version>3.6.0</org.apache.maven.plugins.version>
+   		<java.version>1.8</java.version>
+
+		<!-- Lombok -->
+		<lombok.version>1.18.4</lombok.version>
+		<!-- Mapstruct -->
+        <org.mapstruct.version>1.2.0.Final</org.mapstruct.version>
+
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jersey</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-contract-verifier</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Lombok -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>${lombok.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+	    <dependency>
+	      <groupId>io.swagger</groupId>
+	      <artifactId>swagger-annotations</artifactId>
+	      <version>1.5.21</version>
+	    </dependency>
+	    <dependency>
+	      <groupId>io.swagger</groupId>
+	      <artifactId>swagger-models</artifactId>
+	      <version>1.5.21</version>
+	    </dependency>
+	    <dependency>
+	      <groupId>io.swagger</groupId>
+	      <artifactId>swagger-jaxrs</artifactId>
+	      <version>1.5.21</version>
+	    </dependency>
+		<dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-jdk8</artifactId>
+            <version>${org.mapstruct.version}</version>
+        </dependency>
+
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+		</dependency>
+	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>Camden.SR5</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+
+	<build>
+		<plugins>
+			<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+<!--                 <version>${org.apache.maven.plugins.version}</version> -->
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${org.mapstruct.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                    <compilerArgs>
+                        <arg>-Amapstruct.suppressGeneratorTimestamp=true</arg>
+                        <arg>-Amapstruct.defaultComponentModel=spring</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+		
+			<plugin>
+				<groupId>org.openapitools</groupId>
+				<artifactId>openapi-generator-maven-plugin</artifactId>
+				<version>4.1.2</version>
+				<executions>
+					<execution>
+						<id>generate-jaxrs-from-openapi</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<inputSpec>${project.basedir}/src/main/resources/openapi/bookit-rest-api.yaml</inputSpec>
+							<generatorName>jaxrs-resteasy-eap</generatorName>
+<!-- 							<templateDirectory>${project.basedir}/src/main/resources/openapi/templates</templateDirectory> -->
+							<modelPackage>com.fredrik.bookit.web.rest.model</modelPackage>
+							<apiPackage>com.fredrik.bookit.web.rest.api</apiPackage>
+							<invokerPackage>com.fredrik.bookit.web.rest.invoker</invokerPackage>
+							<configOptions>
+								<sourceFolder>src/main/java</sourceFolder>
+								<implFolder>src/main/java</implFolder>
+								<!-- <java8>true</java8> -->
+								<!-- <dateLibrary>java8</dateLibrary> -->
+								<generateJbossDeploymentDescriptor>false</generateJbossDeploymentDescriptor>
+							</configOptions>
+							<ignoreFileOverride>${project.basedir}/src/main/resources/.openapi-generator-ignore</ignoreFileOverride>
+							<strictSpec>true</strictSpec>
+							<skipValidateSpec>false</skipValidateSpec>
+							<configHelp>false</configHelp>
+							<verbose>false</verbose>
+							<skip>false</skip>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Help Eclipse by adding ${project.build.directory}/generated-sources as source folder -->
+			<plugin>
+			  <groupId>org.codehaus.mojo</groupId>
+			  <artifactId>build-helper-maven-plugin</artifactId>
+<!-- 			  <version>1.9.1</version> -->
+			  <executions>
+			    <execution>
+			      <id>add-source</id>
+			      <phase>generate-sources</phase>
+			      <goals>
+			        <goal>add-source</goal>
+			      </goals>
+			      <configuration>
+			        <sources>
+			          <source>${project.build.directory}/generated-sources/openapi/src/main/java/</source>
+			        </sources>
+			      </configuration>
+			    </execution>
+			  </executions>
+			</plugin>		
+
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			
+			
+			
+		</plugins>
+	</build>
+
+
+</project>

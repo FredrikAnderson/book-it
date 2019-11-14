@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <artifactId>bookit</artifactId>
+    <groupId>com.fredrik</groupId>
+	<version>0.1-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>bookit-ui-web</artifactId>
+  <name>bookit-ui-web</name>
+  <description>bookit-ui-web</description>
+
+  <properties>
+    <jstl.version>1.2</jstl.version>
+
+    <sonar.skip>true</sonar.skip>
+  </properties>
+  <build>  
+    <finalName>${project.artifactId}</finalName>
+    <!-- <finalName>ROOT</finalName> -->
+	
+	<plugins>
+		<plugin>
+			<artifactId>maven-clean-plugin</artifactId>
+			<version>3.1.0</version>
+			<configuration>
+			  <filesets>
+				<fileset>
+				  <directory>node</directory>
+				  <includes>
+					<include>**</include>
+				  </includes>
+				</fileset>
+				<fileset>
+				  <directory>node_modules</directory>
+				  <includes>
+					<include>**</include>
+				  </includes>
+				</fileset>
+			  </filesets>
+			</configuration>
+		</plugin>
+	</plugins>
+  </build>
+
+  <profiles>
+
+    <!-- Plugin to execute command "npm install" and "npm run build" inside /angular directory -->
+    <profile>
+      <id>build-ui</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.github.eirslett</groupId>
+            <artifactId>frontend-maven-plugin</artifactId>
+            <version>1.7.5</version>
+			<configuration>	
+				<npmInheritsProxyConfigFromMaven>false</npmInheritsProxyConfigFromMaven>
+			</configuration>
+            <executions>
+                  <!-- optional: where to download node and npm from. Defaults to https://nodejs.org/dist/ -->
+                  <!-- <downloadRoot>http://java.it.volvo.net/nodejs/</downloadRoot> -->
+				  
+			<!--
+-->
+              <execution>
+                <id>install node and npm</id>
+                <goals>
+                  <goal>install-node-and-npm</goal>
+                </goals>
+                <configuration>
+                  <nodeVersion>v11.10.0</nodeVersion>
+                  <npmVersion>6.9.0</npmVersion>
+
+				  <npmInheritsProxyConfigFromMaven>false</npmInheritsProxyConfigFromMaven>
+<!--                  <downloadRoot>http://tm-web-tcptestmanager-test.ocp.got.volvo.net/nodejs/</downloadRoot>  -->
+                </configuration>
+              </execution>
+
+              <execution>
+                <id>npm config proxy</id>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+                <configuration>
+                  <arguments>config set proxy http://cs-ws-s-volvoproxy:-KKa9GM8fa77gdI@pxgot4.srv.volvo.com:8080</arguments>
+                </configuration>
+              </execution>
+
+              <execution>
+                <id>npm config https-proxy</id>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+                <configuration>
+                  <arguments>config set https-proxy http://cs-ws-s-volvoproxy:-KKa9GM8fa77gdI@pxgot4.srv.volvo.com:8080</arguments>
+                </configuration>
+              </execution>
+			  
+              <execution>
+                <id>npm install</id>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+                <configuration>
+                  <arguments>install</arguments>
+                </configuration>
+              </execution>
+
+              <execution>
+                <id>npm build:prod</id>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+                <configuration>
+                  <arguments>run-script build</arguments>
+                </configuration>
+              </execution>
+
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-resources-plugin</artifactId>
+            <version>2.4.2</version>
+            <executions>
+              <execution>
+                <id>default-copy-resources</id>
+                <phase>process-resources</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                  <overwrite>true</overwrite>
+                  <outputDirectory>${project.build.directory}/${project.artifactId}/</outputDirectory>
+                  <resources>
+                    <resource>
+                      <directory>${project.basedir}/dist</directory>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+<!--		  
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <configuration>
+              <archiveClasses>false</archiveClasses>
+              <packagingExcludes>
+                WEB-INF/lib/*.jar,
+              </packagingExcludes>
+            </configuration>
+          </plugin>
+		  -->
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>build-ui-debug</id>
+      <activation>
+        <property>
+          <name>env.BUILD_UI_DEBUG</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.github.eirslett</groupId>
+            <artifactId>frontend-maven-plugin</artifactId>
+            <version>1.7.5</version>
+			<configuration>	
+				<npmInheritsProxyConfigFromMaven>false</npmInheritsProxyConfigFromMaven>
+			</configuration>
+            <executions>
+              <execution>
+                <id>install node and npm</id>
+                <goals>
+                  <goal>install-node-and-npm</goal>
+                </goals>
+                <configuration>
+                  <nodeVersion>v6.10.3</nodeVersion>
+                  <npmVersion>4.5.0</npmVersion>
+
+                  <!-- optional: where to download node and npm from. Defaults to https://nodejs.org/dist/ -->
+                  <downloadRoot>http://tm-web-tcptestmanager-test.ocp.got.volvo.net/nodejs/</downloadRoot>
+                  <!-- <downloadRoot>http://java.it.volvo.net/nodejs/</downloadRoot> -->
+                </configuration>
+              </execution>
+
+               <execution>
+                <id>npm config proxy</id>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+                <configuration>
+                  <arguments>config set proxy http://cs-ws-s-volvoproxy:-KKa9GM8fa77gdI@pxgot4.srv.volvo.com:8080</arguments>
+                </configuration>
+              </execution>
+
+              <execution>
+                <id>npm config https-proxy</id>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+                <configuration>
+                  <arguments>config set https-proxy http://cs-ws-s-volvoproxy:-KKa9GM8fa77gdI@pxgot4.srv.volvo.com:8080</arguments>
+                </configuration>
+              </execution>
+			  
+              <execution>
+                <id>npm install</id>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+                <configuration>
+                  <arguments>install</arguments>
+                </configuration>
+              </execution>
+
+              <execution>
+                <id>npm build</id>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+                <configuration>
+                  <arguments>run build</arguments>
+                </configuration>
+              </execution>
+
+              <execution>
+                <id>npm lint</id>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+                <configuration>
+                  <arguments>run lint</arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-resources-plugin</artifactId>
+            <version>2.4.2</version>
+            <executions>
+              <execution>
+                <id>default-copy-resources</id>
+                <phase>process-resources</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                  <overwrite>true</overwrite>
+                  <outputDirectory>${project.build.directory}/${project.artifactId}/</outputDirectory>
+                  <resources>
+                    <resource>
+                      <directory>${project.basedir}/dist</directory>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <configuration>
+              <archiveClasses>false</archiveClasses>
+              <packagingExcludes>
+                WEB-INF/lib/*.jar,
+              </packagingExcludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+</project>
