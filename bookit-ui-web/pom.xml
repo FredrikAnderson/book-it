@@ -88,7 +88,7 @@
                   <goal>npm</goal>
                 </goals>
                 <configuration>
-                  <arguments>config set proxy http://cs-ws-s-volvoproxy:-KKa9GM8fa77gdI@pxgot4.srv.volvo.com:8080</arguments>
+                  <arguments>config set proxy http://:8080</arguments>
                 </configuration>
               </execution>
 
@@ -98,7 +98,7 @@
                   <goal>npm</goal>
                 </goals>
                 <configuration>
-                  <arguments>config set https-proxy http://cs-ws-s-volvoproxy:-KKa9GM8fa77gdI@pxgot4.srv.volvo.com:8080</arguments>
+                  <arguments>config set https-proxy http://:8080</arguments>
                 </configuration>
               </execution>
 			  
@@ -193,7 +193,7 @@
                   <npmVersion>4.5.0</npmVersion>
 
                   <!-- optional: where to download node and npm from. Defaults to https://nodejs.org/dist/ -->
-                  <downloadRoot>http://tm-web-tcptestmanager-test.ocp.got.volvo.net/nodejs/</downloadRoot>
+                  <downloadRoot>http://aserver/aurl/</downloadRoot>
                   <!-- <downloadRoot>http://java.it.volvo.net/nodejs/</downloadRoot> -->
                 </configuration>
               </execution>
@@ -204,7 +204,7 @@
                   <goal>npm</goal>
                 </goals>
                 <configuration>
-                  <arguments>config set proxy http://cs-ws-s-volvoproxy:-KKa9GM8fa77gdI@pxgot4.srv.volvo.com:8080</arguments>
+                  <arguments>config set proxy http://:8080</arguments>
                 </configuration>
               </execution>
 
@@ -214,7 +214,7 @@
                   <goal>npm</goal>
                 </goals>
                 <configuration>
-                  <arguments>config set https-proxy http://cs-ws-s-volvoproxy:-KKa9GM8fa77gdI@pxgot4.srv.volvo.com:8080</arguments>
+                  <arguments>config set https-proxy http://:8080</arguments>
                 </configuration>
               </execution>
 			  
