@@ -17,7 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.fredrik.bookit.BookITApplication;
+import com.fredrik.bookit.BookITBackend;
 
 /**
  * Basic integration tests for service demo application.
@@ -25,7 +25,7 @@ import com.fredrik.bookit.BookITApplication;
  * @author Dave Syer
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = BookITApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = BookITBackend.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = {"management.port=0"})
 public class GreetingsTest {
 

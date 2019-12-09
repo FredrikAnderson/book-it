@@ -4,11 +4,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.fredrik.bookit.model.Project;
-import com.fredrik.bookit.model.Resource;
 
 @Repository
-public interface ResourceRepository extends JpaRepository<Resource, Long> {
+public interface ProjectRepository extends JpaRepository<Project, Long> {
 	
-    Resource findByName(String productName);
+    Project findByName(String projName);
 
 }

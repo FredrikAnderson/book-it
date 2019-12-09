@@ -74,6 +74,15 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<dependency>
+		    <groupId>org.springdoc</groupId>
+		    <artifactId>springdoc-openapi-core</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>org.springdoc</groupId>
+		    <artifactId>springdoc-openapi-ui</artifactId>
+		</dependency>			
+
 	    <dependency>
 	      <groupId>io.swagger</groupId>
 	      <artifactId>swagger-annotations</artifactId>
@@ -84,16 +93,41 @@
 	      <artifactId>swagger-models</artifactId>
 	      <version>1.5.21</version>
 	    </dependency>
-	    <dependency>
-	      <groupId>io.swagger</groupId>
-	      <artifactId>swagger-jaxrs</artifactId>
-	      <version>1.5.21</version>
-	    </dependency>
+
+		<dependency>
+		    <groupId>org.openapitools</groupId>
+		    <artifactId>jackson-databind-nullable</artifactId>
+		    <version>0.2.0</version>
+		</dependency>
+	    
+<!-- 	    <dependency> -->
+<!-- 	      <groupId>io.swagger</groupId> -->
+<!-- 	      <artifactId>swagger-jaxrs</artifactId> -->
+<!-- 	      <version>1.5.21</version> -->
+<!-- 	    </dependency> -->
+<!-- 		<dependency> -->
+<!-- 	      <groupId>io.springfox</groupId> -->
+<!-- 	      <artifactId>springfox-swagger2</artifactId> -->
+<!-- 	    </dependency> -->
+<!-- 	    <dependency> -->
+<!-- 	      <groupId>io.springfox</groupId> -->
+<!-- 	      <artifactId>springfox-swagger-ui</artifactId> -->
+<!-- 	    </dependency> -->
+<!-- 	    <dependency> -->
+<!-- 	      <groupId>io.springfox</groupId> -->
+<!-- 	      <artifactId>springfox-bean-validators</artifactId> -->
+<!-- 	    </dependency> -->
+	    
 		<dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct-jdk8</artifactId>
             <version>${org.mapstruct.version}</version>
         </dependency>
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>26.0-jre</version>
+      </dependency>
 
 		<dependency>
 			<groupId>com.h2database</groupId>
@@ -110,6 +144,34 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+			
+<!-- 		      <dependency> -->
+<!-- 		        <groupId>io.springfox</groupId> -->
+<!-- 		        <artifactId>springfox-swagger2</artifactId> -->
+<!-- 		        <version>2.9.2</version> -->
+<!-- 		      </dependency> -->
+<!-- 		      <dependency> -->
+<!-- 		        <groupId>io.springfox</groupId> -->
+<!-- 		        <artifactId>springfox-swagger-ui</artifactId> -->
+<!-- 		        <version>2.9.2</version> -->
+<!-- 		      </dependency> -->
+<!-- 		      <dependency> -->
+<!-- 		        <groupId>io.springfox</groupId> -->
+<!-- 		        <artifactId>springfox-bean-validators</artifactId> -->
+<!-- 		        <version>2.9.2</version> -->
+<!-- 		      </dependency> -->
+
+			<dependency>
+			    <groupId>org.springdoc</groupId>
+			    <artifactId>springdoc-openapi-core</artifactId>
+			    <version>1.1.44</version>
+			</dependency>			
+			<dependency>
+			    <groupId>org.springdoc</groupId>
+			    <artifactId>springdoc-openapi-ui</artifactId>
+			    <version>1.1.44</version>
+			</dependency>			
+			
 		</dependencies>
 	</dependencyManagement>
 
@@ -145,7 +207,7 @@
 			<plugin>
 				<groupId>org.openapitools</groupId>
 				<artifactId>openapi-generator-maven-plugin</artifactId>
-				<version>4.1.2</version>
+				<version>4.1.3</version>
 				<executions>
 					<execution>
 						<id>generate-jaxrs-from-openapi</id>
@@ -154,7 +216,9 @@
 						</goals>
 						<configuration>
 							<inputSpec>${project.basedir}/src/main/resources/openapi/bookit-rest-api.yaml</inputSpec>
-							<generatorName>jaxrs-resteasy-eap</generatorName>
+<!-- 							<generatorName>jaxrs-resteasy-eap</generatorName> -->
+							<generatorName>spring</generatorName>
+							<library>spring-boot</library>
 <!-- 							<templateDirectory>${project.basedir}/src/main/resources/openapi/templates</templateDirectory> -->
 							<modelPackage>com.fredrik.bookit.web.rest.model</modelPackage>
 							<apiPackage>com.fredrik.bookit.web.rest.api</apiPackage>
@@ -162,12 +226,15 @@
 							<configOptions>
 								<sourceFolder>src/main/java</sourceFolder>
 								<implFolder>src/main/java</implFolder>
-								<!-- <java8>true</java8> -->
-								<!-- <dateLibrary>java8</dateLibrary> -->
+								<java8>false</java8>
+								<dateLibrary>java8</dateLibrary>
 								<generateJbossDeploymentDescriptor>false</generateJbossDeploymentDescriptor>
+<!-- 								<generateSupportingFiles>true</generateSupportingFiles> -->
+								<interfaceOnly>true</interfaceOnly>
 							</configOptions>
 							<ignoreFileOverride>${project.basedir}/src/main/resources/.openapi-generator-ignore</ignoreFileOverride>
 							<strictSpec>true</strictSpec>
+							<generateSupportingFiles>true</generateSupportingFiles>
 							<skipValidateSpec>false</skipValidateSpec>
 							<configHelp>false</configHelp>
 							<verbose>false</verbose>
