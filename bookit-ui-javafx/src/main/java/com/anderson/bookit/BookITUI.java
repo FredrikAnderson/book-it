@@ -54,7 +54,6 @@ public class BookITUI extends Application {
 	private CalendarView calendarView = new CalendarView();
 	private BorderPane resourceView = new BorderPane();
 
-	private BorderPane projectView = new BorderPane();
 
 	private Entry<Booking> currentEntry;
 
@@ -68,7 +67,11 @@ public class BookITUI extends Application {
 	ArrayList<Calendar> calendars = new ArrayList<Calendar>();
 
 	ProjectController projectController;
-	
+	private BorderPane projectPane = new BorderPane();
+
+	ProjectGanttController projectGanttController;
+	private BorderPane projectGanttPane = new BorderPane();
+
 	public static BookITUI getInstance() {
 		if (myInstance == null) {
 			myInstance = new BookITUI();
@@ -231,9 +234,12 @@ public class BookITUI extends Application {
 		projectController = new ProjectController();		
 		
 //		projectView.setTop(projCrudBar);
-		projectView.setCenter(projectController.getView());
-		
-		
+		projectPane.setCenter(projectController.getView());
+
+		projectGanttController = new ProjectGanttController();		
+
+		projectGanttPane.setCenter(projectGanttController.getView());
+
 		// What should be view by "default"
 		borderPane.setCenter(calendarView);
 
@@ -254,8 +260,12 @@ public class BookITUI extends Application {
 			borderPane.setCenter(calendarView);
 //			stage.setScene(bookingScene);
 		} else if (scene.equalsIgnoreCase("Projects")) {
-				borderPane.setCenter(projectView);
+				borderPane.setCenter(projectPane);
 //				stage.setScene(bookingScene);
+		} else if (scene.contains("Timeline")) {
+			borderPane.setCenter(projectGanttPane);
+//			stage.setScene(bookingScene);
+			
 		} else if (scene.contains("Calendar")) {
 
 			borderPane.setCenter(calendarView);
