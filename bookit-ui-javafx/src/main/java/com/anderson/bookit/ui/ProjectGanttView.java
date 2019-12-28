@@ -7,7 +7,10 @@ import java.util.Locale;
 
 import com.fredrik.bookit.ui.rest.model.ProjectDTO;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -18,16 +21,19 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 
 public class ProjectGanttView extends BorderPane {
-	// TableView<ProjectDTO> {
 
 	ContextMenu cm;
 	MenuItem mi1, mi2, mi3;
+
+	TextField filterField = new TextField();
 
 	ChoiceBox<String> timeViewChoice = new ChoiceBox<String>();
 
@@ -44,15 +50,17 @@ public class ProjectGanttView extends BorderPane {
 
 	public ProjectGanttView() {
 
+		setPadding(new Insets(50, 100, 50, 100));
+
 		timeViewChoice.getItems().add("Days");
 		timeViewChoice.getItems().add("Weeks");
 		timeViewChoice.getItems().add("Months");
-
 		timeViewChoice.setOnAction(this::timeViewChanged);
 
-		setPadding(new Insets(50, 100, 50, 100));
 
-		setTop(timeViewChoice);
+		HBox horisontalPnl = new HBox(filterField, timeViewChoice);
+		
+		setTop(horisontalPnl);
 
 		setCenter(ganttView);
 
@@ -262,7 +270,41 @@ public class ProjectGanttView extends BorderPane {
 	}
 
 	public void setProjects(ObservableList<ProjectDTO> projects) {
-		ganttView.setItems(projects);
+		
+		// 1. Wrap the ObservableList in a FilteredList (initially display all data).
+        FilteredList<ProjectDTO> filteredData = 
+        		new FilteredList<>(FXCollections.observableArrayList(projects), p -> true);
+        
+        // 2. Set the filter Predicate whenever the filter changes.
+        filterField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(project -> {
+                // If filter text is empty, display all persons.
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                
+                // Compare first name and last name of every person with filter text.
+                String lowerCaseFilter = newValue.toLowerCase();
+                
+                if (project.getId().toString().toLowerCase().contains(lowerCaseFilter)) {
+                    return true; // Filter matches first name.
+                } else if (project.getName().toLowerCase().contains(lowerCaseFilter)) {
+                    return true; // Filter matches last name.
+                }
+                return false; // Does not match.
+            });
+        });
+        
+        // 3. Wrap the FilteredList in a SortedList. 
+        SortedList<ProjectDTO> sortedData = new SortedList<ProjectDTO>(filteredData);
+        
+        // 4. Bind the SortedList comparator to the TableView comparator.
+        sortedData.comparatorProperty().bind(ganttView.comparatorProperty());
+        
+        // 5. Add sorted (and filtered) data to the table.
+//        tableResourceView.setItems(sortedData);
+		
+		ganttView.setItems(sortedData);
 	}
 
 	public void addActionListener(EventHandler<ActionEvent> eventHandler) {
