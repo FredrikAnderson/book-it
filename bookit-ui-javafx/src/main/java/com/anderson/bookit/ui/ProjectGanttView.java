@@ -5,6 +5,7 @@ import java.time.YearMonth;
 import java.time.temporal.WeekFields;
 import java.util.Locale;
 
+import com.anderson.bookit.ui.DateTimePicker.TimeChooserType;
 import com.fredrik.bookit.ui.rest.model.ProjectDTO;
 
 import javafx.collections.FXCollections;
@@ -27,16 +28,26 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 
 public class ProjectGanttView extends BorderPane {
 
 	ContextMenu cm;
 	MenuItem mi1, mi2, mi3;
 
-	TextField filterField = new TextField();
+	Text projFilterLbl = new Text("Project filter:");
+	TextField projFilterTf = new TextField();
 
+	Text timeViewLbl = new Text("Time view:");
 	ChoiceBox<String> timeViewChoice = new ChoiceBox<String>();
 
+	Text dateViewFromLbl = new Text("Date view, from:");
+	DateTimePicker dateViewStart = new DateTimePicker(TimeChooserType.Date);
+	
+	Text dateViewToLbl = new Text("Date view, to:");
+	DateTimePicker dateViewEnd = new DateTimePicker(TimeChooserType.Date);
+	
 	TableView<ProjectDTO> ganttView = new TableView<ProjectDTO>();
 
 	enum TimeView {
@@ -50,16 +61,23 @@ public class ProjectGanttView extends BorderPane {
 
 	public ProjectGanttView() {
 
-		setPadding(new Insets(50, 100, 50, 100));
+		setPadding(new Insets(20, 50, 20, 50));
 
 		timeViewChoice.getItems().add("Days");
 		timeViewChoice.getItems().add("Weeks");
 		timeViewChoice.getItems().add("Months");
 		timeViewChoice.setOnAction(this::timeViewChanged);
 
+		VBox projFilterVx = new VBox(projFilterLbl, projFilterTf);
 
-		HBox horisontalPnl = new HBox(filterField, timeViewChoice);
-		
+		VBox dateViewFromVx = new VBox(dateViewFromLbl, dateViewStart);
+		VBox dateViewToVx = new VBox(dateViewToLbl, dateViewEnd);
+
+		VBox timeViewVx = new VBox(timeViewLbl, timeViewChoice);
+
+		HBox horisontalPnl = new HBox(projFilterVx, timeViewVx, dateViewFromVx, dateViewToVx);		
+		horisontalPnl.setSpacing(10);
+		horisontalPnl.setPadding(new Insets(0, 0, 5, 0));
 		setTop(horisontalPnl);
 
 		setCenter(ganttView);
@@ -84,11 +102,8 @@ public class ProjectGanttView extends BorderPane {
 
 	private void updateGanttColumns() {
 		// Remove gantt columns
-		
-		ganttView.getColumns().size();
-		while (ganttView.getColumns().size() > 3) {
-			ganttView.getColumns().remove(3);
-		}
+		int size = ganttView.getColumns().size();
+		ganttView.getColumns().remove(3, size);
 		
 		addGanttColumns();
 	}
@@ -97,7 +112,7 @@ public class ProjectGanttView extends BorderPane {
 
 //		if (ganttTimeView == TimeView.DAYS) {			
 
-		LocalDate curViewDate = viewStartDate;
+		LocalDate curViewDate = dateViewStart.getLocalDateTime().toLocalDate();
 		int totalNrOfAddedCols = 0;
 
 		while (totalNrOfAddedCols < maxNrOfColumns) {
@@ -241,10 +256,18 @@ public class ProjectGanttView extends BorderPane {
 		
 		if (timeView.equalsIgnoreCase("Days")) {
 			ganttTimeView = TimeView.DAYS;
+			dateViewStart.setLocalDate(viewStartDate);
+			dateViewEnd.setLocalDate(viewStartDate.plusDays(maxNrOfColumns));
+
 		} else if (timeView.equalsIgnoreCase("Weeks")) {
 			ganttTimeView = TimeView.WEEKS;
+			dateViewStart.setLocalDate(viewStartDate);
+			dateViewEnd.setLocalDate(viewStartDate.plusWeeks(maxNrOfColumns));
+			
 		} else if (timeView.equalsIgnoreCase("Months")) {
 			ganttTimeView = TimeView.MONTHS;
+			dateViewStart.setLocalDate(viewStartDate);
+			dateViewEnd.setLocalDate(viewStartDate.plusMonths(maxNrOfColumns));
 		}
 		
 		// 
@@ -276,7 +299,7 @@ public class ProjectGanttView extends BorderPane {
         		new FilteredList<>(FXCollections.observableArrayList(projects), p -> true);
         
         // 2. Set the filter Predicate whenever the filter changes.
-        filterField.textProperty().addListener((observable, oldValue, newValue) -> {
+        projFilterTf.textProperty().addListener((observable, oldValue, newValue) -> {
             filteredData.setPredicate(project -> {
                 // If filter text is empty, display all persons.
                 if (newValue == null || newValue.isEmpty()) {

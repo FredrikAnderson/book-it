@@ -5,11 +5,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.text.Text;
 
 public class DateTimePicker extends HBox {
 
