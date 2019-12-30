@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+import javafx.beans.value.ChangeListener;
 import javafx.scene.control.DatePicker;
 import javafx.scene.layout.HBox;
 
@@ -48,6 +49,11 @@ public class DateTimePicker extends HBox {
 		timePr.setValue(LocalTime.of(0, 0));		
 	}
 
+	public LocalDate getLocalDate() {
+		LocalDate localDate = datePr.getValue();		
+		return localDate;		
+	}
+
 	public void setLocalDateTime(LocalDateTime localDateTime) {
 		if (localDateTime != null) {
 			datePr.setValue(localDateTime.toLocalDate());
@@ -63,4 +69,11 @@ public class DateTimePicker extends HBox {
 		return toret;		
 	}
 	
+	public void removeChangeListener(ChangeListener<LocalDate> listener) {
+		datePr.valueProperty().removeListener(listener);
+	}
+
+	public void addChangeListener(ChangeListener<LocalDate> listener) {
+		datePr.valueProperty().addListener(listener);
+	}
 }

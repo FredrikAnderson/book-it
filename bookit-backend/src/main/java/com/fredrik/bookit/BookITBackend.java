@@ -65,8 +65,8 @@ public class BookITBackend implements CommandLineRunner {
 
 		// save a couple of customers
 		projRepo.save(new Project(0L, "Proj #1", LocalDate.now().minusDays(1), LocalDate.now().plusDays(5)));
-		projRepo.save(new Project(0L, "Project testing", LocalDate.now().minusDays(2), LocalDate.now().plusDays(25)));
-		projRepo.save(new Project(0L, "Project three", LocalDate.now().minusDays(0), LocalDate.now().plusDays(10)));
+		projRepo.save(new Project(0L, "Project testing", LocalDate.now().minusDays(2), LocalDate.now().plusMonths(2)));
+		projRepo.save(new Project(0L, "Project three", LocalDate.now().minusMonths(2), LocalDate.now().plusDays(10)));
 
 		
 		// fetch an individual customer by ID

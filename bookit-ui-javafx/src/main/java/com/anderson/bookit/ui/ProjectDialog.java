@@ -2,7 +2,6 @@ package com.anderson.bookit.ui;
 
 import java.time.LocalDateTime;
 
-import com.anderson.bookit.model.Project;
 import com.anderson.bookit.service.ProjectService;
 import com.anderson.bookit.ui.DateTimePicker.TimeChooserType;
 import com.fredrik.bookit.ui.rest.model.ProjectDTO;

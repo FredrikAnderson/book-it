@@ -1,13 +1,15 @@
 package com.anderson.bookit.ui;
 
 import java.time.LocalDate;
-import java.time.YearMonth;
+import java.time.temporal.ChronoField;
 import java.time.temporal.WeekFields;
 import java.util.Locale;
 
 import com.anderson.bookit.ui.DateTimePicker.TimeChooserType;
 import com.fredrik.bookit.ui.rest.model.ProjectDTO;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -44,10 +46,12 @@ public class ProjectGanttView extends BorderPane {
 
 	Text dateViewFromLbl = new Text("Date view, from:");
 	DateTimePicker dateViewStart = new DateTimePicker(TimeChooserType.Date);
-	
+
 	Text dateViewToLbl = new Text("Date view, to:");
 	DateTimePicker dateViewEnd = new DateTimePicker(TimeChooserType.Date);
-	
+
+	DateChangeListener dateListener = new DateChangeListener();
+
 	TableView<ProjectDTO> ganttView = new TableView<ProjectDTO>();
 
 	enum TimeView {
@@ -66,16 +70,16 @@ public class ProjectGanttView extends BorderPane {
 		timeViewChoice.getItems().add("Days");
 		timeViewChoice.getItems().add("Weeks");
 		timeViewChoice.getItems().add("Months");
-		timeViewChoice.setOnAction(this::timeViewChanged);
 
 		VBox projFilterVx = new VBox(projFilterLbl, projFilterTf);
 
+		HBox dividerHx = new HBox(20);
+		dividerHx.setPrefWidth(80);
 		VBox dateViewFromVx = new VBox(dateViewFromLbl, dateViewStart);
 		VBox dateViewToVx = new VBox(dateViewToLbl, dateViewEnd);
-
 		VBox timeViewVx = new VBox(timeViewLbl, timeViewChoice);
 
-		HBox horisontalPnl = new HBox(projFilterVx, timeViewVx, dateViewFromVx, dateViewToVx);		
+		HBox horisontalPnl = new HBox(projFilterVx, dividerHx, timeViewVx, dateViewFromVx, dateViewToVx);
 		horisontalPnl.setSpacing(10);
 		horisontalPnl.setPadding(new Insets(0, 0, 5, 0));
 		setTop(horisontalPnl);
@@ -97,6 +101,9 @@ public class ProjectGanttView extends BorderPane {
 
 		setGanttTimeView("Days");
 
+		// Adding listeners for user actions
+		timeViewChoice.setOnAction(this::timeViewChanged);
+
 		super.addEventHandler(MouseEvent.MOUSE_CLICKED, new RightClickHandler(this));
 	}
 
@@ -104,31 +111,24 @@ public class ProjectGanttView extends BorderPane {
 		// Remove gantt columns
 		int size = ganttView.getColumns().size();
 		ganttView.getColumns().remove(3, size);
-		
+
 		addGanttColumns();
 	}
-	
+
 	private void addGanttColumns() {
 
-//		if (ganttTimeView == TimeView.DAYS) {			
+		System.out.println("Adding Gantt columns from: " + dateViewStart.getLocalDate().toString() + " to "
+				+ dateViewEnd.getLocalDate().toString() + " for view: " + ganttTimeView.toString());
 
-		LocalDate curViewDate = dateViewStart.getLocalDateTime().toLocalDate();
-		int totalNrOfAddedCols = 0;
-
-		while (totalNrOfAddedCols < maxNrOfColumns) {
+		LocalDate curViewDate = dateViewStart.getLocalDate();
+		while (curViewDate.isBefore(dateViewEnd.getLocalDate())) {
 
 			// Top gantt column header
 			TableColumn<ProjectDTO, String> topGanttCol = null;
-			int maxInnerColumns = maxNrOfColumns;
-			int currentInnerColumns = 0;
 			if (ganttTimeView == TimeView.DAYS) {
 				// Add month col, if day view
 				topGanttCol = new TableColumn<>(monthInHumanFormat(curViewDate.getMonth().toString()));
 				ganttView.getColumns().add(topGanttCol);
-
-				YearMonth yearMonth = YearMonth.of(curViewDate.getYear(), curViewDate.getMonth());
-				maxInnerColumns = yearMonth.lengthOfMonth();
-				currentInnerColumns = curViewDate.getDayOfMonth();
 
 			} else if (ganttTimeView == TimeView.WEEKS) {
 				topGanttCol = new TableColumn<>("Weeks");
@@ -137,31 +137,24 @@ public class ProjectGanttView extends BorderPane {
 			} else if (ganttTimeView == TimeView.MONTHS) {
 				topGanttCol = new TableColumn<>("" + curViewDate.getYear());
 				ganttView.getColumns().add(topGanttCol);
-				maxInnerColumns = 12;
-				currentInnerColumns = curViewDate.getMonthValue();
 
 			}
 
-			while (columnWithoutNewHeaderColumn(curViewDate, currentInnerColumns, maxInnerColumns, totalNrOfAddedCols,
-					maxNrOfColumns)) {
+			boolean newHeaderColumn = false;
+			while (columnWithoutNewHeaderColumn(newHeaderColumn, curViewDate, dateViewEnd.getLocalDate())) {
 
 				TableColumn<ProjectDTO, LocalDate> projDateColumn = null;
 				if (ganttTimeView == TimeView.DAYS) {
 					projDateColumn = new TableColumn<>("" + curViewDate.getDayOfMonth());
 
 				} else if (ganttTimeView == TimeView.WEEKS) {
-
-					WeekFields weekFields = WeekFields.of(Locale.getDefault());
-					int weekNr = curViewDate.get(weekFields.weekOfWeekBasedYear());
-					System.out.println("WeekNr: #" + weekNr);
-
+					int weekNr = curViewDate.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
 					projDateColumn = new TableColumn<>("" + weekNr);
+
 				} else if (ganttTimeView == TimeView.MONTHS) {
-
 					String monthInHumanFormat = monthInHumanFormat(curViewDate.getMonth().toString()).substring(0, 3);
-					System.out.println("MonthNr: #" + monthInHumanFormat);
-
 					projDateColumn = new TableColumn<>("" + monthInHumanFormat);
+
 				}
 
 				projDateColumn.setCellValueFactory(new PropertyValueFactory<>("endDate"));
@@ -172,88 +165,103 @@ public class ProjectGanttView extends BorderPane {
 						@Override
 						protected void updateItem(LocalDate item, boolean empty) {
 							super.updateItem(item, empty);
-
-							String text = column.getText();
+							String color = null;
 							LocalDate userData = (LocalDate) column.getUserData();
 
-							String color = null;
 							int index = getIndex();
 							ObservableList<ProjectDTO> items = getTableView().getItems();
-							// System.out.println("Index:"+ index);
 							if (index != -1 && index < items.size()) {
-								System.out.println("Col, text:" + text);
 								ProjectDTO projectDTO = items.get(index);
-								System.out.println("Proj(" + index + "): " + projectDTO);
 
-								color = getColorFor(text, projectDTO);
-								System.out.println("Color is " + color);
+								color = getColorFor(projectDTO, userData);
 							}
 
 							if (item == null || empty) {
 								setText(null);
 								setStyle("");
-								// setStyle("-fx-background-color: lightgreen");
 							} else {
-								// Format date.
 								setText("");
-								// setBack(value);
-
-								if (color != null) {
+								if (color != null && !color.isEmpty()) {
 									setStyle("-fx-background-color: " + color);
 								}
 							}
 						}
-
-						private String getColorFor(String text, ProjectDTO projectDTO) {
-							String toret = "";
-
-//								LocalDate dateForCol = (LocalDate) getUserData();
-							LocalDate dateForCol = (LocalDate) column.getUserData();
-//								System.out.println("LocalDate: " + dateForCol.toString());
-
-							Boolean inc = (projectDTO.getStartDate().compareTo(dateForCol)
-									* dateForCol.compareTo(projectDTO.getEndDate()) >= 0);
-
-							System.out.println("Date: " + dateForCol + " is " + inc + " in " + projectDTO.getStartDate()
-									+ " - " + projectDTO.getEndDate());
-							if (inc) {
-								toret = "#99ff66";
-							}
-							return toret;
-						}
 					};
 				});
-
+				// Add column to table model
 				topGanttCol.getColumns().add(projDateColumn);
 
-				// Increasing column/view
-				currentInnerColumns++;
-				totalNrOfAddedCols++;
-
 				// Next column
+				newHeaderColumn = false;
+				LocalDate prevViewDate = curViewDate;
 				if (ganttTimeView == TimeView.DAYS) {
 					curViewDate = curViewDate.plusDays(1);
+					newHeaderColumn = prevViewDate.getMonthValue() != curViewDate.getMonthValue();
 
 				} else if (ganttTimeView == TimeView.WEEKS) {
 					curViewDate = curViewDate.plusDays(7);
 				} else if (ganttTimeView == TimeView.MONTHS) {
 					curViewDate = curViewDate.plusMonths(1);
+					newHeaderColumn = prevViewDate.getYear() != curViewDate.getYear();
 				}
-
-//					curViewDate = curViewDate.plusMonths(1).withDayOfMonth(1);
-				System.out.println("CurrDate: " + curViewDate.toString());
+//				System.out.println("CurrDate: " + curViewDate.toString());
 			}
 		}
 	}
 
+	private String getColorFor(ProjectDTO projectDTO, LocalDate viewDate) {
+		String toret = "";
+
+		if (ganttTimeView == TimeView.DAYS) {
+			Boolean inc = (projectDTO.getStartDate().compareTo(viewDate)
+					* viewDate.compareTo(projectDTO.getEndDate()) >= 0);
+
+//			System.out.println("Date: " + viewDate + " is " + inc + " in " + projectDTO.getStartDate()
+//				+ " - " + projectDTO.getEndDate());
+			if (inc) {
+				toret = "#99ff66";
+			}
+
+		} else if (ganttTimeView == TimeView.WEEKS) {
+			LocalDate weekStartDate = viewDate.with(ChronoField.DAY_OF_WEEK, 1);
+			LocalDate weekEndDate = viewDate.with(ChronoField.DAY_OF_WEEK, 7);
+			toret = getColorForPeriod(weekStartDate, weekEndDate, projectDTO.getStartDate(), projectDTO.getEndDate());
+
+		} else if (ganttTimeView == TimeView.MONTHS) {
+			LocalDate monthStartDate = viewDate.withDayOfMonth(1);
+			LocalDate monthEndDate = viewDate.withDayOfMonth(viewDate.lengthOfMonth());
+			toret = getColorForPeriod(monthStartDate, monthEndDate, projectDTO.getStartDate(), projectDTO.getEndDate());
+
+		}
+
+		return toret;
+	}
+
+	private String getColorForPeriod(LocalDate startPer, LocalDate endPer, LocalDate mdlStart, LocalDate mdlEnd) {
+		String toret = "";
+
+		Boolean startDateInc = (mdlStart.compareTo(startPer) * startPer.compareTo(mdlEnd) >= 0);
+		Boolean endDateInc = (mdlStart.compareTo(endPer) * endPer.compareTo(mdlEnd) >= 0);
+
+//		System.out.println("Period start Date: " + startPer  + " is " + startDateInc + " in " + mdlStart + " - " + mdlEnd);
+//		System.out.println("Period end Date: " + endPer + " is " + endDateInc + " in " + mdlStart + " - " + mdlEnd);		
+		if (startDateInc && endDateInc) {
+			toret = "#99ff66"; // Green
+		} else if (startDateInc || endDateInc) {
+			toret = "#ffff1a"; // Yellow
+		}
+
+		return toret;
+	}
+
 	private void timeViewChanged(ActionEvent event) {
 		setGanttTimeView(timeViewChoice.getSelectionModel().getSelectedItem());
-		
 	}
 
 	private void setGanttTimeView(String timeView) {
 		timeViewChoice.getSelectionModel().select(timeView);
-		
+		removeDateChangeListeners();
+
 		if (timeView.equalsIgnoreCase("Days")) {
 			ganttTimeView = TimeView.DAYS;
 			dateViewStart.setLocalDate(viewStartDate);
@@ -263,23 +271,22 @@ public class ProjectGanttView extends BorderPane {
 			ganttTimeView = TimeView.WEEKS;
 			dateViewStart.setLocalDate(viewStartDate);
 			dateViewEnd.setLocalDate(viewStartDate.plusWeeks(maxNrOfColumns));
-			
+
 		} else if (timeView.equalsIgnoreCase("Months")) {
 			ganttTimeView = TimeView.MONTHS;
 			dateViewStart.setLocalDate(viewStartDate);
 			dateViewEnd.setLocalDate(viewStartDate.plusMonths(maxNrOfColumns));
 		}
-		
-		// 
+		addDateChangeListeners();
+
+		//
 		updateGanttColumns();
 	}
-	
-	private boolean columnWithoutNewHeaderColumn(LocalDate curViewDate, int currentInnerColumns, int maxInnerColumns,
-			int totalNrOfAddedCols, int maxNrOfColumns) {
 
-//		for (int i = curViewDate.getDayOfMonth(); i <= lengthOfMonth && nrOfAddedCols < columns; i++) {
+	private boolean columnWithoutNewHeaderColumn(boolean newHeaderColumn, LocalDate curViewDate,
+			LocalDate endViewDate) {
 
-		if (currentInnerColumns <= maxInnerColumns && totalNrOfAddedCols < maxNrOfColumns) {
+		if (!newHeaderColumn && curViewDate.isBefore(endViewDate)) {
 			return true;
 		}
 
@@ -293,41 +300,59 @@ public class ProjectGanttView extends BorderPane {
 	}
 
 	public void setProjects(ObservableList<ProjectDTO> projects) {
-		
+
 		// 1. Wrap the ObservableList in a FilteredList (initially display all data).
-        FilteredList<ProjectDTO> filteredData = 
-        		new FilteredList<>(FXCollections.observableArrayList(projects), p -> true);
-        
-        // 2. Set the filter Predicate whenever the filter changes.
-        projFilterTf.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(project -> {
-                // If filter text is empty, display all persons.
-                if (newValue == null || newValue.isEmpty()) {
-                    return true;
-                }
-                
-                // Compare first name and last name of every person with filter text.
-                String lowerCaseFilter = newValue.toLowerCase();
-                
-                if (project.getId().toString().toLowerCase().contains(lowerCaseFilter)) {
-                    return true; // Filter matches first name.
-                } else if (project.getName().toLowerCase().contains(lowerCaseFilter)) {
-                    return true; // Filter matches last name.
-                }
-                return false; // Does not match.
-            });
-        });
-        
-        // 3. Wrap the FilteredList in a SortedList. 
-        SortedList<ProjectDTO> sortedData = new SortedList<ProjectDTO>(filteredData);
-        
-        // 4. Bind the SortedList comparator to the TableView comparator.
-        sortedData.comparatorProperty().bind(ganttView.comparatorProperty());
-        
-        // 5. Add sorted (and filtered) data to the table.
+		FilteredList<ProjectDTO> filteredData = new FilteredList<>(FXCollections.observableArrayList(projects),
+				p -> true);
+
+		// 2. Set the filter Predicate whenever the filter changes.
+		projFilterTf.textProperty().addListener((observable, oldValue, newValue) -> {
+			filteredData.setPredicate(project -> {
+				// If filter text is empty, display all persons.
+				if (newValue == null || newValue.isEmpty()) {
+					return true;
+				}
+
+				// Compare first name and last name of every person with filter text.
+				String lowerCaseFilter = newValue.toLowerCase();
+
+				if (project.getId().toString().toLowerCase().contains(lowerCaseFilter)) {
+					return true; // Filter matches first name.
+				} else if (project.getName().toLowerCase().contains(lowerCaseFilter)) {
+					return true; // Filter matches last name.
+				}
+				return false; // Does not match.
+			});
+		});
+
+		// 3. Wrap the FilteredList in a SortedList.
+		SortedList<ProjectDTO> sortedData = new SortedList<ProjectDTO>(filteredData);
+
+		// 4. Bind the SortedList comparator to the TableView comparator.
+		sortedData.comparatorProperty().bind(ganttView.comparatorProperty());
+
+		// 5. Add sorted (and filtered) data to the table.
 //        tableResourceView.setItems(sortedData);
-		
+
 		ganttView.setItems(sortedData);
+	}
+
+	private void removeDateChangeListeners() {
+		dateViewStart.removeChangeListener(dateListener);
+		dateViewEnd.removeChangeListener(dateListener);
+	}
+
+	private void addDateChangeListeners() {
+		dateViewStart.addChangeListener(dateListener);
+		dateViewEnd.addChangeListener(dateListener);
+	}
+
+	class DateChangeListener implements ChangeListener<LocalDate> {
+
+		@Override
+		public void changed(ObservableValue<? extends LocalDate> observable, LocalDate oldValue, LocalDate newValue) {
+			updateGanttColumns();
+		}
 	}
 
 	public void addActionListener(EventHandler<ActionEvent> eventHandler) {

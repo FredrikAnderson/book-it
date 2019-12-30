@@ -54,7 +54,7 @@ public class TimePicker extends HBox {
 		String min = ensureNumber(minsCbx.getValue());
 		LocalTime toret = LocalTime.of(Integer.parseInt(hour), Integer.parseInt(min));
 
-		System.out.println("LocalTime: " + toret.toString());
+//		System.out.println("LocalTime: " + toret.toString());
 		return toret;
 	}
 
@@ -84,7 +84,7 @@ public class TimePicker extends HBox {
 
 	private void setValueInComboxBox(ComboBox<String> cbx, String value) {
 		String first = cbx.getItems().stream().filter(it -> it.startsWith(value)).findFirst().get();
-		System.out.println("Found: " + first);
+//		System.out.println("Found: " + first);
 		cbx.getSelectionModel().select(first);
 	}
 
