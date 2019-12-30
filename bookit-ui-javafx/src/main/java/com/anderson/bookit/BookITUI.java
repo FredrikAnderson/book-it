@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.anderson.bookit.model.Booking;
-import com.anderson.bookit.model.Project;
 import com.anderson.bookit.model.Resource;
 import com.anderson.bookit.service.ProjectService;
 import com.anderson.bookit.service.ResourceService;
@@ -40,6 +39,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 
 public class BookITUI extends Application {
@@ -253,6 +253,19 @@ public class BookITUI extends Application {
 		primaryStage.show();	
 		
 		window = primaryStage;
+		
+		window.setOnCloseRequest(new EventHandler<WindowEvent>() {
+		    @Override
+		    public void handle(WindowEvent event) {
+		        try {
+					stop();
+					System.exit(0);
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+		    }
+		});
 	}
 
 	public void showScene(String scene) {
