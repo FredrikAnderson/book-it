@@ -52,7 +52,7 @@ public class BookITUI extends Application {
 	private BorderPane borderPane = new BorderPane();
 	
 	private CalendarView calendarView = new CalendarView();
-	private BorderPane resourceView = new BorderPane();
+//	private BorderPane resourceView = new BorderPane();
 
 
 	private Entry<Booking> currentEntry;
@@ -62,9 +62,12 @@ public class BookITUI extends Application {
 	private CalendarManager calMan = CalendarManager.getInstance();
 	
 	ProjectService projectService = new ProjectService();
-	ResourceService resourceService = new ResourceService();
+//	ResourceService resourceService = new ResourceService();
 
 	ArrayList<Calendar> calendars = new ArrayList<Calendar>();
+
+	ItemController itemController;
+	private BorderPane itemPane = new BorderPane();
 
 	ProjectController projectController;
 	private BorderPane projectPane = new BorderPane();
@@ -149,6 +152,8 @@ public class BookITUI extends Application {
 		Menu view = new Menu("View");
 		MenuItem resourcesMi = new MenuItem("Resources");
 		resourcesMi.setOnAction(mch);
+		MenuItem itemsMi = new MenuItem("Items");
+		itemsMi.setOnAction(mch);
 		MenuItem projectsMi = new MenuItem("Projects");
 		projectsMi.setOnAction(mch);
 		MenuItem bookingTlMi = new MenuItem("Bookings - Timeline");
@@ -156,7 +161,9 @@ public class BookITUI extends Application {
 		MenuItem bookingCalMi = new MenuItem("Bookings - Calendar");
 		bookingCalMi.setOnAction(mch);
 		
-		view.getItems().add(resourcesMi);		
+//		view.getItems().add(resourcesMi);
+		
+		view.getItems().add(itemsMi);		
 		view.getItems().add(projectsMi);		
 		view.getItems().add(bookingTlMi);
 		view.getItems().add(bookingCalMi);
@@ -176,50 +183,50 @@ public class BookITUI extends Application {
 		TextField filterField = new TextField();
 
 		// 1. Wrap the ObservableList in a FilteredList (initially display all data).
-        FilteredList<Resource> filteredData = 
-        		new FilteredList<>(FXCollections.observableArrayList(resourceService.getResources()), p -> true);
-        
-        // 2. Set the filter Predicate whenever the filter changes.
-        filterField.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(resource -> {
-                // If filter text is empty, display all persons.
-                if (newValue == null || newValue.isEmpty()) {
-                    return true;
-                }
-                
-                // Compare first name and last name of every person with filter text.
-                String lowerCaseFilter = newValue.toLowerCase();
-                
-                if (resource.getId().toLowerCase().contains(lowerCaseFilter)) {
-                    return true; // Filter matches first name.
-                } else if (resource.getName().toLowerCase().contains(lowerCaseFilter)) {
-                    return true; // Filter matches last name.
-                }
-                return false; // Does not match.
-            });
-        });
-        
-        // 3. Wrap the FilteredList in a SortedList. 
-        SortedList<Resource> sortedData = new SortedList<Resource>(filteredData);
-        
-        // 4. Bind the SortedList comparator to the TableView comparator.
-        sortedData.comparatorProperty().bind(tableResourceView.comparatorProperty());
-        
-        // 5. Add sorted (and filtered) data to the table.
-        tableResourceView.setItems(sortedData);
-		
-		TableColumn<Resource, String> idColumn = new TableColumn<>("ID");
-		idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-
-		TableColumn<Resource, String> nameColumn = new TableColumn<>("Name");
-		nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-
-		tableResourceView.getColumns().add(idColumn);
-		tableResourceView.getColumns().add(nameColumn);
+//        FilteredList<Resource> filteredData = 
+//        		new FilteredList<>(FXCollections.observableArrayList(resourceService.getResources()), p -> true);
+//        
+//        // 2. Set the filter Predicate whenever the filter changes.
+//        filterField.textProperty().addListener((observable, oldValue, newValue) -> {
+//            filteredData.setPredicate(resource -> {
+//                // If filter text is empty, display all persons.
+//                if (newValue == null || newValue.isEmpty()) {
+//                    return true;
+//                }
+//                
+//                // Compare first name and last name of every person with filter text.
+//                String lowerCaseFilter = newValue.toLowerCase();
+//                
+//                if (resource.getId().toLowerCase().contains(lowerCaseFilter)) {
+//                    return true; // Filter matches first name.
+//                } else if (resource.getName().toLowerCase().contains(lowerCaseFilter)) {
+//                    return true; // Filter matches last name.
+//                }
+//                return false; // Does not match.
+//            });
+//        });
+//        
+//        // 3. Wrap the FilteredList in a SortedList. 
+//        SortedList<Resource> sortedData = new SortedList<Resource>(filteredData);
+//        
+//        // 4. Bind the SortedList comparator to the TableView comparator.
+//        sortedData.comparatorProperty().bind(tableResourceView.comparatorProperty());
+//        
+//        // 5. Add sorted (and filtered) data to the table.
+//        tableResourceView.setItems(sortedData);
+//		
+//		TableColumn<Resource, String> idColumn = new TableColumn<>("ID");
+//		idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+//
+//		TableColumn<Resource, String> nameColumn = new TableColumn<>("Name");
+//		nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+//
+//		tableResourceView.getColumns().add(idColumn);
+//		tableResourceView.getColumns().add(nameColumn);
 		
 // 		tableResourceView.setItems();
-		resourceView.setTop(filterField);
-		resourceView.setCenter(tableResourceView);
+//		resourceView.setTop(filterField);
+//		resourceView.setCenter(tableResourceView);
 		
 
 				
@@ -230,7 +237,12 @@ public class BookITUI extends Application {
 		Button editProjBtn = new Button("Edit");
 		Button deleteProjBtn = new Button("Delete");		
 		HBox projCrudBar = new HBox(20, addProjBtn, editProjBtn, deleteProjBtn);
+
+		itemController = new ItemController();		
 		
+//		projectView.setTop(projCrudBar);
+		itemPane.setCenter(itemController.getView());
+
 		projectController = new ProjectController();		
 		
 //		projectView.setTop(projCrudBar);
@@ -271,6 +283,9 @@ public class BookITUI extends Application {
 	public void showScene(String scene) {
 		if (scene.equalsIgnoreCase("Bookings")) {
 			borderPane.setCenter(calendarView);
+//			stage.setScene(bookingScene);
+		} else if (scene.equalsIgnoreCase("Items")) {
+			borderPane.setCenter(itemPane);
 //			stage.setScene(bookingScene);
 		} else if (scene.equalsIgnoreCase("Projects")) {
 				borderPane.setCenter(projectPane);
@@ -350,15 +365,15 @@ public class BookITUI extends Application {
 	}
 
 	
-	private void addResources(ComboBox cbx) {
-		
-		List<Resource> resources = resourceService.getResources();
-		
-		for (Resource resource : resources) {
-			cbx.getItems().add(resource);			
-		}
-		
-	}
+//	private void addResources(ComboBox cbx) {
+//		
+//		List<Resource> resources = resourceService.getResources();
+//		
+//		for (Resource resource : resources) {
+//			cbx.getItems().add(resource);			
+//		}
+//		
+//	}
 
 	private void actionOnObject(String action, Object userData, int indexinView) {
 		System.out.println("actionObObj: " + action + ", " + userData.toString() + ", " + indexinView);

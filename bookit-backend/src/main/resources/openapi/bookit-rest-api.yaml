@@ -26,6 +26,7 @@ servers:
 tags:
   - name: projects
   - name: resources
+  - name: items
 #  - name: bookings
 #  - name: user
 
@@ -38,6 +39,10 @@ paths:
     $ref: './paths/resources.yaml'
   /resources/{id}:
     $ref: './paths/resources-by-id.yaml'
+  /items:
+    $ref: './paths/items.yaml'
+  /items/{id}:
+    $ref: './paths/items-by-id.yaml'
   # /bookings:
     # post:
       # tags:

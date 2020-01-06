@@ -12,8 +12,11 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.fredrik.bookit.infra.ItemRepository;
 import com.fredrik.bookit.infra.ProjectRepository;
 import com.fredrik.bookit.infra.ResourceRepository;
+import com.fredrik.bookit.model.Item;
+import com.fredrik.bookit.model.ItemProperties;
 import com.fredrik.bookit.model.Project;
 import com.fredrik.bookit.model.Resource;
 
@@ -47,6 +50,9 @@ public class BookITBackend implements CommandLineRunner {
 	@Inject
 	ProjectRepository projRepo;
 
+	@Inject
+	ItemRepository itemRepo;
+
 	@Transactional
 	private void loadInitData() {
 
@@ -56,7 +62,7 @@ public class BookITBackend implements CommandLineRunner {
 		repository.save(new Resource("Kim"));
 
 		// fetch all customers
-		log.info("Customers found with findAll():");
+		log.info("Resources found with findAll():");
 		log.info("-------------------------------");
 		for (Resource res : repository.findAll()) {
 			log.info(res.toString());
@@ -68,6 +74,21 @@ public class BookITBackend implements CommandLineRunner {
 		projRepo.save(new Project(0L, "Project testing", LocalDate.now().minusDays(2), LocalDate.now().plusMonths(2)));
 		projRepo.save(new Project(0L, "Project three", LocalDate.now().minusMonths(2), LocalDate.now().plusDays(10)));
 
+
+		// save a couple of items
+		ItemProperties props = ItemProperties.builder()
+			.name("Stor hammare")
+			.description("Stor hammare")
+//			.id()
+			.height(1.0)
+			.width(2.0)
+			.length(3.0)
+			.build();
+		Item saved = itemRepo.save(new Item(0L, "EAN 1234", props, "Hylla 2A"));
+		itemRepo.save(new Item(0L, "EAN 4321", props, "Hylla 2B"));
+		itemRepo.save(new Item(0L, "EAN 5555", props, "Hylla 2C"));
+		
+		log.info("All init data, done.");
 		
 		// fetch an individual customer by ID
 //		Resource one = repository.getOne(1L);

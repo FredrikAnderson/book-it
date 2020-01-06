@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fredrik.bookit.model.Greeting;
 
 @RestController
+@RequestMapping("/api")
 public class GreetingController {
 
     private static final String template = "Hello, %s!";
