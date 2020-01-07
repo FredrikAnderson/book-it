@@ -16,5 +16,6 @@ public interface ItemService {
 
 	void delete(Long id);
 
+	int nrOfItemProperties();
 	
 }

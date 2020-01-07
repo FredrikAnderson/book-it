@@ -177,61 +177,9 @@ public class BookITUI extends Application {
 	
 //		EventType eventType;
 //		tableResourceView.addEventHandler(eventType, eventHandler);
-		
-//		tableView = new BorderPane();
-		
-		TextField filterField = new TextField();
-
-		// 1. Wrap the ObservableList in a FilteredList (initially display all data).
-//        FilteredList<Resource> filteredData = 
-//        		new FilteredList<>(FXCollections.observableArrayList(resourceService.getResources()), p -> true);
-//        
-//        // 2. Set the filter Predicate whenever the filter changes.
-//        filterField.textProperty().addListener((observable, oldValue, newValue) -> {
-//            filteredData.setPredicate(resource -> {
-//                // If filter text is empty, display all persons.
-//                if (newValue == null || newValue.isEmpty()) {
-//                    return true;
-//                }
-//                
-//                // Compare first name and last name of every person with filter text.
-//                String lowerCaseFilter = newValue.toLowerCase();
-//                
-//                if (resource.getId().toLowerCase().contains(lowerCaseFilter)) {
-//                    return true; // Filter matches first name.
-//                } else if (resource.getName().toLowerCase().contains(lowerCaseFilter)) {
-//                    return true; // Filter matches last name.
-//                }
-//                return false; // Does not match.
-//            });
-//        });
-//        
-//        // 3. Wrap the FilteredList in a SortedList. 
-//        SortedList<Resource> sortedData = new SortedList<Resource>(filteredData);
-//        
-//        // 4. Bind the SortedList comparator to the TableView comparator.
-//        sortedData.comparatorProperty().bind(tableResourceView.comparatorProperty());
-//        
-//        // 5. Add sorted (and filtered) data to the table.
-//        tableResourceView.setItems(sortedData);
-//		
-//		TableColumn<Resource, String> idColumn = new TableColumn<>("ID");
-//		idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-//
-//		TableColumn<Resource, String> nameColumn = new TableColumn<>("Name");
-//		nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-//
-//		tableResourceView.getColumns().add(idColumn);
-//		tableResourceView.getColumns().add(nameColumn);
-		
-// 		tableResourceView.setItems();
-//		resourceView.setTop(filterField);
-//		resourceView.setCenter(tableResourceView);
-		
+				
 
 				
-// 		tableResourceView.setItems();
-//		resourceView.setTop(filterField);
 		
 		Button addProjBtn = new Button("New");
 		Button editProjBtn = new Button("Edit");

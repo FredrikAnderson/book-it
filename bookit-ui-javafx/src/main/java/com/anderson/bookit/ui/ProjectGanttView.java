@@ -65,7 +65,7 @@ public class ProjectGanttView extends BorderPane {
 
 	public ProjectGanttView() {
 
-		setPadding(new Insets(20, 50, 20, 50));
+		setPadding(new Insets(20, 20, 20, 20));
 
 		timeViewChoice.getItems().add("Days");
 		timeViewChoice.getItems().add("Weeks");

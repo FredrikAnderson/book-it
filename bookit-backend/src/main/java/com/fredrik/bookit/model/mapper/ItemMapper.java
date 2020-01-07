@@ -18,6 +18,13 @@ public interface ItemMapper {
 	@Mapping(source = "properties.price", target = "price")
 	ItemDTO mapEntityToDTO(Item entity);
 
+	@Mapping(source = "name", target = "properties.name")
+	@Mapping(source = "description", target = "properties.description")
+	@Mapping(source = "width", target = "properties.width")
+	@Mapping(source = "height", target = "properties.height")
+	@Mapping(source = "length", target = "properties.length")
+	@Mapping(source = "weight", target = "properties.weight")
+	@Mapping(source = "price", target = "properties.price")
 	Item mapDTOToEntity(ItemDTO dto);
 
 }

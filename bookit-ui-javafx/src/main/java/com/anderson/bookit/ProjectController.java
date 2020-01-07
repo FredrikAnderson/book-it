@@ -35,7 +35,7 @@ public class ProjectController {
 		List<ProjectDTO> projects = projectService.getProjects();
 		projectsModel = FXCollections.observableArrayList(projects);
 		
-		view.setItems(projectsModel);
+		view.setProjects(projectsModel);
 	}
 
 	public Node getView() {

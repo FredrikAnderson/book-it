@@ -6,19 +6,22 @@ import java.util.Collections;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.fredrik.bookit.infra.ItemRepository;
+import com.fredrik.bookit.booking.app.ItemService;
 import com.fredrik.bookit.infra.ProjectRepository;
 import com.fredrik.bookit.infra.ResourceRepository;
 import com.fredrik.bookit.model.Item;
 import com.fredrik.bookit.model.ItemProperties;
 import com.fredrik.bookit.model.Project;
 import com.fredrik.bookit.model.Resource;
+import com.fredrik.bookit.model.mapper.ItemMapper;
+import com.fredrik.bookit.web.rest.model.ItemDTO;
 
 @SpringBootApplication
 public class BookITBackend implements CommandLineRunner {
@@ -51,7 +54,9 @@ public class BookITBackend implements CommandLineRunner {
 	ProjectRepository projRepo;
 
 	@Inject
-	ItemRepository itemRepo;
+	ItemService itemService;
+
+	ItemMapper itemMapper = Mappers.getMapper(ItemMapper.class);
 
 	@Transactional
 	private void loadInitData() {
@@ -77,16 +82,27 @@ public class BookITBackend implements CommandLineRunner {
 
 		// save a couple of items
 		ItemProperties props = ItemProperties.builder()
-			.name("Stor hammare")
-			.description("Stor hammare")
+			.name("Hammare")
+			.description("Hammare, vanlig")
 //			.id()
 			.height(1.0)
 			.width(2.0)
 			.length(3.0)
+			.weight(11.12)
+			.price(39.95)
 			.build();
-		Item saved = itemRepo.save(new Item(0L, "EAN 1234", props, "Hylla 2A"));
-		itemRepo.save(new Item(0L, "EAN 4321", props, "Hylla 2B"));
-		itemRepo.save(new Item(0L, "EAN 5555", props, "Hylla 2C"));
+		
+		Item entity = new Item(0L, "EAN 1234", props, "Hylla 2A");
+		ItemDTO itemDTO = itemMapper.mapEntityToDTO(entity);
+		ItemDTO savedDto = itemService.save(itemDTO);
+		
+		entity = new Item(0L, "EAN 4321", props, "Hylla 2B");
+		itemDTO = itemMapper.mapEntityToDTO(entity);
+		savedDto = itemService.save(itemDTO);
+
+		entity = new Item(0L, "EAN 5555", props, "Hylla 2C");
+		itemDTO = itemMapper.mapEntityToDTO(entity);
+		savedDto = itemService.save(itemDTO);
 		
 		log.info("All init data, done.");
 		

@@ -2,6 +2,7 @@ package com.fredrik.bookit.booking.app;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -11,12 +12,16 @@ import org.mapstruct.factory.Mappers;
 
 import com.fredrik.bookit.infra.ItemRepository;
 import com.fredrik.bookit.model.Item;
+import com.fredrik.bookit.model.ItemProperties;
 import com.fredrik.bookit.model.Project;
 import com.fredrik.bookit.model.mapper.ItemMapper;
 import com.fredrik.bookit.web.rest.model.ItemDTO;
 import com.fredrik.bookit.web.rest.model.ProjectDTO;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Named
+@Slf4j
 public class ItemServiceBean implements ItemService {
 
 	@Inject 
@@ -44,6 +49,16 @@ public class ItemServiceBean implements ItemService {
 	public ItemDTO save(ItemDTO dto) {
 		// DTO to entity
 		Item entity = itemMapper.mapDTOToEntity(dto);
+
+		// If itemProperties not containing id then lookup based on name
+		if (Objects.isNull(entity.getProperties().getId())) {
+			log.info("ItemPropertis should be looked up.");
+			
+			ItemProperties itemProperties = itemRepo.findByName(entity.getProperties().getName());
+			if (Objects.nonNull(itemProperties)) {
+				entity.setProperties(itemProperties);
+			}			
+		}
 		
 		entity = itemRepo.save(entity);
 		
@@ -66,6 +81,12 @@ public class ItemServiceBean implements ItemService {
 		
 	}
 
+	@Override
+	public int nrOfItemProperties() {
+		return itemRepo.nrOfItemProperties();		
+	}
+	
+	
 	private List<ItemDTO> mapEntitiesToDtos(List<Item> items) {
 		List<ItemDTO> itemDtos = new ArrayList<>();
 		ItemMapper mapper = Mappers.getMapper(ItemMapper.class);
