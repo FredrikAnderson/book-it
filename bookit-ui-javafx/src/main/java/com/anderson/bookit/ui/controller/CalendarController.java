@@ -1,4 +1,4 @@
-package com.anderson.bookit;
+package com.anderson.bookit.ui.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,9 +7,9 @@ import java.util.List;
 import com.anderson.bookit.model.Booking;
 import com.anderson.bookit.model.Project;
 import com.anderson.bookit.model.Resource;
-import com.anderson.bookit.service.ProjectService;
-import com.anderson.bookit.service.ResourceService;
 import com.anderson.bookit.ui.CalEventHandler;
+import com.anderson.bookit.ui.service.ProjectService;
+import com.anderson.bookit.ui.service.ResourceService;
 import com.calendarfx.model.Calendar;
 import com.calendarfx.model.Calendar.Style;
 import com.calendarfx.model.CalendarEvent;
@@ -19,9 +19,9 @@ import com.fredrik.bookit.ui.rest.model.ProjectDTO;
 import javafx.event.EventHandler;
 import javafx.scene.control.ComboBox;
 
-public class CalendarManager {
+public class CalendarController {
 
-	private static CalendarManager myInstance = null;
+	private static CalendarController myInstance = null;
 	
 	private ArrayList<Calendar> calendars = new ArrayList<Calendar>();
 
@@ -33,14 +33,14 @@ public class CalendarManager {
 //	private Entry currentEntry;
 	
 	
-	private CalendarManager() {
+	private CalendarController() {
 		
 		createCalendars();
 	}
 	
-	public static CalendarManager getInstance() {
+	public static CalendarController getInstance() {
 		if (myInstance == null) {
-			myInstance = new CalendarManager();
+			myInstance = new CalendarController();
 		}
 		return myInstance;
 	}

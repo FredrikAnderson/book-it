@@ -7,8 +7,13 @@ import java.util.List;
 
 import com.anderson.bookit.model.Booking;
 import com.anderson.bookit.model.Resource;
-import com.anderson.bookit.service.ProjectService;
-import com.anderson.bookit.service.ResourceService;
+import com.anderson.bookit.ui.controller.CalendarController;
+import com.anderson.bookit.ui.controller.ItemController;
+import com.anderson.bookit.ui.controller.ProjectController;
+import com.anderson.bookit.ui.controller.ProjectGanttController;
+import com.anderson.bookit.ui.service.ProjectService;
+import com.anderson.bookit.ui.service.ResourceService;
+import com.anderson.bookit.ui.view.BookingDialog;
 import com.calendarfx.model.Calendar;
 import com.calendarfx.model.CalendarSource;
 import com.calendarfx.model.Entry;
@@ -59,7 +64,7 @@ public class BookITUI extends Application {
 
 	Booking bookingToEdit = new Booking();
 	
-	private CalendarManager calMan = CalendarManager.getInstance();
+	private CalendarController calMan = CalendarController.getInstance();
 	
 	ProjectService projectService = new ProjectService();
 //	ResourceService resourceService = new ResourceService();
@@ -82,7 +87,7 @@ public class BookITUI extends Application {
 		return myInstance;
 	}
 
-	public CalendarManager getCalenderManager() {
+	public CalendarController getCalenderManager() {
 		return calMan;
 	}
 	

@@ -1,26 +1,25 @@
 
-package com.anderson.bookit.service;
+package com.anderson.bookit.ui.service;
 
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
 
 import com.anderson.bookit.model.Project;
-import com.fredrik.bookit.ui.rest.api.ItemsApi;
+import com.fredrik.bookit.ui.rest.api.ProjectsApi;
 import com.fredrik.bookit.ui.rest.invoker.ApiException;
-import com.fredrik.bookit.ui.rest.model.ItemDTO;
-import com.fredrik.bookit.ui.rest.model.ItemDTOList;
-import com.fredrik.bookit.ui.rest.model.ItemDTO;
+import com.fredrik.bookit.ui.rest.model.ProjectDTO;
+import com.fredrik.bookit.ui.rest.model.ProjectDTOList;
 
-public class ItemService {
+public class ProjectService {
 
-	ItemsApi itemsApi = new ItemsApi();
+	ProjectsApi projsApi = new ProjectsApi();
 
-	public ItemService() {
+	public ProjectService() {
 		
 	}
 	
-	public List<ItemDTO> getItems() {
+	public List<ProjectDTO> getProjects() {
 		System.out.println("Get Projects from backend.");
 
 		Project p1 = new Project("P1");
@@ -34,16 +33,16 @@ public class ItemService {
 		
 //		return Arrays.asList(p1, p2);		
 		
-		ItemDTOList itemDTOList = null;
+		ProjectDTOList projectDTOList = null;
 		try {
-			itemDTOList = itemsApi.getItems();
+			projectDTOList = projsApi.getProjects();
 		
 		} catch (ApiException e) {
 			e.printStackTrace();
 		}
 		
-		System.out.println("Items: " + itemDTOList.toString());
-		List<ItemDTO> items = itemDTOList.getItems();
+		System.out.println("Projects: " + projectDTOList.toString());
+		List<ProjectDTO> items = projectDTOList.getItems();
 //		
 //		items.stream().forEach( proj -> { 
 //			proj.startDate(LocalDate.now().minusDays(1)); 
@@ -52,14 +51,14 @@ public class ItemService {
 		return items;
 	}
 
-	public ItemDTO saveItem(ItemDTO toEdit) {
+	public ProjectDTO saveProject(ProjectDTO toEdit) {
 		System.out.println("Save Project to backend: " + toEdit);		
 		
 		try {
 			if (toEdit.getId() == null) {
-				toEdit = itemsApi.addItem(toEdit);				
+				toEdit = projsApi.addProject(toEdit);				
 			} else {
-				itemsApi.updateItem(toEdit.getId(), toEdit);				
+				toEdit = projsApi.updateProject(toEdit.getId(), toEdit);				
 			}
 			
 		} catch (ApiException e) {
@@ -68,12 +67,12 @@ public class ItemService {
 		return toEdit;
 	}
 
-	public void deleteItem(ItemDTO toEdit) {
+	public void deleteProject(ProjectDTO toEdit) {
 		System.out.println("Delete proj: " + toEdit);
 		
 		if (toEdit.getId() != null) {
 			try {
-				itemsApi.deleteItem(toEdit.getId());
+				projsApi.deleteProject(toEdit.getId());
 			} catch (ApiException e) {
 				e.printStackTrace();
 			}		

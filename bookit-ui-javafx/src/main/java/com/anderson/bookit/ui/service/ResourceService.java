@@ -1,5 +1,5 @@
 
-package com.anderson.bookit.service;
+package com.anderson.bookit.ui.service;
 
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.anderson.bookit.CalendarManager;
 import com.anderson.bookit.model.Booking;
 import com.anderson.bookit.model.Resource;
+import com.anderson.bookit.ui.controller.CalendarController;
 import com.calendarfx.model.Entry;
 
 public class ResourceService {
@@ -62,7 +62,7 @@ public class ResourceService {
 
 	public Entry<Booking> updateEntryWithBooking(Entry<Booking> toEdit, Booking booking) {
 
-		toEdit = CalendarManager.updateEntryFromBooking(toEdit, booking);		
+		toEdit = CalendarController.updateEntryFromBooking(toEdit, booking);		
 		
 		// Save Booking to backend
 		System.out.println("Saving booking to backend: " + booking.toString());

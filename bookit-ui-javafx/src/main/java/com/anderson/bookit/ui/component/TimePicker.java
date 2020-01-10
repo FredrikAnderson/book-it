@@ -1,4 +1,4 @@
-package com.anderson.bookit.ui;
+package com.anderson.bookit.ui.component;
 
 
 import java.time.LocalTime;

@@ -1,4 +1,4 @@
-package com.anderson.bookit.ui;
+package com.anderson.bookit.ui.view;
 
 import java.time.LocalDate;
 
@@ -96,7 +96,7 @@ public class ItemView extends BorderPane {
 		mi3 = new MenuItem("Delete");
 		cm.getItems().add(mi3);
 
-		super.addEventHandler(MouseEvent.MOUSE_CLICKED, new RightClickHandler(this));
+		itemView.addEventHandler(MouseEvent.MOUSE_CLICKED, new RightClickHandler(this));
 
 //		tableResourceView.setItems();
 //	resourceView.setTop(filterField);

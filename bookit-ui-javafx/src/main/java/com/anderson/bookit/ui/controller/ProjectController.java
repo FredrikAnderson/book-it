@@ -1,11 +1,14 @@
-package com.anderson.bookit;
+package com.anderson.bookit.ui.controller;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
-import com.anderson.bookit.service.ProjectService;
-import com.anderson.bookit.ui.ProjectDialog;
-import com.anderson.bookit.ui.ProjectGanttView;
+import com.anderson.bookit.model.Project;
+import com.anderson.bookit.ui.service.ProjectService;
+import com.anderson.bookit.ui.view.ProjectDialog;
+import com.anderson.bookit.ui.view.ProjectView;
 import com.fredrik.bookit.ui.rest.model.ProjectDTO;
 
 import javafx.collections.FXCollections;
@@ -15,17 +18,17 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
 
-public class ProjectGanttController {
+public class ProjectController {
 
 	ProjectService projectService = new ProjectService();
 
-	ProjectGanttView view = new ProjectGanttView();
+	ProjectView view = new ProjectView();
 
 	ObservableList<ProjectDTO> projectsModel;
 
 	ProjectDTO toEdit = null;
 	
-	public ProjectGanttController() {
+	public ProjectController() {
 
 		view.addActionListener(new ProjectInListActionHandler());
 		

@@ -1,10 +1,13 @@
-package com.anderson.bookit.ui;
+package com.anderson.bookit.ui.view;
 
 import java.time.LocalDateTime;
 
-import com.anderson.bookit.service.ItemService;
-import com.anderson.bookit.ui.DateTimePicker.TimeChooserType;
-import com.fredrik.bookit.ui.rest.model.ItemDTO;
+import com.anderson.bookit.ui.component.DateTimePicker;
+import com.anderson.bookit.ui.component.DateTimePicker.TimeChooserType;
+import com.anderson.bookit.ui.service.ProjectService;
+import com.anderson.bookit.ui.view.ItemDialog.CloseDialogActionHandler;
+import com.anderson.bookit.ui.view.ItemDialog.CloseDialogKeyHandler;
+import com.fredrik.bookit.ui.rest.model.ProjectDTO;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -12,18 +15,21 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class ItemDialog extends Stage {
+public class ProjectDialog extends Stage {
 
 //	Stage dialogStage = null;
 
-    ItemService itemService = new ItemService();
+    ProjectService projectService = new ProjectService();
 
-    ItemDTO toEdit = null;
+    ProjectDTO toEdit = null;
 
 	private TextField nameTf;	
 	private DateTimePicker startDateTimePr = new DateTimePicker(TimeChooserType.Date);
@@ -33,8 +39,9 @@ public class ItemDialog extends Stage {
 
 	private String action;
 	Button okButton = new Button("OK");
+	Button cancelButton = new Button("Cancel");
     
-	public ItemDialog() {		
+	public ProjectDialog() {		
 		super(); 
 		initModality(Modality.APPLICATION_MODAL);
 		setTitle("Edit Project");
@@ -59,8 +66,7 @@ public class ItemDialog extends Stage {
 				
 //		addProjects(projCbx);
 
-		// CHoosing a proj would set times for the booking
-		
+		// Choosing a proj would set times for the booking		
 		gridP.add(projLbl, 0, 1);
 		gridP.add(nameTf, 1, 1);
 
@@ -78,39 +84,41 @@ public class ItemDialog extends Stage {
 		gridP.add(endTimeLbl, 0, 3);
 		gridP.add(endDateTimePr, 1, 3);
 		
-//		button.setOnAction(new EventHandler<ActionEvent>() {
-//				@Override
-//	            public void handle(ActionEvent event) {
-//	                System.out.println("Hello World! Should save booking:");
-//	                
-//	                System.out.println("Name: " + nameTf.getText()); // getSelectionModel().getSelectedItem().toString());
-//	                
-//	                LocalDateTime localStateDate = startDateTimePr.getLocalDateTime();
-//	                LocalDateTime localEndDate = endDateTimePr.getLocalDateTime();
-//	                
-//	                close();
-//	                
-//	                Project proj = toEdit;
-//	                
-//	                proj.setName(nameTf.getText());
-//	                proj.setStartDate(startDateTimePr.getLocalDateTime().toLocalDate());
-//	                proj.setEndDate(endDateTimePr.getLocalDateTime().toLocalDate());
-//	                
-//	                BookITApp.getInstance().modifiedProject(action, toEdit, editingIndex);
-//	            }
-//		});
-		gridP.add(okButton, 1, 4);
+		HBox btnsHbx = new HBox(okButton, cancelButton);
+		btnsHbx.setSpacing(10);
+		
+		gridP.add(btnsHbx, 1, 4);
 		
 		// Fix scene
 		setScene(new Scene(gridP, 270, 180));
+		
+		cancelButton.setOnAction(new CloseDialogActionHandler());
+		addEventHandler(KeyEvent.KEY_PRESSED, new CloseDialogKeyHandler());
 	}
 
+	class CloseDialogActionHandler implements EventHandler<ActionEvent> {
+		@Override
+        public void handle(ActionEvent event) {
+			close();
+        }
+	}
+
+	class CloseDialogKeyHandler implements EventHandler<KeyEvent> {
+
+		@Override
+        public void handle(KeyEvent event) {
+			if (event.getCode() == KeyCode.ESCAPE) {
+				close();
+			}
+        }
+	}
+	
 	public void addActionHandler(EventHandler<ActionEvent> handler) {
 		
 		okButton.setOnAction(handler);
 	}
 	
-	public void editModel(String reqAction, ItemDTO reqEdit, int indexinView) {
+	public void editModel(String reqAction, ProjectDTO reqEdit, int indexinView) {
 		action = reqAction;
 		toEdit = reqEdit;
 		editingIndex = indexinView;
@@ -121,9 +129,9 @@ public class ItemDialog extends Stage {
 		nameTf.setText(toEdit.getName());
 
 		// Set select time
-//		startDateTimePr.setLocalDate(toEdit.getStartDate());
-//		// Set selected time
-//		endDateTimePr.setLocalDate(toEdit.getEndDate());
+		startDateTimePr.setLocalDate(toEdit.getStartDate());
+		// Set selected time
+		endDateTimePr.setLocalDate(toEdit.getEndDate());
 		
 		show();
 	}

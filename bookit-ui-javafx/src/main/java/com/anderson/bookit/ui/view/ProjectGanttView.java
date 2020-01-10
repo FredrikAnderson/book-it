@@ -1,11 +1,12 @@
-package com.anderson.bookit.ui;
+package com.anderson.bookit.ui.view;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoField;
 import java.time.temporal.WeekFields;
 import java.util.Locale;
 
-import com.anderson.bookit.ui.DateTimePicker.TimeChooserType;
+import com.anderson.bookit.ui.component.DateTimePicker;
+import com.anderson.bookit.ui.component.DateTimePicker.TimeChooserType;
 import com.fredrik.bookit.ui.rest.model.ProjectDTO;
 
 import javafx.beans.value.ChangeListener;

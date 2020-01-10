@@ -1,4 +1,4 @@
-package com.anderson.bookit.ui;
+package com.anderson.bookit.ui.component;
 
 
 import java.time.LocalDate;
@@ -16,7 +16,7 @@ public class DateTimePicker extends HBox {
 	DatePicker datePr = new DatePicker();
 	TimePicker timePr = new TimePicker();
 
-	enum TimeChooserType {
+	public enum TimeChooserType {
 		Date,
 		DateTime
 	};

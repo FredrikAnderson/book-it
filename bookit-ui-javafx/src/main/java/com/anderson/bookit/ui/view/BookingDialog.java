@@ -1,12 +1,13 @@
-package com.anderson.bookit;
+package com.anderson.bookit.ui.view;
 
 import java.time.LocalDateTime;
 
+import com.anderson.bookit.BookITUI;
 import com.anderson.bookit.model.Booking;
 import com.anderson.bookit.model.Project;
 import com.anderson.bookit.model.Resource;
-import com.anderson.bookit.service.ResourceService;
-import com.anderson.bookit.ui.DateTimePicker;
+import com.anderson.bookit.ui.component.DateTimePicker;
+import com.anderson.bookit.ui.service.ResourceService;
 import com.calendarfx.model.Entry;
 
 import javafx.event.ActionEvent;

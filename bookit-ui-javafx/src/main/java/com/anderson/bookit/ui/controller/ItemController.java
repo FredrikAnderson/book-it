@@ -1,11 +1,11 @@
-package com.anderson.bookit;
+package com.anderson.bookit.ui.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.anderson.bookit.service.ItemService;
-import com.anderson.bookit.ui.ItemDialog;
-import com.anderson.bookit.ui.ItemView;
+import com.anderson.bookit.ui.service.ItemService;
+import com.anderson.bookit.ui.view.ItemDialog;
+import com.anderson.bookit.ui.view.ItemView;
 import com.fredrik.bookit.ui.rest.model.ItemDTO;
 
 import javafx.collections.FXCollections;
@@ -42,12 +42,14 @@ public class ItemController {
 	private void showEditItemDialog(String text, ItemDTO toEdit, int indexinView) {
 		this.toEdit = toEdit;
 		
-//		ProjectDialog projDialog = new ProjectDialog();
-//
-//		projDialog.addActionHandler(new ProjectActionHandler(projDialog));
-//		projDialog.editModel(text, toEdit, indexinView);
+		System.out.println("Should show Item Edit dialog with: " + text + ", " + toEdit.toString());
 		
-//		projDialog.s
+		ItemDialog itemDialog = new ItemDialog();
+
+		itemDialog.addActionHandler(new ItemActionHandler(itemDialog));
+		itemDialog.editModel(text, toEdit, indexinView);
+		
+		itemDialog.show();
 	}
 
 	class ItemInListActionHandler implements EventHandler<ActionEvent> {
@@ -86,8 +88,8 @@ public class ItemController {
 			System.out.println("Name: " + itemDialog.getProjectName()); // getSelectionModel().getSelectedItem().toString());
             
             String projectName = itemDialog.getProjectName();
-            LocalDateTime localStartDate = itemDialog.getStartDate();
-            LocalDateTime localEndDate = itemDialog.getEndDate();
+//            LocalDateTime localStartDate = itemDialog.getStartDate();
+//            LocalDateTime localEndDate = itemDialog.getEndDate();
             
             itemDialog.close();
             
