@@ -35,7 +35,7 @@ public class CalendarController {
 	
 	private CalendarController() {
 		
-		createCalendars();
+		updateData();
 	}
 	
 	public static CalendarController getInstance() {
@@ -45,18 +45,19 @@ public class CalendarController {
 		return myInstance;
 	}
 
-	private List<Calendar> createCalendars() {
+	public List<Calendar> updateData() {
 
 		List<ProjectDTO> projects = projectService.getProjects();
 
+		calendars.clear();
 		for (ProjectDTO proj : projects) {
 			calendars.add(createCalendarForProject(proj));
 		}
 
-		List<Resource> resources = resourceService.getResources();
-		for (Resource res : resources) {
-			calendars.add(createCalendarForResource(res));
-		}
+//		List<Resource> resources = resourceService.getResources();
+//		for (Resource res : resources) {
+//			calendars.add(createCalendarForResource(res));
+//		}
 
 		Calendar birthdays = new Calendar("Birthdays");
 		Calendar holidays = new Calendar("Holidays");

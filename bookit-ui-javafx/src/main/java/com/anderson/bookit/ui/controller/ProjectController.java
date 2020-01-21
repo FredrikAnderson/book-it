@@ -32,6 +32,10 @@ public class ProjectController {
 
 		view.addActionListener(new ProjectInListActionHandler());
 		
+		updateData();
+	}
+
+	public void updateData() {
 		List<ProjectDTO> projects = projectService.getProjects();
 		projectsModel = FXCollections.observableArrayList(projects);
 		

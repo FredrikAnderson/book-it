@@ -29,6 +29,10 @@ public class ItemController {
 
 		view.addActionListener(new ItemInListActionHandler());
 		
+		updateData();
+	}
+
+	public void updateData() {
 		List<ItemDTO> items = itemService.getItems();
 		itemsModel = FXCollections.observableArrayList(items);
 		

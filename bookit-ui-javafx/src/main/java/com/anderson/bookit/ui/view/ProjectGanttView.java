@@ -55,6 +55,9 @@ public class ProjectGanttView extends BorderPane {
 
 	TableView<ProjectDTO> ganttView = new TableView<ProjectDTO>();
 
+	String GREEN_COLOR_HEX_CODE = "#a4f3a9";
+	String YELLOW_COLOR_HEX_CODE = "#ffff1a";
+	
 	enum TimeView {
 		DAYS, WEEKS, MONTHS
 	};
@@ -220,7 +223,7 @@ public class ProjectGanttView extends BorderPane {
 //			System.out.println("Date: " + viewDate + " is " + inc + " in " + projectDTO.getStartDate()
 //				+ " - " + projectDTO.getEndDate());
 			if (inc) {
-				toret = "#99ff66";
+				toret = GREEN_COLOR_HEX_CODE; // "#99ff66";
 			}
 
 		} else if (ganttTimeView == TimeView.WEEKS) {
@@ -247,9 +250,9 @@ public class ProjectGanttView extends BorderPane {
 //		System.out.println("Period start Date: " + startPer  + " is " + startDateInc + " in " + mdlStart + " - " + mdlEnd);
 //		System.out.println("Period end Date: " + endPer + " is " + endDateInc + " in " + mdlStart + " - " + mdlEnd);		
 		if (startDateInc && endDateInc) {
-			toret = "#99ff66"; // Green
+			toret = GREEN_COLOR_HEX_CODE; // "#99ff66"; // Green
 		} else if (startDateInc || endDateInc) {
-			toret = "#ffff1a"; // Yellow
+			toret = YELLOW_COLOR_HEX_CODE; // "#ffff1a"; // Yellow
 		}
 
 		return toret;

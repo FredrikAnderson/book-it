@@ -60,6 +60,7 @@ public class BookITUI extends Application {
 	Booking bookingToEdit = new Booking();
 	
 	private CalendarController calMan = CalendarController.getInstance();
+	CalendarSource myCalendarSource = new CalendarSource("My Calendars");
 	
 	ProjectService projectService = new ProjectService();
 //	ResourceService resourceService = new ResourceService();
@@ -98,9 +99,7 @@ public class BookITUI extends Application {
 
 //		calendarView.setShowSourceTray(true);23
 
-		CalendarSource myCalendarSource = new CalendarSource("My Calendars");
 		myCalendarSource.getCalendars().addAll(calMan.getCalendars());
-
 		calendarView.getCalendarSources().addAll(myCalendarSource);
 
 		calendarView.setRequestedTime(LocalTime.now());
@@ -207,8 +206,8 @@ public class BookITUI extends Application {
 		
 		primaryStage.setTitle("Book IT");
 		primaryStage.setScene(rootScene);
-		primaryStage.setWidth(1300);
-		primaryStage.setHeight(1000);
+		primaryStage.setWidth(1000);
+		primaryStage.setHeight(800);
 //		primaryStage.centerOnScreen();
 		
 		Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
@@ -235,20 +234,33 @@ public class BookITUI extends Application {
 
 	public void showScene(String scene) {
 		if (scene.equalsIgnoreCase("Bookings")) {
+			calMan.updateData();
 			borderPane.setCenter(calendarView);
+			
 //			stage.setScene(bookingScene);
 		} else if (scene.equalsIgnoreCase("Items")) {
+			itemController.updateData();
 			borderPane.setCenter(itemPane);
+
 //			stage.setScene(bookingScene);
 		} else if (scene.equalsIgnoreCase("Projects")) {
-				borderPane.setCenter(projectPane);
+			projectController.updateData();
+			borderPane.setCenter(projectPane);
 //				stage.setScene(bookingScene);
 		} else if (scene.contains("Timeline")) {
+			projectGanttController.updateData();
 			borderPane.setCenter(projectGanttPane);
 //			stage.setScene(bookingScene);
 			
 		} else if (scene.contains("Calendar")) {
+			calMan.updateData();
 
+			myCalendarSource.getCalendars().clear();
+			myCalendarSource.getCalendars().addAll(calMan.getCalendars());
+			calendarView.getCalendarSources().clear();
+			calendarView.getCalendarSources().addAll(myCalendarSource);
+			calendarView.refreshData();
+			
 			borderPane.setCenter(calendarView);
 //			stage.setScene(bookingScene);
 			
