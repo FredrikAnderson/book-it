@@ -12,7 +12,6 @@ import com.anderson.bookit.ui.controller.ItemController;
 import com.anderson.bookit.ui.controller.ProjectController;
 import com.anderson.bookit.ui.controller.ProjectGanttController;
 import com.anderson.bookit.ui.service.ProjectService;
-import com.anderson.bookit.ui.service.ResourceService;
 import com.anderson.bookit.ui.view.BookingDialog;
 import com.calendarfx.model.Calendar;
 import com.calendarfx.model.CalendarSource;
@@ -25,9 +24,6 @@ import com.fredrik.bookit.ui.rest.model.ProjectDTO;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.transformation.FilteredList;
-import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -37,14 +33,13 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import javafx.stage.Screen;
 import javafx.stage.WindowEvent;
+import javafx.geometry.Rectangle2D;
 import javafx.util.Callback;
 
 public class BookITUI extends Application {
@@ -214,7 +209,12 @@ public class BookITUI extends Application {
 		primaryStage.setScene(rootScene);
 		primaryStage.setWidth(1300);
 		primaryStage.setHeight(1000);
-		primaryStage.centerOnScreen();
+//		primaryStage.centerOnScreen();
+		
+		Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
+        primaryStage.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
+        primaryStage.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2 + 20);
+		
 		primaryStage.show();	
 		
 		window = primaryStage;
