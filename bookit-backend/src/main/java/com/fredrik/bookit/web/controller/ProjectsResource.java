@@ -5,6 +5,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.validation.Valid;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -50,7 +51,7 @@ public class ProjectsResource implements ProjectsApi {
 		log.info("deleteProject: " + id);
 
 		projectService.deleteProject(id);
-		return (ResponseEntity<Void>) ResponseEntity.ok();
+		return new ResponseEntity<Void>(HttpStatus.OK);
 	}
 
 	@Override

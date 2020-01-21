@@ -6,6 +6,7 @@ import java.util.Objects;
 import javax.inject.Inject;
 import javax.validation.Valid;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -42,7 +43,7 @@ public class ItemsResource implements ItemsApi {
 		log.info("deleteItem: " + id);
 
 		itemService.delete(id);
-		return (ResponseEntity<Void>) ResponseEntity.ok();
+		return new ResponseEntity<Void>(HttpStatus.OK);
 	}
 
 	@Override

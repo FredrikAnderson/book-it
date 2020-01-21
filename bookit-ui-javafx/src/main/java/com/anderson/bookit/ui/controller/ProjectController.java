@@ -103,11 +103,14 @@ public class ProjectController {
     		
     		if (projDialog.getAction().toLowerCase().contains("new")) {
     			projectsModel.add(toEdit);
+
+    			view.setProjects(projectsModel);
     		} else {
     			// Update project in model. First find project in model
     			int indexOf = projectsModel.indexOf(toEdit);
     			if (indexOf != -1) {
     				projectsModel.set(indexOf, toEdit);
+        			view.setProjects(projectsModel);
     			}
     		}
         }
@@ -122,8 +125,7 @@ public class ProjectController {
 			projectService.deleteProject(toEdit);
 			
 			projectsModel.remove(toEdit);
-			
-//			view.getItems().remove(toEdit);
+			view.setProjects(projectsModel);
 			
 		} else {
 			showEditProjectDialog(action, toEdit, 1); // , indexinView);
