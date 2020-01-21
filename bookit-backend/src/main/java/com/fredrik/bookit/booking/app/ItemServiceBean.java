@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -75,6 +76,16 @@ public class ItemServiceBean implements ItemService {
 		return dtos;
 	}
 
+	@Override
+	public List<ItemDTO> findBy(String itemName) {
+		
+		List<ItemProperties> findAll = itemRepo.findBy(itemName);
+		List<Item> items = findAll.stream().map(ip -> new Item(ip)).collect(Collectors.toList());		
+		List<ItemDTO> dtos = mapEntitiesToDtos(items);
+		
+		return dtos;
+	}
+	
 	@Override
 	public void delete(Long id) {
 		// TODO Auto-generated method stub

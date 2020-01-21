@@ -27,6 +27,13 @@ get:
   summary: Gets all items
   description: ''
   operationId: getItems
+  parameters:
+    - name: name
+      in: query
+      description: Name of items to return
+      required: false
+      schema:
+         type: string
   responses:
     '200':
       description: 'Category.OK(0), OK'
@@ -36,3 +43,4 @@ get:
             $ref: '../schemas/ItemDTOList.yaml'
     '405':
       description: Invalid input
+      

@@ -3,6 +3,7 @@ package com.anderson.bookit.ui.service;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.Collection;
 import java.util.List;
 
 import com.anderson.bookit.model.Project;
@@ -36,7 +37,7 @@ public class ItemService {
 		
 		ItemDTOList itemDTOList = null;
 		try {
-			itemDTOList = itemsApi.getItems();
+			itemDTOList = itemsApi.getItems(null);
 		
 		} catch (ApiException e) {
 			e.printStackTrace();
@@ -78,7 +79,19 @@ public class ItemService {
 				e.printStackTrace();
 			}		
 		}
-		
+	}
+
+	public List<ItemDTO> lookupItems(String prefix) {
+
+		ItemDTOList itemDTOList = null;
+		try {
+			itemDTOList = itemsApi.getItems(prefix);
+		} catch (ApiException e) {
+			e.printStackTrace();
+		}
+		List<ItemDTO> items = itemDTOList.getItems();
+
+		return items;
 	}
 	
 }

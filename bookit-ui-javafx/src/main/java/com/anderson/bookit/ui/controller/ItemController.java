@@ -44,10 +44,10 @@ public class ItemController {
 		
 		System.out.println("Should show Item Edit dialog with: " + text + ", " + toEdit.toString());
 		
-		ItemDialog itemDialog = new ItemDialog();
+		ItemDialog itemDialog = new ItemDialog(text, toEdit, indexinView);
 
 		itemDialog.addActionHandler(new ItemActionHandler(itemDialog));
-		itemDialog.editModel(text, toEdit, indexinView);
+//		itemDialog.editModel(text, toEdit, indexinView);
 		
 		itemDialog.show();
 	}

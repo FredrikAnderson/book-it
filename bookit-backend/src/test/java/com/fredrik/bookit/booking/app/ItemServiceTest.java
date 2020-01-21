@@ -2,6 +2,8 @@ package com.fredrik.bookit.booking.app;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.junit.Test;
@@ -33,8 +35,8 @@ public class ItemServiceTest {
 		int nrOfItemProperties = itemService.nrOfItemProperties();
 		// save a couple of items
 		ItemProperties props = ItemProperties.builder()
-			.name("Stor hammare")
-			.description("Stor hammare")
+			.name("Affisch")
+			.description("Stor affisch")
 //			.id()
 			.height(1.0)
 			.width(2.0)
@@ -62,6 +64,35 @@ public class ItemServiceTest {
 		assertEquals(1, nrOfItemPropertiesAfter - nrOfItemProperties); 		
 		
 	}
+
+	@Test 
+	public void givenAFilter_findItems_correct() {
+		// Given
+		
+//		// save a couple of items
+//		ItemProperties props = ItemProperties.builder()
+//			.name("Stor hammare")
+//			.description("Stor hammare")
+////			.id()
+//			.height(1.0)
+//			.width(2.0)
+//			.length(3.0)
+//			.build();
+//
+//		Item entity = new Item(0L, "EAN 1234", props, "Hylla 2A");
+//		ItemDTO itemDTO = itemMapper.mapEntityToDTO(entity);
+		
+		// When
+		List<ItemDTO> list = itemService.findBy("ham");
+
+		assertEquals(1, list.size()); 		
+
+		list = itemService.findBy("gam");
+
+		assertEquals(0, list.size()); 		
+		
+	}
+
 	
 //	@Test
 //	public void fullItemToItemProperties_correctly() {

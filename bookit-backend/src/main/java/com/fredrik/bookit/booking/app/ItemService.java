@@ -7,7 +7,9 @@ import com.fredrik.bookit.web.rest.model.ItemDTO;
 public interface ItemService {
 
 	List<ItemDTO> findAll();
-	
+
+	List<ItemDTO> findBy(String itemName);
+
     ItemDTO findOne(Long id);
 
     ItemDTO findByName(String itemName);

@@ -1,76 +1,133 @@
 package com.anderson.bookit.ui;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
+import org.joda.time.Instant;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
+public class FilterComboBox<T> extends ComboBox<T> {
 
-public class FilterComboBox {
+	private Instant lastTypedTime = null;
+	
+	private Lookup<T> lookup = null;
 
-//	private ObservableList<String>    items;
-
-	private static ComboBox<?> cbox;
+	public FilterComboBox() {
+		setEditable(true);
 		
-	public static <T> void autoTypeSelect(ComboBox<T> comboBox) {	
-		cbox = comboBox;
-		
-		cbox.setOnKeyReleased( new KeyHandler(cbox) );
+		this.setOnKeyReleased(new KeyHandler<T>());
+	}
+
+	public void setLookup(Lookup<T> aLookup) {
+		this.lookup = aLookup;
 	}
 	
-    private static class KeyHandler<T> implements EventHandler<KeyEvent> {
+	private Collection<T> lookupForPrefix(String toLookup) {
 
-    	private static ComboBox<?> cbox;
+		Collection<T> collection = lookup.lookup(toLookup);
 
-        private SingleSelectionModel<T> sm;
-        private String					typed;
+		return collection;
+	}
+	
+	void setList(Collection<?> collection) {
+		
+		ObservableList<T> observableList = (ObservableList<T>) FXCollections.observableArrayList(collection);
+		
+		setItems(observableList);
+	}
+	
+	private String getText() {
+		String text = getEditor().getText().toLowerCase();
 
-        public KeyHandler(ComboBox<T> cbox) {
-        	cbox = cbox;
-            sm = cbox.getSelectionModel();
-            typed = "";
-        }
+		return text;
+	}
 
-        @Override
-        public void handle( KeyEvent event ) {
-            // handle non alphanumeric keys like backspace, delete etc
-        	typed.notify();
-            if( event.getCode() == KeyCode.BACK_SPACE && typed.length()>0)
-                typed = typed.substring( 0, typed.length() - 1 );
-            else typed += event.getText();
+	public void setItems(List<T> items) {
 
-            if( typed.length() == 0 ) {
-                sm.selectFirst();
-                return;
-            }
-            System.out.println("Typed: " + typed);
-            
-            synchronized (typed) {
-                try {
-					typed.wait(5 * 100000);
-					
-		            for( Object item: cbox.getItems() ) {
-		            	if (item.toString().startsWith(typed)) {
-//		            		cbox.setValue((T) item);
-//		            		sm.select(item);
-		            	}
-		            }
-					
+		ObservableList<T> obsList = FXCollections.observableArrayList(items);
+		this.setItems(obsList);
+	}
+
+	public void keyTyped() {
+		lastTypedTime = Instant.now();
+		
+		System.out.println("In UI: " + getText());
+		Task<Collection<T>> lookupTask = new Task<Collection<T>>() {
+			
+			@Override
+			protected Collection<T> call() throws Exception {
+
+				System.out.println("Typed: " + getText());
+				// Maybe check if string is longer than 2 or 3!?
+						
+				// Wait until no key presses for within 700 ms
+				// CHeck if something new is typed
+							
+				try {
+					Thread.sleep(800);
+				} catch (InterruptedException e1) {
+				}					
+				Instant now = Instant.now().minus(790);
+				if (lastTypedTime.isAfter(now)) {
+					// Then user has typed something					
+					return null;
+				}
+				
+				// Lookup string from server
+				System.out.println("Looking up: " + getText());
+
+				return (Collection<T>) lookupForPrefix(getText());
+			}
+			
+			@Override
+			protected void succeeded() {
+				Collection<T> collection = null;
+				try {
+					collection = get();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
-					// Another key typed, fall-through
-				}				
+				} catch (ExecutionException e) {
+					e.printStackTrace();
+				}
+				// If not the set model...
+				if (collection != null) {
+					setList(collection);
+					
+					show();					
+				}
 			}
-            
-            
-//            for( String item: getItems() ) {
-//                if( item.startsWith( typed ) ) sm.select( item );
-//            }
-        }
+		};
 
-    }
+		new Thread(lookupTask).start();
+	}
+	
+	class KeyHandler<T> implements EventHandler<KeyEvent> {
+
+		@Override
+		public void handle(KeyEvent event) {
+			System.out.println("Typed: " + event.toString());
+			
+			if (event.getCode() != KeyCode.CONTROL && event.getCode() != KeyCode.SHIFT 
+//					&& event.getCode() != KeyCode.BACK_SPACE
+					&& event.getCode() != KeyCode.ENTER
+					&& event.getCode() != KeyCode.LEFT && event.getCode() != KeyCode.RIGHT
+					&& event.getCode() != KeyCode.UP && event.getCode() != KeyCode.DOWN) {
+				
+				System.out.println("Typed, reacting, code: " + event.getCode());				
+				keyTyped();
+			}
+			if (event.getCode() == KeyCode.ENTER) {
+				
+			}			
+		}
+	}
 
 }
