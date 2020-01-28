@@ -27,7 +27,7 @@ public class ProjectDialog extends Stage {
 
 //	Stage dialogStage = null;
 
-    ProjectService projectService = new ProjectService();
+    ProjectService projectService = ProjectService.getInstance();
 
     ProjectDTO toEdit = null;
 

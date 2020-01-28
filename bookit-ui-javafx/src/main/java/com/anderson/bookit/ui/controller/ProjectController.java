@@ -1,11 +1,10 @@
 package com.anderson.bookit.ui.controller;
 
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 
 import com.anderson.bookit.model.Project;
+import com.anderson.bookit.ui.service.ItemModificationListener;
 import com.anderson.bookit.ui.service.ProjectService;
 import com.anderson.bookit.ui.view.ProjectDialog;
 import com.anderson.bookit.ui.view.ProjectView;
@@ -18,9 +17,9 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
 
-public class ProjectController {
+public class ProjectController implements ItemModificationListener<Long, ProjectDTO> {
 
-	ProjectService projectService = new ProjectService();
+	ProjectService projectService = ProjectService.getInstance();
 
 	ProjectView view = new ProjectView();
 
@@ -32,12 +31,16 @@ public class ProjectController {
 
 		view.addActionListener(new ProjectInListActionHandler());
 		
+		projectService.addItemListener(this);
+		
+		List<ProjectDTO> projects = projectService.getProjects();
+		projectsModel = FXCollections.observableArrayList(projects);
 		updateData();
 	}
 
-	public void updateData() {
-		List<ProjectDTO> projects = projectService.getProjects();
-		projectsModel = FXCollections.observableArrayList(projects);
+	private void updateData() {
+//		List<ProjectDTO> projects = projectService.getProjects();
+//		projectsModel = FXCollections.observableArrayList(projects);
 		
 		view.setProjects(projectsModel);
 	}
@@ -46,17 +49,38 @@ public class ProjectController {
 		return view;
 	}
 
-	private void showEditProjectDialog(String text, ProjectDTO toEdit, int indexinView) {
-		this.toEdit = toEdit;
-		
-		ProjectDialog projDialog = new ProjectDialog();
+//	private void showEditProjectDialog(String text, ProjectDTO toEdit, int indexinView) {
+//		this.toEdit = toEdit;
+//		
+//		ProjectDialog projDialog = new ProjectDialog();
+//
+//		projDialog.addActionHandler(new ProjectActionHandler(projDialog));
+//		projDialog.editModel(text, toEdit, indexinView);
+//		
+////		projDialog.s
+//	}
 
-		projDialog.addActionHandler(new ProjectActionHandler(projDialog));
-		projDialog.editModel(text, toEdit, indexinView);
-		
-//		projDialog.s
+	@Override
+	public void itemModified(Long id, ItemEvent event, ProjectDTO item) {
+		System.out.println("itemModified: " + id + ", " + event + ": " + item.toString());
+
+		if (event == ItemEvent.ADD) {
+			projectsModel.add(item);
+			
+		} else if (event == ItemEvent.EDIT) {
+			int indexOf = projectsModel.indexOf(item);
+			if (indexOf != -1) {
+				projectsModel.set(indexOf, item);
+			}			
+			
+		} else if (event == ItemEvent.DELETE) {
+			projectsModel.remove(item);			
+			
+		}
+
+		updateData();
 	}
-
+	
 	class ProjectInListActionHandler implements EventHandler<ActionEvent> {
 
 		@Override
@@ -105,34 +129,38 @@ public class ProjectController {
     		ProjectDTO proj = projectService.saveProject(toEdit);
     		toEdit = proj;
     		
-    		if (projDialog.getAction().toLowerCase().contains("new")) {
-    			projectsModel.add(toEdit);
-
-    			view.setProjects(projectsModel);
-    		} else {
-    			// Update project in model. First find project in model
-    			int indexOf = projectsModel.indexOf(toEdit);
-    			if (indexOf != -1) {
-    				projectsModel.set(indexOf, toEdit);
-        			view.setProjects(projectsModel);
-    			}
-    		}
+//    		if (projDialog.getAction().toLowerCase().contains("new")) {
+//    			projectsModel.add(toEdit);
+//
+//    			view.setProjects(projectsModel);
+//    		} else {
+//    			// Update project in model. First find project in model
+//    			int indexOf = projectsModel.indexOf(toEdit);
+//    			if (indexOf != -1) {
+//    				projectsModel.set(indexOf, toEdit);
+//        			view.setProjects(projectsModel);
+//    			}
+//    		}
         }
 	}
 
 	public void actionOnObject(String action, ProjectDTO proj) {
-		ProjectDTO toEdit = proj;
+		toEdit = proj;
 		if (action.toLowerCase().contains("new")) {
 			toEdit = new ProjectDTO();
 		} 
 		if (action.toLowerCase().contains("delete")) {
 			projectService.deleteProject(toEdit);
 			
-			projectsModel.remove(toEdit);
-			view.setProjects(projectsModel);
+//			projectsModel.remove(toEdit);
+//			view.setProjects(projectsModel);
 			
 		} else {
-			showEditProjectDialog(action, toEdit, 1); // , indexinView);
+			ProjectDialog projDialog = new ProjectDialog();
+
+			projDialog.addActionHandler(new ProjectActionHandler(projDialog));
+			projDialog.editModel(action, toEdit, 1);
+//			showEditProjectDialog(action, toEdit, 1); // , indexinView);
 		}			
 		
 	}

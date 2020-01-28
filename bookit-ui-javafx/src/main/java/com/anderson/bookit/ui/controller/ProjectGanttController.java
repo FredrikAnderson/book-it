@@ -3,7 +3,9 @@ package com.anderson.bookit.ui.controller;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.anderson.bookit.ui.service.ItemModificationListener;
 import com.anderson.bookit.ui.service.ProjectService;
+import com.anderson.bookit.ui.service.ItemModificationListener.ItemEvent;
 import com.anderson.bookit.ui.view.ProjectDialog;
 import com.anderson.bookit.ui.view.ProjectGanttView;
 import com.fredrik.bookit.ui.rest.model.ProjectDTO;
@@ -15,9 +17,9 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
 
-public class ProjectGanttController {
+public class ProjectGanttController implements ItemModificationListener<Long, ProjectDTO> {
 
-	ProjectService projectService = new ProjectService();
+	ProjectService projectService = ProjectService.getInstance();
 
 	ProjectGanttView view = new ProjectGanttView();
 
@@ -28,19 +30,42 @@ public class ProjectGanttController {
 	public ProjectGanttController() {
 
 		view.addActionListener(new ProjectInListActionHandler());
+
+		projectService.addItemListener(this);
 		
+		List<ProjectDTO> projects = projectService.getProjects();
+		projectsModel = FXCollections.observableArrayList(projects);
 		updateData();
 	}
 
-	public void updateData() {
-		List<ProjectDTO> projects = projectService.getProjects();
-		projectsModel = FXCollections.observableArrayList(projects);
+	private void updateData() {
 		
 		view.setProjects(projectsModel);
 	}
 
 	public Node getView() {
 		return view;
+	}
+
+	@Override
+	public void itemModified(Long id, ItemEvent event, ProjectDTO item) {
+		System.out.println("itemModified: " + id + ", " + event + ": " + item.toString());
+
+		if (event == ItemEvent.ADD) {
+			projectsModel.add(item);
+			
+		} else if (event == ItemEvent.EDIT) {
+			int indexOf = projectsModel.indexOf(item);
+			if (indexOf != -1) {
+				projectsModel.set(indexOf, item);
+			}			
+			
+		} else if (event == ItemEvent.DELETE) {
+			projectsModel.remove(item);			
+			
+		}
+
+		updateData();
 	}
 
 	private void showEditProjectDialog(String text, ProjectDTO toEdit, int indexinView) {

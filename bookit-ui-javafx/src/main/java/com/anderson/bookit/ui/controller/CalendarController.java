@@ -1,43 +1,85 @@
 package com.anderson.bookit.ui.controller;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.anderson.bookit.ContextMenuCallback;
+import com.anderson.bookit.EntryContextMenuCallback;
+import com.anderson.bookit.EntryDetailsManager;
 import com.anderson.bookit.model.Booking;
-import com.anderson.bookit.model.Project;
 import com.anderson.bookit.model.Resource;
 import com.anderson.bookit.ui.CalEventHandler;
+import com.anderson.bookit.ui.service.ItemModificationListener;
 import com.anderson.bookit.ui.service.ProjectService;
 import com.anderson.bookit.ui.service.ResourceService;
+import com.anderson.bookit.ui.service.ItemModificationListener.ItemEvent;
 import com.calendarfx.model.Calendar;
-import com.calendarfx.model.Calendar.Style;
 import com.calendarfx.model.CalendarEvent;
+import com.calendarfx.model.CalendarSource;
 import com.calendarfx.model.Entry;
+import com.calendarfx.view.CalendarView;
+import com.calendarfx.view.DateControl.ContextMenuParameter;
+import com.calendarfx.view.DateControl.EntryContextMenuParameter;
+import com.calendarfx.view.DateControl.EntryDetailsParameter;
 import com.fredrik.bookit.ui.rest.model.ProjectDTO;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
+import javafx.util.Callback;
 
-public class CalendarController {
+public class CalendarController implements ItemModificationListener<Long, ProjectDTO> {
 
 	private static CalendarController myInstance = null;
 	
-	private ArrayList<Calendar> calendars = new ArrayList<Calendar>();
+	private CalendarView view = new CalendarView();
 
 	private ResourceService resourceService = new ResourceService();
+	private ProjectService projectService = ProjectService.getInstance();
 
-	private ProjectService projectService = new ProjectService();
-
+	private CalendarSource calendarSrc = new CalendarSource("Calendars");
 	
-//	private Entry currentEntry;
-	
+	private ArrayList<Calendar> calendars = new ArrayList<Calendar>();
+	ObservableList<ProjectDTO> projectsModel;	
 	
 	private CalendarController() {
+
+		initView();
+
+		projectService.addItemListener(this);
 		
+		List<ProjectDTO> projects = projectService.getProjects();
+		projectsModel = FXCollections.observableArrayList(projects);
+
 		updateData();
 	}
 	
+	private void initView() {
+		view.setShowAddCalendarButton(false);
+		view.setShowDeveloperConsole(true);
+		view.setShowPrintButton(false);
+		view.showWeekPage();
+
+//		calendarView.setShowSourceTray(true);23
+
+		view.setRequestedTime(LocalTime.now());
+
+		Callback<EntryDetailsParameter, Boolean> callback = new EntryDetailsManager<EntryDetailsParameter, Boolean>();
+		view.setEntryDetailsCallback(callback);
+
+		Callback<ContextMenuParameter, ContextMenu> contextMenuCallback = new ContextMenuCallback<ContextMenuParameter, ContextMenu>();
+		view.setContextMenuCallback(contextMenuCallback);
+
+		Callback<EntryContextMenuParameter, ContextMenu> entryContextMenuCallback = new EntryContextMenuCallback<EntryContextMenuParameter, ContextMenu>();
+		view.setEntryContextMenuCallback(entryContextMenuCallback);
+
+	}
+
 	public static CalendarController getInstance() {
 		if (myInstance == null) {
 			myInstance = new CalendarController();
@@ -45,42 +87,44 @@ public class CalendarController {
 		return myInstance;
 	}
 
-	public List<Calendar> updateData() {
-
-		List<ProjectDTO> projects = projectService.getProjects();
-
-		calendars.clear();
-		for (ProjectDTO proj : projects) {
-			calendars.add(createCalendarForProject(proj));
-		}
-
-//		List<Resource> resources = resourceService.getResources();
-//		for (Resource res : resources) {
-//			calendars.add(createCalendarForResource(res));
-//		}
-
-		Calendar birthdays = new Calendar("Birthdays");
-		Calendar holidays = new Calendar("Holidays");
-
-		birthdays.setStyle(Style.STYLE1);
-		holidays.setStyle(Style.STYLE2);
-
-		Entry<?> entry = new Entry<>("Testing");
-//		entry.ch
-		holidays.addEntry(entry);
-
-		EventHandler<CalendarEvent> evHandler = new CalEventHandler();
-		holidays.addEventHandler(evHandler);
-		birthdays.addEventHandler(evHandler);
-
-		calendars.add(birthdays);
-		calendars.add(holidays);
-
-		return calendars;
+	public Node getView() {
+		return view;
 	}
 
-	public List<Calendar> getCalendars() {
-		return calendars;
+	public void updateData() {
+
+		calendars.clear();
+		calendarSrc.getCalendars().clear();
+		view.getCalendarSources().clear();
+
+		for (ProjectDTO proj : projectsModel) {
+			calendars.add(createCalendarForProject(proj));
+		}
+		calendarSrc.getCalendars().addAll(calendars);
+		view.getCalendarSources().addAll(calendarSrc);
+		
+		view.refreshData();
+	}
+
+	@Override
+	public void itemModified(Long id, ItemEvent event, ProjectDTO item) {
+		System.out.println("itemModified: " + id + ", " + event + ": " + item.toString());
+
+		if (event == ItemEvent.ADD) {
+			projectsModel.add(item);
+			
+		} else if (event == ItemEvent.EDIT) {
+			int indexOf = projectsModel.indexOf(item);
+			if (indexOf != -1) {
+				projectsModel.set(indexOf, item);
+			}			
+			
+		} else if (event == ItemEvent.DELETE) {
+			projectsModel.remove(item);			
+			
+		}
+
+		updateData();
 	}
 	
 	public Calendar createCalendarForResource(Resource res) {

@@ -6,6 +6,7 @@ import java.time.Month;
 import java.util.List;
 
 import com.anderson.bookit.model.Project;
+import com.anderson.bookit.ui.service.ItemModificationListener.ItemEvent;
 import com.fredrik.bookit.ui.rest.api.ProjectsApi;
 import com.fredrik.bookit.ui.rest.invoker.ApiException;
 import com.fredrik.bookit.ui.rest.model.ProjectDTO;
@@ -15,9 +16,20 @@ public class ProjectService {
 
 	ProjectsApi projsApi = new ProjectsApi();
 
-	public ProjectService() {
-		
+	ProjectCache projCache = new ProjectCache();
+	
+	private static ProjectService myInstance = null;
+	
+	private ProjectService() {
 	}
+
+	public static ProjectService getInstance() {
+		if (myInstance == null) {
+			myInstance = new ProjectService();
+		}
+		return myInstance;
+	}
+	
 	
 	public List<ProjectDTO> getProjects() {
 		System.out.println("Get Projects from backend.");
@@ -57,8 +69,11 @@ public class ProjectService {
 		try {
 			if (toEdit.getId() == null) {
 				toEdit = projsApi.addProject(toEdit);				
+				
+				projCache.itemModified(toEdit.getId(), ItemEvent.ADD, toEdit);
 			} else {
 				toEdit = projsApi.updateProject(toEdit.getId(), toEdit);				
+				projCache.itemModified(toEdit.getId(), ItemEvent.EDIT, toEdit);
 			}
 			
 		} catch (ApiException e) {
@@ -73,11 +88,16 @@ public class ProjectService {
 		if (toEdit.getId() != null) {
 			try {
 				projsApi.deleteProject(toEdit.getId());
+				projCache.itemModified(toEdit.getId(), ItemEvent.DELETE, toEdit);
 			} catch (ApiException e) {
 				e.printStackTrace();
 			}		
 		}
 		
+	}
+
+	public void addItemListener(ItemModificationListener<Long, ProjectDTO> itemListener) {
+		projCache.addItemListener(itemListener);
 	}
 	
 }

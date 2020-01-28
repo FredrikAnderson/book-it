@@ -51,22 +51,11 @@ public class BookITUI extends Application {
 	
 	private BorderPane borderPane = new BorderPane();
 	
-	private CalendarView calendarView = new CalendarView();
 //	private BorderPane resourceView = new BorderPane();
 
-
-	private Entry<Booking> currentEntry;
-
-	Booking bookingToEdit = new Booking();
+	private CalendarController calController = CalendarController.getInstance();
+//	CalendarSource myCalendarSource = new CalendarSource("My Calendars");
 	
-	private CalendarController calMan = CalendarController.getInstance();
-	CalendarSource myCalendarSource = new CalendarSource("My Calendars");
-	
-	ProjectService projectService = new ProjectService();
-//	ResourceService resourceService = new ResourceService();
-
-	ArrayList<Calendar> calendars = new ArrayList<Calendar>();
-
 	ItemController itemController;
 	private BorderPane itemPane = new BorderPane();
 
@@ -76,6 +65,10 @@ public class BookITUI extends Application {
 	ProjectGanttController projectGanttController;
 	private BorderPane projectGanttPane = new BorderPane();
 
+	
+	private Entry<Booking> currentEntry;
+	Booking bookingToEdit = new Booking();
+
 	public static BookITUI getInstance() {
 		if (myInstance == null) {
 			myInstance = new BookITUI();
@@ -84,34 +77,12 @@ public class BookITUI extends Application {
 	}
 
 	public CalendarController getCalenderManager() {
-		return calMan;
+		return calController;
 	}
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 
-		
-//		calendarView = new CalendarView();
-		calendarView.setShowAddCalendarButton(false);
-		calendarView.setShowDeveloperConsole(true);
-		calendarView.setShowPrintButton(false);
-		calendarView.showWeekPage();
-
-//		calendarView.setShowSourceTray(true);23
-
-		myCalendarSource.getCalendars().addAll(calMan.getCalendars());
-		calendarView.getCalendarSources().addAll(myCalendarSource);
-
-		calendarView.setRequestedTime(LocalTime.now());
-
-		Callback<EntryDetailsParameter, Boolean> callback = new EntryDetailsManager<EntryDetailsParameter, Boolean>();
-		calendarView.setEntryDetailsCallback(callback);
-
-		Callback<ContextMenuParameter, ContextMenu> contextMenuCallback = new ContextMenuCallback<ContextMenuParameter, ContextMenu>();
-		calendarView.setContextMenuCallback(contextMenuCallback);
-
-		Callback<EntryContextMenuParameter, ContextMenu> entryContextMenuCallback = new EntryContextMenuCallback<EntryContextMenuParameter, ContextMenu>();
-		calendarView.setEntryContextMenuCallback(entryContextMenuCallback);
 
 		// calendarView.setContextMenu(ContextMenuCallback.createContextMenu());
 //		EventHandler<? super ContextMenuEvent> value;
@@ -122,8 +93,9 @@ public class BookITUI extends Application {
 			public void run() {
 				while (true) {
 					Platform.runLater(() -> {
-						calendarView.setToday(LocalDate.now());
-						calendarView.setTime(LocalTime.now());
+						// TODO
+//						calendarView.setToday(LocalDate.now());
+//						calendarView.setTime(LocalTime.now());
 					});
 
 					try {
@@ -177,30 +149,22 @@ public class BookITUI extends Application {
 //		EventType eventType;
 //		tableResourceView.addEventHandler(eventType, eventHandler);
 				
-
-				
-		
 		Button addProjBtn = new Button("New");
 		Button editProjBtn = new Button("Edit");
 		Button deleteProjBtn = new Button("Delete");		
 		HBox projCrudBar = new HBox(20, addProjBtn, editProjBtn, deleteProjBtn);
 
 		itemController = new ItemController();		
-		
-//		projectView.setTop(projCrudBar);
 		itemPane.setCenter(itemController.getView());
 
 		projectController = new ProjectController();		
-		
-//		projectView.setTop(projCrudBar);
 		projectPane.setCenter(projectController.getView());
 
 		projectGanttController = new ProjectGanttController();		
-
 		projectGanttPane.setCenter(projectGanttController.getView());
 
 		// What should be view by "default"
-		borderPane.setCenter(calendarView);
+		borderPane.setCenter(calController.getView());
 
 		rootScene = new Scene(borderPane);
 		
@@ -234,35 +198,23 @@ public class BookITUI extends Application {
 
 	public void showScene(String scene) {
 		if (scene.equalsIgnoreCase("Bookings")) {
-			calMan.updateData();
-			borderPane.setCenter(calendarView);
+			borderPane.setCenter(calController.getView());
 			
 //			stage.setScene(bookingScene);
 		} else if (scene.equalsIgnoreCase("Items")) {
 			itemController.updateData();
 			borderPane.setCenter(itemPane);
 
-//			stage.setScene(bookingScene);
 		} else if (scene.equalsIgnoreCase("Projects")) {
-			projectController.updateData();
 			borderPane.setCenter(projectPane);
-//				stage.setScene(bookingScene);
+			
 		} else if (scene.contains("Timeline")) {
-			projectGanttController.updateData();
 			borderPane.setCenter(projectGanttPane);
-//			stage.setScene(bookingScene);
 			
 		} else if (scene.contains("Calendar")) {
-			calMan.updateData();
-
-			myCalendarSource.getCalendars().clear();
-			myCalendarSource.getCalendars().addAll(calMan.getCalendars());
-			calendarView.getCalendarSources().clear();
-			calendarView.getCalendarSources().addAll(myCalendarSource);
-			calendarView.refreshData();
+//			calController.updateData();
 			
-			borderPane.setCenter(calendarView);
-//			stage.setScene(bookingScene);
+			borderPane.setCenter(calController.getView());
 			
 		} else if (scene.contains("Exit")) {
 			System.exit(0);
@@ -320,26 +272,7 @@ public class BookITUI extends Application {
 		bookingDialog.editModel(toEdit);
 	}
 
-
-	private void addProjects(ComboBox cbx) {
-		List<ProjectDTO> projects = projectService.getProjects();
-		
-		for (ProjectDTO proj : projects) {
-			cbx.getItems().add(proj);			
-		}
-	}
-
 	
-//	private void addResources(ComboBox cbx) {
-//		
-//		List<Resource> resources = resourceService.getResources();
-//		
-//		for (Resource resource : resources) {
-//			cbx.getItems().add(resource);			
-//		}
-//		
-//	}
-
 	private void actionOnObject(String action, Object userData, int indexinView) {
 		System.out.println("actionObObj: " + action + ", " + userData.toString() + ", " + indexinView);
 		
