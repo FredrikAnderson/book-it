@@ -127,6 +127,12 @@ public class FilterComboBox<T> extends ComboBox<T> {
 			if (event.getCode() == KeyCode.ENTER) {
 				
 			}			
+			if (event.getCode() == KeyCode.DELETE || event.getCode() == KeyCode.BACK_SPACE) {
+				System.out.println("Deleted, reacting, code: " + event.getCode());				
+
+			getSelectionModel().clearSelection();
+			}			
+
 		}
 	}
 

@@ -9,6 +9,7 @@ import com.anderson.bookit.ui.Lookup;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -66,6 +67,10 @@ public class TestUI extends Application {
 
 		testFilterComp.setLookup(new TestLookup(countries));
 		testFilterComp.setOnAction(new ItemSelectedHandler());
+//		testFilterComp.setLi
+		testFilterComp.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {
+			System.out.println("New value: " + newValue);
+		} );
 		
 		borderPane.setCenter(testFilterComp);
 		
@@ -84,7 +89,11 @@ public class TestUI extends Application {
 		@Override
         public void handle(ActionEvent event) {
 			System.out.println("Item Sel, Event: "+ event.toString());
-			
+
+			FilterComboBox<String> fbox = (FilterComboBox<String>) event.getSource();
+			String selectedItem = fbox.getSelectionModel().getSelectedItem();
+
+			System.out.println("Item Selected: "+ selectedItem);			
         }
 	}
 

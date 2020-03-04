@@ -65,9 +65,9 @@ public class ItemController {
 			MenuItem mi = (MenuItem) event.getSource();
 			String label = mi.getText();
 
-			System.out.println("Event: " + event);
-			System.out.println("EventSrc: " + event.getSource());
-			System.out.println("MenuItem: " + mi.getText() + ", " + mi.getClass());
+//			System.out.println("Event: " + event);
+//			System.out.println("EventSrc: " + event.getSource());
+//			System.out.println("MenuItem: " + mi.getText() + ", " + mi.getClass());
 			if (mi.getUserData() != null) {
 				System.out.println("UserData: " + mi.getUserData().toString());
 			}
@@ -89,15 +89,26 @@ public class ItemController {
 		
 		@Override
         public void handle(ActionEvent event) {
-			System.out.println("Name: " + itemDialog.getProjectName()); // getSelectionModel().getSelectedItem().toString());
+			System.out.println("Inv: " + itemDialog.getInventory()); // getSelectionModel().getSelectedItem().toString());
             
-            String projectName = itemDialog.getProjectName();
-//            LocalDateTime localStartDate = itemDialog.getStartDate();
-//            LocalDateTime localEndDate = itemDialog.getEndDate();
+            String inventory = itemDialog.getInventory();
             
             itemDialog.close();
+
+            ItemDTO itemDTO = itemDialog.getModel();
             
-            toEdit.setName(projectName);
+            // Update backend
+            itemService.saveItem(itemDTO);
+            
+            // Update UI
+            if (itemDialog.getAction().equalsIgnoreCase("new")) {
+            	itemsModel.add(itemDTO);
+            } else {
+            	
+            }
+            
+            
+//            toEdit.setName(inventory);
 //            toEdit.setStartDate(localStartDate.toLocalDate());
 //            toEdit.setEndDate(localEndDate.toLocalDate());
 //                        
@@ -113,7 +124,7 @@ public class ItemController {
 //    				itemsModel.set(indexOf, toEdit);
 //    			}
 //    		}
-        }
+        }	
 	}
 
 	public void actionOnObject(String action, ItemDTO item) {

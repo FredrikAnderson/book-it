@@ -1,7 +1,9 @@
 package com.anderson.bookit.ui.view;
 
 import java.util.Collection;
+import java.util.Objects;
 
+import com.anderson.bookit.HelloFX;
 import com.anderson.bookit.ui.FilterComboBox;
 import com.anderson.bookit.ui.Lookup;
 import com.anderson.bookit.ui.service.ItemService;
@@ -56,7 +58,9 @@ public class ItemDialog extends Stage {
             }
 
             @Override public ItemDTO fromString(String string) {
-                return (ItemDTO) null;
+            	ItemDTO dto = new ItemDTO();
+            	dto.setName(string);
+                return dto;
             }
         };
     }
@@ -65,14 +69,12 @@ public class ItemDialog extends Stage {
 	public ItemDialog(String reqAction, ItemDTO reqEdit, int indexinView) {		
 		super(); 
 		initModality(Modality.APPLICATION_MODAL);
-		setTitle("Edit Item");
 
 		action = reqAction;
 		toEdit = reqEdit;
-		
+				
 		System.out.println("Should make action " + action + " on proj: " + toEdit.toString());		
 		
-
 		GridPane gridP = new GridPane();
 		
 		// Setting the vertical and horizontal gaps between the columns
@@ -90,6 +92,7 @@ public class ItemDialog extends Stage {
 		int row = 0;
 		
 		if (action.equalsIgnoreCase("new")) {
+			setTitle("New Item");
 			
 			// Name
 			Text proj1Lbl = new Text("Name: ");
@@ -110,6 +113,8 @@ public class ItemDialog extends Stage {
 			itemNameCbx.setLookup(lookup);
 
 		} else if (action.equalsIgnoreCase("edit")) {
+			setTitle("Edit Item");
+
 			
 			Text projLbl = new Text("Name: ");
 			nameTf = new TextField();
@@ -170,27 +175,9 @@ public class ItemDialog extends Stage {
 		gridP.add(btnsHbx, 1, row);
 
 		if (action.equalsIgnoreCase("edit")) {
-			// Item stuff
-			inventoryTf.setText(toEdit.getInventory());
-
-			// General item stuff
-			// Set name
-			nameTf.setText(toEdit.getName());
-			setTfReadOnly(nameTf);
-			descTf.setText(toEdit.getDescription());	
-			setTfReadOnly(descTf);
-			heightTf.setText(toEdit.getHeight().toString());
-			setTfReadOnly(heightTf);
-			widthTf.setText(toEdit.getWidth().toString());
-			setTfReadOnly(widthTf);
-			lengthTf.setText(toEdit.getLength().toString());
-			setTfReadOnly(lengthTf);
-			weightTf.setText(toEdit.getWeight().toString());
-			setTfReadOnly(weightTf);
-			priceTf.setText(toEdit.getPrice().toString());
-			setTfReadOnly(priceTf);
+			
+			editItem(toEdit);			
 		}
-
 		
 		// Fix scene
 		setScene(new Scene(gridP, 270, 320));
@@ -201,11 +188,56 @@ public class ItemDialog extends Stage {
 		show();
 	}
 
+	private void editItem(ItemDTO item) {
+		// Item stuff
+		inventoryTf.setText(item.getInventory());
+
+		// General item stuff
+		// Set name
+//		nameTf.setText(item.getName());
+//		setTfReadOnly(nameTf);
+		descTf.setText(item.getDescription());	
+		setTfReadOnly(descTf);
+		heightTf.setText(item.getHeight().toString());
+		setTfReadOnly(heightTf);
+		widthTf.setText(item.getWidth().toString());
+		setTfReadOnly(widthTf);
+		lengthTf.setText(item.getLength().toString());
+		setTfReadOnly(lengthTf);
+		weightTf.setText(item.getWeight().toString());
+		setTfReadOnly(weightTf);
+		priceTf.setText(item.getPrice().toString());
+		setTfReadOnly(priceTf);
+	}
+
+	public ItemDTO getModel() {
+		
+		toEdit.setInventory(inventoryTf.getText());
+
+		// General item stuff
+		// Set name
+//		nameTf.setText(item.getName());
+		toEdit.setDescription(descTf.getText());	
+		toEdit.setHeight(Float.parseFloat(heightTf.getText()));
+		toEdit.setWidth(Float.parseFloat(widthTf.getText()));
+		toEdit.setLength(Float.parseFloat(lengthTf.getText()));
+		toEdit.setWeight(Float.parseFloat(weightTf.getText()));
+		toEdit.setPrice(Float.parseFloat(priceTf.getText()));
+
+		return toEdit;
+	}
+	
 	class ItemSelectedHandler implements EventHandler<ActionEvent> {
 		@Override
         public void handle(ActionEvent event) {
-			System.out.println("Event"+ event.toString());
-			
+//			System.out.println("Event"+ event.toString());
+
+			ItemDTO selectedItem = itemNameCbx.getSelectionModel().getSelectedItem();
+			if (Objects.nonNull(selectedItem)) {
+				System.out.println("Selected item is: " + selectedItem);
+				
+				editItem(selectedItem);
+			}			
         }
 	}
 
@@ -236,8 +268,8 @@ public class ItemDialog extends Stage {
 		tf.setStyle("-fx-background-color: lightgrey;");		
 	}
 	
-	public String getProjectName() {
-		return nameTf.getText();
+	public String getInventory() {
+		return inventoryTf.getText();
 	}
 	
 	public String getAction() {
