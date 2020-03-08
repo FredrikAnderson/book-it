@@ -138,9 +138,18 @@ public class BookITUI extends Application {
 		view.getItems().add(projectsMi);		
 		view.getItems().add(bookingTlMi);
 		view.getItems().add(bookingCalMi);
+		
+		Menu help = new Menu("Help");
+		MenuItem aboutMi = new MenuItem("About");
+		aboutMi.setOnAction(mch);
+		help.getItems().add(aboutMi);		
+
 		menubar.getMenus().add(file);
 		menubar.getMenus().add(view);
+		menubar.getMenus().add(help);
 
+		
+		
 		borderPane.setTop(menubar);
 				
 //		
@@ -219,6 +228,9 @@ public class BookITUI extends Application {
 		} else if (scene.contains("Exit")) {
 			System.exit(0);
 
+		} else if (scene.contains("About")) {
+			System.out.println("Show about info");
+				
 		} else {
 			System.out.println("ShowScene: " + scene);
 		}

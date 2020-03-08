@@ -1,6 +1,5 @@
 package com.anderson.bookit.ui.controller;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import com.anderson.bookit.ui.service.ItemService;
@@ -14,6 +13,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 public class ItemController {
 
@@ -27,7 +28,18 @@ public class ItemController {
 	
 	public ItemController() {
 
+		view.addRightClickMenu();
 		view.addActionListener(new ItemInListActionHandler());
+
+		view.addEventHandler(KeyEvent.KEY_RELEASED, (keyEvent) -> {
+			if (keyEvent.getCode() == KeyCode.DELETE) {
+				ItemDTO selectedItem = view.getSelectedItem();
+				deleteItem(selectedItem);
+			}
+			if (keyEvent.getCode() == KeyCode.F5) {
+				updateData();
+			}
+		});
 		
 		updateData();
 	}
@@ -60,22 +72,15 @@ public class ItemController {
 
 		@Override
 		public void handle(ActionEvent event) {
-//			System.out.println("MenuChoice handling: " + event.getSource());
-
 			MenuItem mi = (MenuItem) event.getSource();
 			String label = mi.getText();
 
-//			System.out.println("Event: " + event);
-//			System.out.println("EventSrc: " + event.getSource());
-//			System.out.println("MenuItem: " + mi.getText() + ", " + mi.getClass());
-			if (mi.getUserData() != null) {
-				System.out.println("UserData: " + mi.getUserData().toString());
-			}
+//			if (mi.getUserData() != null) {
+//				System.out.println("UserData: " + mi.getUserData().toString());
+//			}
 			if (mi.getUserData() != null) {
 				actionOnObject(mi.getText(), (ItemDTO) mi.getUserData()); // , view.getSelectionModel().getSelectedIndex());
 			}
-
-//			showScene(label);
 		}
 	}
 	
@@ -91,27 +96,33 @@ public class ItemController {
         public void handle(ActionEvent event) {
 			System.out.println("Inv: " + itemDialog.getInventory()); // getSelectionModel().getSelectedItem().toString());
             
-            String inventory = itemDialog.getInventory();
+//            String inventory = itemDialog.getInventory();
             
             itemDialog.close();
 
             ItemDTO itemDTO = itemDialog.getModel();
             
             // Update backend
-            itemService.saveItem(itemDTO);
+            itemDTO = itemService.saveItem(itemDTO);
             
             // Update UI
             if (itemDialog.getAction().equalsIgnoreCase("new")) {
             	itemsModel.add(itemDTO);
-            } else {
             	
+            	view.setModelItems(itemsModel);
+            } else {
+            	// Edit
+            	itemsModel.remove(itemDTO);
+            	itemsModel.add(itemDTO);
+            	
+            	view.setModelItems(itemsModel);            	
             }
             
             
 //            toEdit.setName(inventory);
 //            toEdit.setStartDate(localStartDate.toLocalDate());
 //            toEdit.setEndDate(localEndDate.toLocalDate());
-//                        
+//                        t
 //    		ProjectDTO proj = itemService.saveProject(toEdit);
 //    		toEdit = proj;
 //    		
@@ -133,16 +144,20 @@ public class ItemController {
 			toEdit = new ItemDTO();
 		} 
 		if (action.toLowerCase().contains("delete")) {
-			itemService.deleteItem(toEdit);
-			
-			itemsModel.remove(toEdit);
-			
-//			view.getItems().remove(toEdit);
+			deleteItem(toEdit);
 			
 		} else {
 			showEditItemDialog(action, toEdit, 1); // , indexinView);
 		}			
 		
+	}
+
+	public void deleteItem(ItemDTO toEdit) {
+		itemService.deleteItem(toEdit);
+		
+		itemsModel.remove(toEdit);
+		
+		view.setModelItems(itemsModel);
 	}
 
 }

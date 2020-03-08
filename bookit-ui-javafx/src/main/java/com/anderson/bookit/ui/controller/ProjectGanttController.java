@@ -3,11 +3,13 @@ package com.anderson.bookit.ui.controller;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.anderson.bookit.model.ProjectItemBooking;
 import com.anderson.bookit.ui.service.ItemModificationListener;
 import com.anderson.bookit.ui.service.ProjectService;
-import com.anderson.bookit.ui.service.ItemModificationListener.ItemEvent;
 import com.anderson.bookit.ui.view.ProjectDialog;
 import com.anderson.bookit.ui.view.ProjectGanttView;
+import com.anderson.bookit.ui.view.ProjectItemBookingDialog;
+import com.calendarfx.model.Entry;
 import com.fredrik.bookit.ui.rest.model.ProjectDTO;
 
 import javafx.collections.FXCollections;
@@ -151,7 +153,17 @@ public class ProjectGanttController implements ItemModificationListener<Long, Pr
 			
 //			view.getItems().remove(toEdit);
 			
+		} else if (action.toLowerCase().contains("book item")) {
+			System.out.println("BOOK an Item");
+			
+			ProjectItemBookingDialog bookingDialog = new ProjectItemBookingDialog();
+			ProjectItemBooking projItemBooking = new ProjectItemBooking();
+			projItemBooking.setProject(toEdit);
+			
+			bookingDialog.editModel(projItemBooking);
+
 		} else {
+			// Edit
 			showEditProjectDialog(action, toEdit, 1); // , indexinView);
 		}			
 		

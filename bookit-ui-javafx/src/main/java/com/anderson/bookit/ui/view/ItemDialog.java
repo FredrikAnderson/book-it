@@ -189,41 +189,78 @@ public class ItemDialog extends Stage {
 	}
 
 	private void editItem(ItemDTO item) {
+		System.out.println("editItem: " + item);
+
 		// Item stuff
-		inventoryTf.setText(item.getInventory());
+		if (Objects.nonNull(item.getInventory())) {
+			inventoryTf.setText(item.getInventory());
+		}
 
 		// General item stuff
 		// Set name
-//		nameTf.setText(item.getName());
-//		setTfReadOnly(nameTf);
-		descTf.setText(item.getDescription());	
-		setTfReadOnly(descTf);
-		heightTf.setText(item.getHeight().toString());
-		setTfReadOnly(heightTf);
-		widthTf.setText(item.getWidth().toString());
-		setTfReadOnly(widthTf);
-		lengthTf.setText(item.getLength().toString());
-		setTfReadOnly(lengthTf);
-		weightTf.setText(item.getWeight().toString());
-		setTfReadOnly(weightTf);
-		priceTf.setText(item.getPrice().toString());
-		setTfReadOnly(priceTf);
+		if (action.equalsIgnoreCase("edit") && Objects.nonNull(item.getName())) {
+//			itemNameCbx.setValue(item);
+			nameTf.setText(item.getName());
+			setTfReadOnly(nameTf);
+		}
+		if (Objects.nonNull(item.getDescription())) {
+			descTf.setText(item.getDescription());	
+			setTfReadOnly(descTf);
+		}
+		if (Objects.nonNull(item.getHeight())) {
+			heightTf.setText(item.getHeight().toString());
+			setTfReadOnly(heightTf);
+		}
+		if (Objects.nonNull(item.getWidth())) {
+			widthTf.setText(item.getWidth().toString());
+			setTfReadOnly(widthTf);
+		}
+		if (Objects.nonNull(item.getLength())) {
+			lengthTf.setText(item.getLength().toString());
+			setTfReadOnly(lengthTf);
+		}
+		if (Objects.nonNull(item.getWeight())) {
+			weightTf.setText(item.getWeight().toString());
+			setTfReadOnly(weightTf);
+		}
+		if (Objects.nonNull(item.getPrice())) {
+			priceTf.setText(item.getPrice().toString());
+			setTfReadOnly(priceTf);
+		}
 	}
 
+	private String getName() {
+		if (action.equalsIgnoreCase("edit")) {
+			return nameTf.getText();
+		} else {
+			return itemNameCbx.getSelectionModel().getSelectedItem().getName();
+		}		
+	}
+	
 	public ItemDTO getModel() {
 		
 		toEdit.setInventory(inventoryTf.getText());
 
 		// General item stuff
-		// Set name
-//		nameTf.setText(item.getName());
-		toEdit.setDescription(descTf.getText());	
-		toEdit.setHeight(Float.parseFloat(heightTf.getText()));
-		toEdit.setWidth(Float.parseFloat(widthTf.getText()));
-		toEdit.setLength(Float.parseFloat(lengthTf.getText()));
-		toEdit.setWeight(Float.parseFloat(weightTf.getText()));
-		toEdit.setPrice(Float.parseFloat(priceTf.getText()));
-
+		toEdit.setName(getName());
+		
+		toEdit.setDescription(descTf.getText());
+		if (!heightTf.getText().isEmpty()) {
+			toEdit.setHeight(Float.parseFloat(heightTf.getText()));
+		}
+		if (!widthTf.getText().isEmpty()) {
+			toEdit.setWidth(Float.parseFloat(widthTf.getText()));
+		}
+		if (!lengthTf.getText().isEmpty()) {
+			toEdit.setLength(Float.parseFloat(lengthTf.getText()));
+		}
+		if (!weightTf.getText().isEmpty()) {
+			toEdit.setWeight(Float.parseFloat(weightTf.getText()));
+		}
+		if (!priceTf.getText().isEmpty()) {		
+			toEdit.setPrice(Float.parseFloat(priceTf.getText()));
+		}
+		
 		return toEdit;
 	}
 	
@@ -233,6 +270,7 @@ public class ItemDialog extends Stage {
 //			System.out.println("Event"+ event.toString());
 
 			ItemDTO selectedItem = itemNameCbx.getSelectionModel().getSelectedItem();
+//			if (Objects.nonNull(selectedItem) && Objects.nonNull(selectedItem.getId())) {
 			if (Objects.nonNull(selectedItem)) {
 				System.out.println("Selected item is: " + selectedItem);
 				

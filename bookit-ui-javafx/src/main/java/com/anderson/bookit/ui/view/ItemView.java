@@ -3,7 +3,6 @@ package com.anderson.bookit.ui.view;
 import java.time.LocalDate;
 
 import com.fredrik.bookit.ui.rest.model.ItemDTO;
-import com.fredrik.bookit.ui.rest.model.ProjectDTO;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -29,7 +28,7 @@ import javafx.scene.text.Text;
 public class ItemView extends BorderPane {
 
 	ContextMenu cm;
-	MenuItem mi1, mi2, mi3;
+	MenuItem miNew, miEdit, miDel; // miCp
 
 	Text filterLbl = new Text("Item filter:");
 	TextField filterTf = new TextField();
@@ -88,18 +87,22 @@ public class ItemView extends BorderPane {
 		itemView.getColumns().add(priceColumn);
 
 		cm = new ContextMenu();
-		mi1 = new MenuItem("New");
-		cm.getItems().add(mi1);
-		mi1.setUserData(new ItemDTO());
-		mi2 = new MenuItem("Edit");
-		cm.getItems().add(mi2);
-		mi3 = new MenuItem("Delete");
-		cm.getItems().add(mi3);
-
-		itemView.addEventHandler(MouseEvent.MOUSE_CLICKED, new RightClickHandler(this));
-
+		miNew = new MenuItem("New");
+		cm.getItems().add(miNew);
+		miNew.setUserData(new ItemDTO());
+//		miCp = new MenuItem("Copy");
+//		cm.getItems().add(miCp);
+		miEdit = new MenuItem("Edit");
+		cm.getItems().add(miEdit);
+		miDel = new MenuItem("Delete");
+		cm.getItems().add(miDel);
+		
 //		tableResourceView.setItems();
 //	resourceView.setTop(filterField);
+	}
+
+	public void addRightClickMenu() {
+		itemView.addEventHandler(MouseEvent.MOUSE_CLICKED, new RightClickHandler(this));
 	}
 
 	public void setModelItems(ObservableList<ItemDTO> items) {
@@ -125,8 +128,9 @@ public class ItemView extends BorderPane {
 					return true;
 				} else if (item.getInventory().toString().toLowerCase().contains(lowerCaseFilter)) {
 					return true;
-				} else if (item.getPublicId().toString().toLowerCase().contains(lowerCaseFilter)) {
-					return true;
+					// TODO
+//				} else if (item.getPublicId().toString().toLowerCase().contains(lowerCaseFilter)) {
+//					return true;
 				} else if (item.getName().toLowerCase().contains(lowerCaseFilter)) {
 					return true; // Filter matches last name.
 				}
@@ -146,10 +150,15 @@ public class ItemView extends BorderPane {
 		itemView.setItems(sortedData);
 	}
 
+	public ItemDTO getSelectedItem() {
+		return itemView.getSelectionModel().getSelectedItem();
+	}
+	
 	public void addActionListener(EventHandler<ActionEvent> eventHandler) {
-		mi1.setOnAction(eventHandler);
-		mi2.setOnAction(eventHandler);
-		mi3.setOnAction(eventHandler);
+		miNew.setOnAction(eventHandler);
+//		miCp.setOnAction(eventHandler);
+		miEdit.setOnAction(eventHandler);
+		miDel.setOnAction(eventHandler);
 	}
 
 	class RightClickHandler implements EventHandler<MouseEvent> {
@@ -163,8 +172,9 @@ public class ItemView extends BorderPane {
 		public void handle(MouseEvent me) {
 			if (me.getButton() == MouseButton.SECONDARY) {
 
-				mi2.setUserData(itemView.getSelectionModel().getSelectedItem());
-				mi3.setUserData(itemView.getSelectionModel().getSelectedItem());
+//				miCp.setUserData(itemView.getSelectionModel().getSelectedItem());
+				miEdit.setUserData(itemView.getSelectionModel().getSelectedItem());
+				miDel.setUserData(itemView.getSelectionModel().getSelectedItem());
 
 				cm.show(parent, me.getScreenX(), me.getScreenY());
 			}

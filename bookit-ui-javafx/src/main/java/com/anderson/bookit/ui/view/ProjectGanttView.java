@@ -21,6 +21,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -37,7 +38,7 @@ import javafx.scene.text.Text;
 public class ProjectGanttView extends BorderPane {
 
 	ContextMenu cm;
-	MenuItem mi1, mi2, mi3;
+	MenuItem miNew, miEdit, miDel, miBookItem;
 
 	Text projFilterLbl = new Text("Project filter:");
 	TextField projFilterTf = new TextField();
@@ -105,10 +106,24 @@ public class ProjectGanttView extends BorderPane {
 
 		setGanttTimeView("Days");
 
+		cm = new ContextMenu();
+		miNew = new MenuItem("New");
+		cm.getItems().add(miNew);
+		miNew.setUserData(new ProjectDTO());
+//		miCp = new MenuItem("Copy");
+//		cm.getItems().add(miCp);
+		miEdit = new MenuItem("Edit");
+		cm.getItems().add(miEdit);
+		miDel = new MenuItem("Delete");
+		cm.getItems().add(miDel);
+		cm.getItems().add(new SeparatorMenuItem());
+		miBookItem = new MenuItem("Book Item");
+		cm.getItems().add(miBookItem);
+
 		// Adding listeners for user actions
 		timeViewChoice.setOnAction(this::timeViewChanged);
 
-		super.addEventHandler(MouseEvent.MOUSE_CLICKED, new RightClickHandler(this));
+		ganttView.addEventHandler(MouseEvent.MOUSE_CLICKED, new RightClickHandler(this));
 	}
 
 	private void updateGanttColumns() {
@@ -360,9 +375,10 @@ public class ProjectGanttView extends BorderPane {
 	}
 
 	public void addActionListener(EventHandler<ActionEvent> eventHandler) {
-//		mi1.setOnAction(eventHandler);
-//		mi2.setOnAction(eventHandler);
-//		mi3.setOnAction(eventHandler);
+		miNew.setOnAction(eventHandler);
+		miEdit.setOnAction(eventHandler);
+		miDel.setOnAction(eventHandler);
+		miBookItem.setOnAction(eventHandler);
 	}
 
 	class RightClickHandler implements EventHandler<MouseEvent> {
@@ -376,10 +392,12 @@ public class ProjectGanttView extends BorderPane {
 		public void handle(MouseEvent me) {
 			if (me.getButton() == MouseButton.SECONDARY) {
 
-//				mi2.setUserData(getSelectionModel().getSelectedItem());
+				miEdit.setUserData(ganttView.getSelectionModel().getSelectedItem());
+				miDel.setUserData(ganttView.getSelectionModel().getSelectedItem());
 //				mi3.setUserData(getSelectionModel().getSelectedItem());
+				miBookItem.setUserData(ganttView.getSelectionModel().getSelectedItem());
 //
-//				cm.show(parent, me.getScreenX(), me.getScreenY());
+				cm.show(parent, me.getScreenX(), me.getScreenY());
 			}
 		}
 	}

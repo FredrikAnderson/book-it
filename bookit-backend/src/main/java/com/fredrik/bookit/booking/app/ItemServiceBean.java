@@ -53,7 +53,7 @@ public class ItemServiceBean implements ItemService {
 
 		// If itemProperties not containing id then lookup based on name
 		if (Objects.isNull(entity.getProperties().getId())) {
-			log.info("ItemPropertis should be looked up.");
+			log.info("ItemPropertis should be looked up. By name: " + entity.getProperties().getName());
 			
 			ItemProperties itemProperties = itemRepo.findByName(entity.getProperties().getName());
 			if (Objects.nonNull(itemProperties)) {
@@ -62,6 +62,7 @@ public class ItemServiceBean implements ItemService {
 		}
 		
 		entity = itemRepo.save(entity);
+		
 		
 		ItemDTO toret = itemMapper.mapEntityToDTO(entity);
 		return toret;
@@ -88,8 +89,7 @@ public class ItemServiceBean implements ItemService {
 	
 	@Override
 	public void delete(Long id) {
-		// TODO Auto-generated method stub
-		
+		itemRepo.deleteById(id);
 	}
 
 	@Override
