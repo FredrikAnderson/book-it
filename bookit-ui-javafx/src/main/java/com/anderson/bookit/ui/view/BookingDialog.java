@@ -105,9 +105,7 @@ public class BookingDialog {
 		Button button = new Button("OK");
 		button.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
-	            public void handle(ActionEvent event) {
-	                System.out.println("Hello World! Should save booking:");
-	                
+	            public void handle(ActionEvent event) {	                
 	                System.out.println("Res: " + resCbx.getValue()); // getSelectionModel().getSelectedItem().toString());
 	                System.out.println("Proj: " + projCbx.getValue()); // getSelectionModel().getSelectedItem().toString());
 	                

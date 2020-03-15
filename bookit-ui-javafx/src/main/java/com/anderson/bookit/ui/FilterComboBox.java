@@ -98,7 +98,7 @@ public class FilterComboBox<T> extends ComboBox<T> {
 					e.printStackTrace();
 				}
 				// If not the set model...
-				if (collection != null) {
+				if (isFocused() && collection != null) {
 					setList(collection);
 					
 					show();					

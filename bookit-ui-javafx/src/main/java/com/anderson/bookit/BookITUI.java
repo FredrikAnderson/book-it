@@ -1,46 +1,32 @@
 package com.anderson.bookit;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.anderson.bookit.model.Booking;
 import com.anderson.bookit.model.Resource;
 import com.anderson.bookit.ui.controller.CalendarController;
 import com.anderson.bookit.ui.controller.ItemController;
 import com.anderson.bookit.ui.controller.ProjectController;
 import com.anderson.bookit.ui.controller.ProjectGanttController;
-import com.anderson.bookit.ui.service.ProjectService;
 import com.anderson.bookit.ui.view.BookingDialog;
-import com.calendarfx.model.Calendar;
-import com.calendarfx.model.CalendarSource;
 import com.calendarfx.model.Entry;
-import com.calendarfx.view.CalendarView;
-import com.calendarfx.view.DateControl.ContextMenuParameter;
-import com.calendarfx.view.DateControl.EntryContextMenuParameter;
-import com.calendarfx.view.DateControl.EntryDetailsParameter;
 import com.fredrik.bookit.ui.rest.model.ProjectDTO;
 
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableView;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.stage.Stage;
 import javafx.stage.Screen;
+import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import javafx.geometry.Rectangle2D;
-import javafx.util.Callback;
 
 public class BookITUI extends Application {
 
@@ -179,8 +165,8 @@ public class BookITUI extends Application {
 		
 		primaryStage.setTitle("Book IT");
 		primaryStage.setScene(rootScene);
-		primaryStage.setWidth(1000);
-		primaryStage.setHeight(800);
+		primaryStage.setWidth(1200);
+		primaryStage.setHeight(1000);
 //		primaryStage.centerOnScreen();
 		
 		Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
@@ -190,6 +176,9 @@ public class BookITUI extends Application {
 		primaryStage.show();	
 		
 		window = primaryStage;
+
+		Image im = new Image("bilia-logo_400x123.png", 64, 64, true, false);
+		window.getIcons().add(im);
 		
 		window.setOnCloseRequest(new EventHandler<WindowEvent>() {
 		    @Override

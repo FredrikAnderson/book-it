@@ -1,5 +1,6 @@
 package com.anderson.bookit.ui.view;
 
+import java.io.InputStream;
 import java.time.LocalDate;
 
 import com.fredrik.bookit.ui.rest.model.ItemDTO;
@@ -18,10 +19,14 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
@@ -42,7 +47,19 @@ public class ItemView extends BorderPane {
 
 		VBox projFilterVx = new VBox(filterLbl, filterTf);
 
-		HBox horisontalPnl = new HBox(projFilterVx);
+		Region region1 = new Region();
+        HBox.setHgrow(region1, Priority.ALWAYS);
+
+        InputStream inStream = getClass().getResourceAsStream("/bilia-logo_400x123.png");
+        Image logo = new Image(inStream);
+        ImageView image = new ImageView(logo);
+        image.setFitWidth(100);
+        image.setFitHeight(100);
+        image.setPreserveRatio(true);
+        
+		HBox horisontalPnl = new HBox(projFilterVx, region1, image);
+
+//		HBox horisontalPnl = new HBox(projFilterVx);
 		horisontalPnl.setSpacing(10);
 		horisontalPnl.setPadding(new Insets(0, 0, 5, 0));
 		setTop(horisontalPnl);

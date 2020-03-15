@@ -8,6 +8,7 @@ import com.fredrik.bookit.ui.rest.model.ProjectDTO;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -41,62 +42,29 @@ public class ProjectItemBookingDialog {
 		dialogStage.initModality(Modality.APPLICATION_MODAL);
 		dialogStage.setTitle("Book an Item to a Project");
 		
-		GridPane gridP = new GridPane();
-		
-		// Setting the vertical and horizontal gaps between the columns
-		gridP.setVgap(5);
-		gridP.setHgap(5);
-
-		// Setting the Grid alignment
-		gridP.setAlignment(Pos.CENTER);
-
-//		HBox resHbx = new HBox(resLbl, resCbx);
-//		resHbx.setAlignment(Pos.CENTER_LEFT);
-//		resHbx.setPadding(new Insets(10));
-
 		// Project
 		Text projLbl = new Text("Project: ");
-//		projCbx = new ComboBox<ProjectDTO>();
 		projectTf = new TextField();
-				
-		projectTf.setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent event) {
-//				ProjectDTO value = projCbx.getValue();				
-				
-//				System.out.println("SHould set" + value.getStartDate() + value.getEndDate());
-			}			
-		});
 
 		// CHoosing a proj would set times for the booking
 		HBox projHbx = new HBox(projLbl, projectTf);
-//		gridP.add(projLbl, 0, 0);
-//		gridP.add(projectTf, 1, 0);
-
+		projHbx.setPadding(new Insets(20, 20, 0, 20));
+		
 		// Resource
 		Text itemLbl = new Text("Item: ");
 		itemCbx = new ComboBox<ItemDTO>();
 		itemView = new ItemView();
 	
 		itemView.setModelItems(FXCollections.observableArrayList(itemService.getItems()));
-		
-//		addResources(resCbx);
-		
-//		gridP.add(itemLbl, 0, 1);
-//		gridP.add(itemView, 0, 1);
-
-		
+				
 		Button button = new Button("OK");
 		button.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 	            public void handle(ActionEvent event) {
-	                System.out.println("Hello World! Should save booking:");
-	                
-//	                System.out.println("Res: " + itemCbx.getValue()); // getSelectionModel().getSelectedItem().toString());
-	                System.out.println("Proj: " + projectTf.getText()); // getSelectionModel().getSelectedItem().toString());
-
 	                ItemDTO selectedItem = itemView.getSelectedItem();
+	                
+	                System.out.println("Should save project/item booking:");	                
+	                System.out.println("Proj: " + projectTf.getText()); // getSelectionModel().getSelectedItem().toString());
 	                System.out.println("Item: " + selectedItem);
 	            	                
 	                dialogStage.close();
@@ -110,9 +78,12 @@ public class ProjectItemBookingDialog {
 //	                BookITUI.getInstance().getCalenderManager().updateEntryToBooking(entry, booking);
 	            }
 		});
-//		gridP.add(button, 1, 4);
 
-		VBox vbox = new VBox(projHbx, itemView, button);
+		HBox btnHbx = new HBox(button);
+		btnHbx.setAlignment(Pos.BASELINE_RIGHT);
+		btnHbx.setPadding(new Insets(0, 20, 20, 0));
+			
+		VBox vbox = new VBox(projHbx, itemView, btnHbx);
 		
 		// Fix scene
 		dialogStage.setScene(new Scene(vbox, 650, 400));
