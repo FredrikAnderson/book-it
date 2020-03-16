@@ -62,6 +62,11 @@ public class BookITUI extends Application {
 		return myInstance;
 	}
 
+	public String getLogoImage() {
+		
+		return "volvo-logo.png";
+	}
+	
 	public CalendarController getCalenderManager() {
 		return calController;
 	}
@@ -177,7 +182,7 @@ public class BookITUI extends Application {
 		
 		window = primaryStage;
 
-		Image im = new Image("bilia-logo_400x123.png", 64, 64, true, false);
+		Image im = new Image(getLogoImage(), 64, 64, true, false);
 		window.getIcons().add(im);
 		
 		window.setOnCloseRequest(new EventHandler<WindowEvent>() {

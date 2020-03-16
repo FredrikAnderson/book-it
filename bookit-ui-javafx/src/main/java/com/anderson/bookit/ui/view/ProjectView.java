@@ -3,6 +3,7 @@ package com.anderson.bookit.ui.view;
 import java.io.InputStream;
 import java.time.LocalDate;
 
+import com.anderson.bookit.BookITUI;
 import com.fredrik.bookit.ui.rest.model.ProjectDTO;
 
 import javafx.collections.FXCollections;
@@ -50,11 +51,11 @@ public class ProjectView extends BorderPane {
 		Region region1 = new Region();
         HBox.setHgrow(region1, Priority.ALWAYS);
 
-        InputStream inStream = getClass().getResourceAsStream("/bilia-logo_400x123.png");
+        InputStream inStream = getClass().getResourceAsStream("/" + BookITUI.getInstance().getLogoImage());
         Image logo = new Image(inStream);
         ImageView image = new ImageView(logo);
-        image.setFitWidth(100);
-        image.setFitHeight(100);
+        image.setFitWidth(40);
+        image.setFitHeight(40);
         image.setPreserveRatio(true);
         
 		HBox horisontalPnl = new HBox(projFilterVx, region1, image);
