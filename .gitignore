@@ -25,6 +25,9 @@ hs_err_pid*
 target/
 !.mvn/wrapper/maven-wrapper.jar
 
+# Node / npm stuff
+node/
+
 ### STS ###
 .apt_generated
 .classpath

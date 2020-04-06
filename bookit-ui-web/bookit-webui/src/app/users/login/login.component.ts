@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UsersServiceService } from '../../services/users-service';
@@ -12,9 +12,6 @@ import { AppComponent } from '../../app.component';
     styleUrls: ['./login.component.css']
 } )
 export class LoginComponent implements OnInit {
-
-    @ViewChild( AppComponent )
-    private appComponent: AppComponent;
 
     loginForm: FormGroup;
 
@@ -35,9 +32,7 @@ export class LoginComponent implements OnInit {
 
         // Support for logout
         if (url.includes('logout')) {
-            this.userService.logoutUser();
-            
-//            this.appComponent.update();            
+            this.userService.logoutUser();            
         }
         
         console.log("CurUser: " + this.userService.currentUser.getValue());
@@ -89,16 +84,6 @@ export class LoginComponent implements OnInit {
                   this.router.navigate( ['/home'] );                  
               });
         
-//        this.authenticationService.login( this.f.username.value, this.f.password.value )
-//            .pipe( first() )
-//            .subscribe(
-//            data => {
-//                this.router.navigate( [this.returnUrl] );
-//            },
-//            error => {
-//                this.alertService.error( error );
-//                this.loading = false;
-//            } );
     }
 
 }
