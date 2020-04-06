@@ -72,6 +72,13 @@ public class ProjectsResource implements ProjectsApi {
 		return ResponseEntity.ok(toret);
 	}
 
+	@Override
+	public ResponseEntity<ProjectDTO> bookItemToProject(Long id, Long item) {
+
+		ProjectDTO projectDTO = projectService.bookItemToProject(id, item);
+
+		return ResponseEntity.ok(projectDTO);
+	}
 
 	
 //	public ResponseEntity<ProjectDTO> addProject(@Valid ProjectDTO projectDTO) {

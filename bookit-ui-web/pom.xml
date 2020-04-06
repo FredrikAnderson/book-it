@@ -51,7 +51,7 @@
     <profile>
       <id>build-ui</id>
       <activation>
-        <activeByDefault>false</activeByDefault>
+        <activeByDefault>true</activeByDefault>
       </activation>
       <build>
         <plugins>
@@ -67,7 +67,6 @@
                   <!-- <downloadRoot>http://java.it.volvo.net/nodejs/</downloadRoot> -->
 				  
 			<!--
--->
               <execution>
                 <id>install node and npm</id>
                 <goals>
@@ -78,7 +77,6 @@
                   <npmVersion>6.9.0</npmVersion>
 
 				  <npmInheritsProxyConfigFromMaven>false</npmInheritsProxyConfigFromMaven>
-<!--                  <downloadRoot>http://tm-web-tcptestmanager-test.ocp.got.volvo.net/nodejs/</downloadRoot>  -->
                 </configuration>
               </execution>
 
@@ -121,9 +119,31 @@
                   <arguments>run-script build</arguments>
                 </configuration>
               </execution>
+-->
 
             </executions>
           </plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.6.0</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<executable>ng</executable>
+					<arguments>
+					  <argument>build</argument>
+					</arguments>
+					<workingDirectory>${project.basedir}/bookit-webui</workingDirectory>				
+				</configuration>
+			</plugin>
 
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -132,16 +152,17 @@
             <executions>
               <execution>
                 <id>default-copy-resources</id>
-                <phase>process-resources</phase>
+                <phase>install</phase>
                 <goals>
                   <goal>copy-resources</goal>
                 </goals>
                 <configuration>
                   <overwrite>true</overwrite>
-                  <outputDirectory>${project.build.directory}/${project.artifactId}/</outputDirectory>
+<!--                  <outputDirectory>${project.build.directory}/${project.artifactId}/</outputDirectory>   -->
+                  <outputDirectory>${project.basedir}/../bookit-backend/target/classes/static</outputDirectory>
                   <resources>
                     <resource>
-                      <directory>${project.basedir}/dist</directory>
+                      <directory>${project.basedir}/bookit-webui/dist/bookit-webui/</directory>
                     </resource>
                   </resources>
                 </configuration>

@@ -27,14 +27,16 @@ tags:
   - name: projects
   - name: resources
   - name: items
+  - name: users
 #  - name: bookings
-#  - name: user
 
 paths:
   /projects:
     $ref: './paths/projects.yaml'
   /projects/{id}:
     $ref: './paths/projects-by-id.yaml'
+  /projects/{id}/book/{item}:
+    $ref: './paths/projects-booking.yaml'
   /resources:
     $ref: './paths/resources.yaml'
   /resources/{id}:
@@ -43,6 +45,12 @@ paths:
     $ref: './paths/items.yaml'
   /items/{id}:
     $ref: './paths/items-by-id.yaml'
+  /users:
+    $ref: './paths/users.yaml'
+  /users/{id}:
+    $ref: './paths/users-by-id.yaml'
+  /users/{id}/login/{password}:
+    $ref: './paths/users-login.yaml'
   # /bookings:
     # post:
       # tags:

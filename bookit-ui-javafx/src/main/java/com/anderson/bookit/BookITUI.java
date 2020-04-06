@@ -4,9 +4,12 @@ import com.anderson.bookit.model.Booking;
 import com.anderson.bookit.model.Resource;
 import com.anderson.bookit.ui.controller.CalendarController;
 import com.anderson.bookit.ui.controller.ItemController;
+import com.anderson.bookit.ui.controller.LoginController;
 import com.anderson.bookit.ui.controller.ProjectController;
 import com.anderson.bookit.ui.controller.ProjectGanttController;
+import com.anderson.bookit.ui.controller.UserController;
 import com.anderson.bookit.ui.view.BookingDialog;
+import com.anderson.bookit.ui.view.ItemBookingFormView;
 import com.calendarfx.model.Entry;
 import com.fredrik.bookit.ui.rest.model.ProjectDTO;
 
@@ -41,7 +44,13 @@ public class BookITUI extends Application {
 
 	private CalendarController calController = CalendarController.getInstance();
 //	CalendarSource myCalendarSource = new CalendarSource("My Calendars");
-	
+
+	LoginController loginController = new LoginController();
+	private BorderPane loginPane = new BorderPane();
+
+	UserController userController;
+	private BorderPane userPane = new BorderPane();
+
 	ItemController itemController;
 	private BorderPane itemPane = new BorderPane();
 
@@ -51,6 +60,13 @@ public class BookITUI extends Application {
 	ProjectGanttController projectGanttController;
 	private BorderPane projectGanttPane = new BorderPane();
 
+	private BorderPane itemBookingFormPane = new BorderPane();
+		
+	MenuBar menubar = new MenuBar();
+	
+	Menu file = new Menu("File");
+	Menu view = new Menu("View");
+	Menu help = new Menu("Help");
 	
 	private Entry<Booking> currentEntry;
 	Booking bookingToEdit = new Booking();
@@ -74,10 +90,7 @@ public class BookITUI extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 
-
-		// calendarView.setContextMenu(ContextMenuCallback.createContextMenu());
-//		EventHandler<? super ContextMenuEvent> value;
-//		calendarView.setOnContextMenuRequested(value);
+		myInstance = this;
 
 		Thread updateTimeThread = new Thread("Calendar: Update Time Thread") {
 			@Override
@@ -105,15 +118,14 @@ public class BookITUI extends Application {
 		updateTimeThread.start();
 
 		ActionHandler mch = new ActionHandler();
-		MenuBar menubar = new MenuBar();
-		Menu file = new Menu("File");
 		MenuItem exitMi = new MenuItem("Exit");
 		exitMi.setOnAction(mch);
 		file.getItems().add(exitMi);		
 		
-		Menu view = new Menu("View");
 		MenuItem resourcesMi = new MenuItem("Resources");
 		resourcesMi.setOnAction(mch);
+		MenuItem usersMi = new MenuItem("Users");
+		usersMi.setOnAction(mch);
 		MenuItem itemsMi = new MenuItem("Items");
 		itemsMi.setOnAction(mch);
 		MenuItem projectsMi = new MenuItem("Projects");
@@ -125,34 +137,27 @@ public class BookITUI extends Application {
 		
 //		view.getItems().add(resourcesMi);
 		
+		view.getItems().add(usersMi);		
 		view.getItems().add(itemsMi);		
 		view.getItems().add(projectsMi);		
 		view.getItems().add(bookingTlMi);
 		view.getItems().add(bookingCalMi);
 		
-		Menu help = new Menu("Help");
 		MenuItem aboutMi = new MenuItem("About");
 		aboutMi.setOnAction(mch);
 		help.getItems().add(aboutMi);		
-
-		menubar.getMenus().add(file);
-		menubar.getMenus().add(view);
-		menubar.getMenus().add(help);
-
-		
-		
-		borderPane.setTop(menubar);
 				
-//		
 		TableView<Resource> tableResourceView = new TableView<Resource>();
-	
-//		EventType eventType;
-//		tableResourceView.addEventHandler(eventType, eventHandler);
-				
+					
 		Button addProjBtn = new Button("New");
 		Button editProjBtn = new Button("Edit");
 		Button deleteProjBtn = new Button("Delete");		
 		HBox projCrudBar = new HBox(20, addProjBtn, editProjBtn, deleteProjBtn);
+
+		loginPane.setCenter(loginController.getView());
+
+		userController = new UserController();		
+		userPane.setCenter(userController.getView());
 
 		itemController = new ItemController();		
 		itemPane.setCenter(itemController.getView());
@@ -163,8 +168,11 @@ public class BookITUI extends Application {
 		projectGanttController = new ProjectGanttController();		
 		projectGanttPane.setCenter(projectGanttController.getView());
 
+		itemBookingFormPane.setCenter(new ItemBookingFormView());
+
 		// What should be view by "default"
-		borderPane.setCenter(calController.getView());
+//		borderPane.setCenter(calController.getView());
+		borderPane.setCenter(loginController.getView());
 
 		rootScene = new Scene(borderPane);
 		
@@ -197,13 +205,32 @@ public class BookITUI extends Application {
 				}
 		    }
 		});
+				
 	}
 
+	public void addMenuAtTop(String role) {
+		
+		menubar.getMenus().add(file);
+		
+		if (!role.equalsIgnoreCase("booker")) {
+			menubar.getMenus().add(view);
+		}
+		menubar.getMenus().add(help);
+
+		borderPane.setTop(menubar);
+	}
+	
 	public void showScene(String scene) {
+		scene = scene.toLowerCase();
+			
 		if (scene.equalsIgnoreCase("Bookings")) {
 			borderPane.setCenter(calController.getView());
 			
 //			stage.setScene(bookingScene);
+		} else if (scene.equalsIgnoreCase("Users")) {
+			userController.updateData();
+			borderPane.setCenter(userPane);
+
 		} else if (scene.equalsIgnoreCase("Items")) {
 			itemController.updateData();
 			borderPane.setCenter(itemPane);
@@ -211,18 +238,21 @@ public class BookITUI extends Application {
 		} else if (scene.equalsIgnoreCase("Projects")) {
 			borderPane.setCenter(projectPane);
 			
-		} else if (scene.contains("Timeline")) {
+		} else if (scene.contains("timeline")) {
 			borderPane.setCenter(projectGanttPane);
 			
-		} else if (scene.contains("Calendar")) {
+		} else if (scene.contains("calendar")) {
 //			calController.updateData();
 			
 			borderPane.setCenter(calController.getView());
 			
-		} else if (scene.contains("Exit")) {
+		} else if (scene.contains("exit")) {
 			System.exit(0);
 
-		} else if (scene.contains("About")) {
+		} else if (scene.contains("itembookingform")) {
+			borderPane.setCenter(itemBookingFormPane);
+
+		} else if (scene.contains("about")) {
 			System.out.println("Show about info");
 				
 		} else {

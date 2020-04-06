@@ -1,0 +1,41 @@
+<div style="height: 5px" ></div>
+<div style="display: flex; justify-content: center;">
+
+<font size="4">
+	<nav class="navbar navbar-fixed-top navbar-dark bg-inverse">
+    	<div class="container">
+<!-- 	        <a class="navbar-brand">Menu</a> -->
+<!-- 	        &nbsp;&nbsp;&nbsp; -->
+	        <a class="nav-link" routerLink="users" *ngIf="showUsers">Users</a>
+	        &nbsp;&nbsp;&nbsp;
+	        <a class="nav-link" routerLink="items" *ngIf="showItems">Items</a>
+	        &nbsp;&nbsp;&nbsp;
+	        <a class="nav-link" routerLink="projects" *ngIf="showProjects">Projects</a>
+	        &nbsp;&nbsp;&nbsp;
+	        <a class="nav-link" routerLink="projects-gantt" *ngIf="showProjects">Projects, Gantt</a>
+	        &nbsp;&nbsp;&nbsp;
+	        <a class="nav-link" routerLink="projects-book-item">Book Item for Project</a>
+
+<!--     	&emsp;&emsp;&emsp; -->
+<!--     	<div class="horizontalgap" align="right" style="width:400"> -->
+<!-- 		<img src="assets/volvo-logo.png" alt="image" width="45px" height="45px" align="right"> -->
+<!-- 		</div> -->
+<!-- 	    	<div class="horizontalgap" align="right"> -->
+	        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	        
+	        <a class="nav-link" routerLink="logout">Logout</a>
+	        &nbsp;&nbsp;&nbsp;
+	        <b *ngIf="loggedInUser">
+		    	Hi {{ user.name }}!
+			</b>
+<!-- 			</div> -->
+    	</div>    	
+    	
+	</nav>
+</font>
+</div>
+
+<div class="horizontalgap" align="right">
+	<img src="assets/volvo-logo.png" alt="image" width="60px" height="60px" align="right" hspace="20">		
+</div>
+<router-outlet></router-outlet>
+

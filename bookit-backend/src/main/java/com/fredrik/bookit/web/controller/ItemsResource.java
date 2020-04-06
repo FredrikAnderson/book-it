@@ -9,16 +9,13 @@ import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fredrik.bookit.booking.app.ItemService;
 import com.fredrik.bookit.web.rest.api.ItemsApi;
 import com.fredrik.bookit.web.rest.model.ItemDTO;
 import com.fredrik.bookit.web.rest.model.ItemDTOList;
-import com.fredrik.bookit.web.rest.model.ProjectDTO;
 
-import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController

@@ -1,0 +1,12 @@
+.form {
+  min-width: 80px;
+  max-width: 300px;
+  width: 100%;
+}
+.form-element {
+  padding: 5px 0px 5px 2px;
+  width: 100%;
+}
+.button {
+  margin-right: 8px;
+}

@@ -34,13 +34,13 @@ public class ProjectService {
 	public List<ProjectDTO> getProjects() {
 		System.out.println("Get Projects from backend.");
 
-		Project p1 = new Project("P1");
-		p1.setStartDate(LocalDate.of(2019, Month.OCTOBER, 29));
-		p1.setEndDate(LocalDate.of(2019, Month.DECEMBER, 29));
-		
-		Project p2 = new Project("P2");
-		p2.setStartDate(LocalDate.of(2019, Month.NOVEMBER, 1));
-		p2.setEndDate(LocalDate.of(2019, Month.DECEMBER, 14));
+//		Project p1 = new Project("P1");
+//		p1.setStartDate(LocalDate.of(2019, Month.OCTOBER, 29));
+//		p1.setEndDate(LocalDate.of(2019, Month.DECEMBER, 29));
+//		
+//		Project p2 = new Project("P2");
+//		p2.setStartDate(LocalDate.of(2019, Month.NOVEMBER, 1));
+//		p2.setEndDate(LocalDate.of(2019, Month.DECEMBER, 14));
 
 		
 //		return Arrays.asList(p1, p2);		
@@ -96,6 +96,21 @@ public class ProjectService {
 		
 	}
 
+	public ProjectDTO bookItemForProject(ProjectDTO proj, Long item) {
+		System.out.println("Book Item " + item + " for Project " + proj + " to backend.");		
+		
+		try {
+			proj = projsApi.bookItemToProject(proj.getId(), item);				
+			
+			projCache.itemModified(proj.getId(), ItemEvent.EDIT, proj);
+			
+		} catch (ApiException e) {
+			e.printStackTrace();
+		}		
+		return proj;
+	}
+
+	
 	public void addItemListener(ItemModificationListener<Long, ProjectDTO> itemListener) {
 		projCache.addItemListener(itemListener);
 	}

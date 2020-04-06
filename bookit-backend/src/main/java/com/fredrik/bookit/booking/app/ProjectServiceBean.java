@@ -7,51 +7,45 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.mapstruct.factory.Mappers;
+
+import com.fredrik.bookit.infra.ItemRepository;
 import com.fredrik.bookit.infra.ProjectRepository;
+import com.fredrik.bookit.model.Item;
 import com.fredrik.bookit.model.Project;
+import com.fredrik.bookit.model.mapper.ProjectMapper;
+import com.fredrik.bookit.web.rest.model.ItemDTO;
 import com.fredrik.bookit.web.rest.model.ProjectDTO;
 
 @Named
 public class ProjectServiceBean implements ProjectService {
 
+//	@Inject 
+//	ItemService itemService;
+
+	@Inject 
+	ItemRepository itemRepo;
+
 	@Inject 
 	ProjectRepository projRepo;
+
 	
+	ProjectMapper projMapper = Mappers.getMapper(ProjectMapper.class);
+
 	@Override
 	public List<ProjectDTO> getProjects() {
 		
 		List<Project> all = projRepo.findAll();
 
-		List<ProjectDTO> dtos = mapEntitiesToDtos(all);		
+		List<ProjectDTO> dtos = projMapper.mapEntitiesToDTOs(all);
 		return dtos;
-	}
-
-	private List<ProjectDTO> mapEntitiesToDtos(List<Project> projs) {
-		List<ProjectDTO> projDtos = new ArrayList<>();
-		for (Project project : projs) {
-			ProjectDTO projDto = mapEntityToDTO(project);
-			
-			projDtos.add(projDto);
-		}
-		
-		return projDtos;
-	}
-
-	private ProjectDTO mapEntityToDTO(Project project) {
-		ProjectDTO projectDTO = new ProjectDTO();
-		projectDTO.setId(project.getId());
-		projectDTO.setName(project.getName());
-		projectDTO.setStartDate(project.getStartDate());
-		projectDTO.setEndDate(project.getEndDate());
-		
-		return projectDTO;
 	}
 
 	@Override
 	public ProjectDTO findOne(Long id) {
 		Optional<Project> byId = projRepo.findById(id);
 		
-		ProjectDTO dto = mapEntityToDTO(byId.get());
+		ProjectDTO dto = projMapper.mapEntityToDTO(byId.get());
 		return dto;
 	}
 
@@ -59,21 +53,17 @@ public class ProjectServiceBean implements ProjectService {
 	public ProjectDTO findByName(String productName) {
 		Project byName = projRepo.findByName(productName);		
 		
-		ProjectDTO dto = mapEntityToDTO(byName);
+		ProjectDTO dto = projMapper.mapEntityToDTO(byName);
 		return dto;
 	}
 
 	@Override
 	public ProjectDTO saveProject(ProjectDTO proj) {
 		// DTO to entity
-		Project entity = new Project(proj.getName());
-		entity.setId(proj.getId());
-		entity.setStartDate(proj.getStartDate());
-		entity.setEndDate(proj.getEndDate());
-		
+		Project entity = projMapper.mapDTOToEntity(proj);		
 		entity = projRepo.save(entity);
 		
-		ProjectDTO dto = mapEntityToDTO(entity);
+		ProjectDTO dto = projMapper.mapEntityToDTO(entity);
 		return dto;		
 	}
 
@@ -81,6 +71,30 @@ public class ProjectServiceBean implements ProjectService {
 	public void deleteProject(Long id) {
 
 		projRepo.deleteById(id);
+	}
+
+	@Override
+	public ProjectDTO bookItemToProject(Long projId, Long itemId) {
+//		proj.addBookedItemsItem(item);
+//		item.addProjectsItem(proj);
+		
+		Project project = projRepo.getOne(projId);
+
+		Item item = itemRepo.getOne(itemId);
+		
+		project.bookItem(item);
+//		item.getProject().add(project);
+
+		Project savedProj = projRepo.save(project);
+
+		ProjectDTO dto = projMapper.mapEntityToDTO(savedProj);
+		return dto;				
+	}
+
+	@Override
+	public void cancelBookingItemToProject(ProjectDTO proj, ItemDTO item) {
+		// TODO Auto-generated method stub
+		
 	}
     
 }

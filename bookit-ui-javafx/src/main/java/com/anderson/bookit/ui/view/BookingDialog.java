@@ -7,6 +7,7 @@ import com.anderson.bookit.model.Booking;
 import com.anderson.bookit.model.Project;
 import com.anderson.bookit.model.Resource;
 import com.anderson.bookit.ui.component.DateTimePicker;
+import com.anderson.bookit.ui.service.ProjectService;
 import com.anderson.bookit.ui.service.ResourceService;
 import com.calendarfx.model.Entry;
 
@@ -25,7 +26,7 @@ public class BookingDialog {
 
 	Stage dialogStage = null;
 
-    ResourceService resourceService = new ResourceService();
+    ProjectService projService = ProjectService.getInstance();
 
     Entry<Booking> entryToEdit = null;
     Booking bookingToEdit = null;
@@ -121,6 +122,7 @@ public class BookingDialog {
 	                booking.setProject(projCbx.getValue());
 	                booking.setStartTime(startDateTimePr.getLocalDateTime());
 	                booking.setEndTime(endDateTimePr.getLocalDateTime());
+
 	                
 	                BookITUI.getInstance().getCalenderManager().updateEntryToBooking(entry, booking);
 	            }

@@ -11,3 +11,7 @@ properties:
   endDate:
     type: string
     format: date
+  bookedItems:
+    type: array
+    items:
+      $ref: '../schemas/ItemDTO.yaml'

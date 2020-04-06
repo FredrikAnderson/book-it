@@ -12,16 +12,24 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.fredrik.bookit.booking.app.ItemService;
+import com.fredrik.bookit.booking.app.UserService;
 import com.fredrik.bookit.infra.ProjectRepository;
-import com.fredrik.bookit.infra.ResourceRepository;
 import com.fredrik.bookit.model.Item;
 import com.fredrik.bookit.model.ItemProperties;
 import com.fredrik.bookit.model.Project;
-import com.fredrik.bookit.model.Resource;
+import com.fredrik.bookit.model.User;
 import com.fredrik.bookit.model.mapper.ItemMapper;
+import com.fredrik.bookit.model.mapper.UserMapper;
 import com.fredrik.bookit.web.rest.model.ItemDTO;
+import com.fredrik.bookit.web.rest.model.UserDTO;
+import com.fredrik.bookit.web.servlet.AppInfoServlet;
+import com.fredrik.bookit.web.servlet.UserStartServlet;
 
 @SpringBootApplication
 public class BookITBackend implements CommandLineRunner {
@@ -40,6 +48,31 @@ public class BookITBackend implements CommandLineRunner {
 		app.run(args);			 
 	}
 
+	// Register Servlet
+	@Bean
+	public ServletRegistrationBean userStartServletBean() {
+		ServletRegistrationBean bean = new ServletRegistrationBean(new UserStartServlet(), "/userstart");
+		return bean;
+	}
+
+	@Bean
+	public ServletRegistrationBean appInfoServletBean() {
+		ServletRegistrationBean bean = new ServletRegistrationBean(new AppInfoServlet(), "/support");
+		return bean;
+	}
+
+	@Bean
+	public WebMvcConfigurer corsConfigurer() {
+		return new WebMvcConfigurer() {
+			@Override
+			public void addCorsMappings(CorsRegistry registry) {
+//				registry.addMapping("/api/users").allowedOrigins("http://localhost:4200");
+//				registry.addMapping("/**").allowedOrigins("http://localhost:4200");
+                registry.addMapping("/**").allowedOrigins("*").allowedMethods("GET", "POST","PUT", "DELETE");
+			}
+		};
+	}
+	
 	@Override
 	public void run(String... args) throws Exception {
 		log.info("Command runner");
@@ -47,8 +80,8 @@ public class BookITBackend implements CommandLineRunner {
 		loadInitData();
 	}
 
-	@Inject
-	ResourceRepository repository;
+//	@Inject
+//	ResourceRepository repository;
 
 	@Inject
 	ProjectRepository projRepo;
@@ -58,21 +91,26 @@ public class BookITBackend implements CommandLineRunner {
 
 	ItemMapper itemMapper = Mappers.getMapper(ItemMapper.class);
 
+	@Inject
+	UserService userService;
+
+	UserMapper userMapper = Mappers.getMapper(UserMapper.class);
+
 	@Transactional
 	private void loadInitData() {
 
 		// save a couple of customers
-		repository.save(new Resource("Jack"));
-		repository.save(new Resource("Chloe"));
-		repository.save(new Resource("Kim"));
-
-		// fetch all customers
-		log.info("Resources found with findAll():");
-		log.info("-------------------------------");
-		for (Resource res : repository.findAll()) {
-			log.info(res.toString());
-		}
-		log.info("");
+//		repository.save(new Resource("Jack"));
+//		repository.save(new Resource("Chloe"));
+//		repository.save(new Resource("Kim"));
+//
+//		// fetch all customers
+//		log.info("Resources found with findAll():");
+//		log.info("-------------------------------");
+//		for (Resource res : repository.findAll()) {
+//			log.info(res.toString());
+//		}
+//		log.info("");
 
 		// save a couple of customers
 		projRepo.save(new Project(0L, "Proj #1", LocalDate.now().minusDays(1), LocalDate.now().plusDays(5)));
@@ -103,30 +141,66 @@ public class BookITBackend implements CommandLineRunner {
 		entity = new Item(0L, "EAN 5555", props, "Hylla 2C");
 		itemDTO = itemMapper.mapEntityToDTO(entity);
 		savedDto = itemService.save(itemDTO);
+
+		ItemProperties storStol = ItemProperties.builder()
+				.name("Stor stol")
+				.description("Stol, stor")
+//				.id()
+				.height(1.0)
+				.width(0.5)
+				.length(0.8)
+				.weight(2.22)
+				.price(39.95)
+				.build();
+
+		entity = new Item(0L, "EAN 98765", storStol, "Hylla 5B");
+		itemDTO = itemMapper.mapEntityToDTO(entity);
+		savedDto = itemService.save(itemDTO);
+				
+		User myself = new User();
+		myself.setUserid("me");
+		myself.setName("Fredrik Anderson");
+		myself.setEmail("fanderson75@gmail.com");
+		myself.setRole("admin");
 		
+		UserDTO userDTO = userMapper.mapEntityToDTO(myself);
+		userDTO = userService.save(userDTO);
+
+		User booker = new User();
+		booker.setUserid("booker");
+		booker.setName("Mr Booker");
+		booker.setEmail("booker@gmail.com");
+		booker.setRole("booker");
+		
+		userDTO = userMapper.mapEntityToDTO(booker);
+		userDTO = userService.save(userDTO);
+
+		User user = new User();
+		user.setUserid("User1");
+		user.setName("User#1");
+		user.setEmail("user1@gmail.com");
+		user.setRole("booker");
+		
+		userDTO = userMapper.mapEntityToDTO(user);
+		userDTO = userService.save(userDTO);
+
+		user.setUserid("User2");
+		user.setName("User#2");
+		user.setEmail("user2@gmail.com");
+		user.setRole("booker");
+		
+		userDTO = userMapper.mapEntityToDTO(user);
+		userDTO = userService.save(userDTO);
+
+		user.setUserid("User3");
+		user.setName("User#3");
+		user.setEmail("user3@gmail.com");
+		user.setRole("booker");
+		
+		userDTO = userMapper.mapEntityToDTO(user);
+		userDTO = userService.save(userDTO);
+
 		log.info("All init data, done.");
-		
-		// fetch an individual customer by ID
-//		Resource one = repository.getOne(1L);
-//		log.info(one.toString());
-
-//				.ifPresent(resource -> {
-//					log.info("Resource found with findById(1L):");
-//					log.info("--------------------------------");
-//					log.info(resource.toString());
-//					log.info("");
-//				});
-
-		// fetch customers by last name
-//			log.info("Customer found with findByName('Chloe'):");
-//			log.info("--------------------------------------------");
-//			repository.findByName("Chloe").forEach(bauer -> {
-//				log.info(bauer.toString());
-//			});
-//			// for (Customer bauer : repository.findByLastName("Bauer")) {
-//			// 	log.info(bauer.toString());
-//			// }
-//			log.info("");
 	}
 
 }

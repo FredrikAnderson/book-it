@@ -26,3 +26,8 @@ properties:
   price:
     type: number
     format: float
+  projects:
+    type: array
+    items:
+      $ref: '../schemas/ProjectDTO.yaml'
+    

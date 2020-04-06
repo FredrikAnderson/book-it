@@ -1,0 +1,42 @@
+<!-- <br> -->
+<div style="text-align: center;">
+<h2>Project</h2>
+</div>
+
+<!-- <div style="text-align: center;"> -->
+<div style="display: flex; justify-content: center;">
+
+<form [formGroup]="projectForm" class="form">
+
+<mat-form-field class="form-element" *ngIf="showId">
+	<input matInput type="text" placeholder="Id" formControlName="id" readonly="true" *ngIf="showId">
+</mat-form-field>
+
+<mat-form-field class="form-element">
+	<input matInput type="text" placeholder="Name" formControlName="name">
+</mat-form-field>
+
+<mat-form-field class="form-element">
+	<mat-label>Start Date</mat-label>
+	<input matInput [matDatepicker]="startDatePicker" formControlName="startDate">
+	<mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+	<mat-datepicker #startDatePicker></mat-datepicker>	
+</mat-form-field>
+
+<mat-form-field class="form-element">
+	<mat-label>End Date</mat-label>
+	<input matInput [matDatepicker]="endDatePicker" formControlName="endDate">
+	<mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+	<mat-datepicker #endDatePicker></mat-datepicker>
+</mat-form-field>
+
+<p *ngIf="showSaveBtn">
+<!-- 	&nbsp;&nbsp;&nbsp; -->
+	<button mat-raised-button color="primary" (click)="onSaveProject()" *ngIf="showSaveBtn">Save</button>
+	&nbsp;&nbsp;&nbsp;
+  	<button mat-raised-button color="primary" (click)="onDeleteProject()" *ngIf="showDeleteBtn">Delete</button>
+</p>
+
+<!-- <p> Form Value: {{ projectForm.value }} </p> -->
+</form>
+</div>

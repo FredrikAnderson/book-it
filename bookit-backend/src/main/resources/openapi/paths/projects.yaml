@@ -36,3 +36,4 @@ get:
             $ref: '../schemas/ProjectDTOList.yaml'
     '405':
       description: Invalid input
+      
