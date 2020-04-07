@@ -1,6 +1,6 @@
-<br>
+<br><br>
 <div style="text-align: center;">
-<h2>Projects</h2>
+<h2>Booked Items for: {{ name }} </h2>
 </div>
 
 <div style="text-align: center;">
@@ -9,19 +9,17 @@
   <input matInput (keyup)="applyFilter($event)" placeholder="Filter">
 </mat-form-field>
 	&nbsp;&nbsp;&nbsp;
-<button mat-raised-button color="primary" (click)="onNewProject()">New</button>
-	&nbsp;&nbsp;&nbsp;
-<button mat-raised-button color="primary" (click)="onEditProject()">Edit</button>
+<button mat-raised-button color="primary" (click)="onCancelItemBooking()">Cancel</button>
 
 </div>
 
 <div style="display: flex; justify-content: center;">
 
-<table mat-table [dataSource]="projects" class="mat-elevation-z8">
+<table mat-table [dataSource]="items" class="mat-elevation-z8">
   <!--- Note that these columns can be defined in any order.
         The actual rendered columns are set as a property on the row definition" -->
 
-  <!-- Id Column -->
+  <!-- Position Column -->
   <ng-container matColumnDef="id">
     <th mat-header-cell *matHeaderCellDef> Id </th>
     <td mat-cell *matCellDef="let element"> {{element.id}} </td>
@@ -33,26 +31,24 @@
     <td mat-cell *matCellDef="let element"> {{element.name}} </td>
   </ng-container>
 
-  <!-- StartDate Column -->
-  <ng-container matColumnDef="startdate">
-    <th mat-header-cell *matHeaderCellDef> Start Date </th>
-    <td mat-cell *matCellDef="let element"> {{element.startDate}} </td>
+  <!-- Description Column -->
+  <ng-container matColumnDef="description">
+    <th mat-header-cell *matHeaderCellDef> Description </th>
+    <td mat-cell *matCellDef="let element"> {{element.description}} </td>
   </ng-container>
 
   <!-- Inventory Column -->
-  <ng-container matColumnDef="enddate">
-    <th mat-header-cell *matHeaderCellDef> End Date</th>
-    <td mat-cell *matCellDef="let element"> {{element.endDate}} </td>
+  <ng-container matColumnDef="inventory">
+    <th mat-header-cell *matHeaderCellDef> Inventory </th>
+    <td mat-cell *matCellDef="let element"> {{element.inventory}} </td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row (click)="onRowClicked(row)" *matRowDef="let row; columns: displayedColumns;" 
-        [style.background-color]="onRowBackgroundColor(row)"></tr>  
+ 	 [style.background-color]="onRowBackgroundColor(row)"></tr>  
+  
+  <!-- 	  [style.background]="highlightedRows.indexOf(row) != -1 ? 'lightblue' : ''" > -->
   
 </table>
 
 </div>
-
-<app-project-items-list></app-project-items-list>
-
-<app-projects-book-item type="select-item"></app-projects-book-item>

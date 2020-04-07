@@ -28,6 +28,7 @@ import { ProjectsListComponent } from './projects/projects-list/projects-list.co
 import { ProjectsGanttComponent } from './projects/projects-gantt/projects-gantt.component';
 import { ProjectEditComponent } from './projects/project-edit/project-edit.component';
 import { ProjectsBookItemComponent } from './projects/projects-book-item/projects-book-item.component';
+import { ProjectItemsListComponent } from './projects/project-items-list/project-items-list.component';
 
 
 export const MY_DATE_FORMATS = {
@@ -52,7 +53,8 @@ export const MY_DATE_FORMATS = {
     ProjectEditComponent,
     ProjectsGanttComponent,
     ProjectsBookItemComponent,
-    LoginComponent
+    LoginComponent,
+    ProjectItemsListComponent
   ],
   imports: [
     BrowserModule,

@@ -22,6 +22,7 @@ export class UsersServiceService {
     }
 
     constructor( private http: HttpClient ) {
+        this.apiURL = window.location.protocol + "//" + window.location.hostname + ":8888/api"; 
 
         this.setCurrentUser(JSON.parse(window.localStorage.getItem('currentUser')));  
         

@@ -80,6 +80,14 @@ public class ProjectsResource implements ProjectsApi {
 		return ResponseEntity.ok(projectDTO);
 	}
 
+	@Override
+	public ResponseEntity<ProjectDTO> cancelItemToProject(Long id, Long item) {
+
+		ProjectDTO projectDTO = projectService.cancelItemToProject(id, item);
+
+		return ResponseEntity.ok(projectDTO);
+	}
+
 	
 //	public ResponseEntity<ProjectDTO> addProject(@Valid ProjectDTO projectDTO) {
 //	// TODO Auto-generated method stub

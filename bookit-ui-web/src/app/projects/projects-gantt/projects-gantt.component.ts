@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router'; 
 import { Project } from '../../shared/project';
 import { ProjectsServiceService } from '../../services/projects-service';
+import { ProjectItemsListComponent } from '../../projects/project-items-list/project-items-list.component';
+import { ProjectsBookItemComponent } from '../../projects/projects-book-item/projects-book-item.component';
 
 //import { ViewChild } from '@angular/core';
 //import { GoogleChartComponent } from 'angular-google-charts';
@@ -20,7 +22,13 @@ export class ProjectsGanttComponent implements OnInit {
 
 //    @ViewChild('chart')
 //    chart: GoogleChartComponent;
-    
+
+    @ViewChild( ProjectItemsListComponent )
+    private projectItemsListComponent: ProjectItemsListComponent;
+
+    @ViewChild( ProjectsBookItemComponent )
+    private projectsBookItemComponent: ProjectsBookItemComponent;
+
     type = 'Timeline';
     title = "Fredrik testar";
 
@@ -69,7 +77,7 @@ export class ProjectsGanttComponent implements OnInit {
             hAxis: { minValue : new Date(2020, 4, 1), maxValue: new Date(2020, 4, 25), format: 'dd MMM' },
             colors: ['green'],
             width: 1400,
-            height: 500,
+            height: 210,
             fontSize: 20,
 //            fontName: 'Courier',
     };
@@ -113,7 +121,22 @@ export class ProjectsGanttComponent implements OnInit {
       const row = event[0].row;
       console.log("Selected item, row: " + row + ", " + this.data[row][0]);
 
+      this.projectItemsListComponent.setProject(this.getProject(row));      
+
+      this.projectsBookItemComponent.setProject(this.getProject(row));
+}
+  
+  getProject(projId : number) : Project {
+      console.log("getProject: " + projId);
+
+      return this.projects[projId];
       
+//      this.projects.forEach( (proj : Project) => {
+//         if (proj.id === projId) {
+//             return proj;
+//         }           
+//      });      
+//      return null;
   }
   
 }

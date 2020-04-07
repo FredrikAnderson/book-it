@@ -12,7 +12,7 @@ export class ItemsServiceService {
     apiURL = "http://localhost:8888/api";
     
     constructor(private http : HttpClient) { 
-        
+        this.apiURL = window.location.protocol + "//" + window.location.hostname + ":8888/api"; 
     }
     
     //Http Options

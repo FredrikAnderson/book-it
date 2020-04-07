@@ -1,9 +1,9 @@
-put:
+delete:
   tags:
     - projects
-  summary: Book item to a project
+  summary: Cancel item to a project
   description: ''
-  operationId: bookItemToProject
+  operationId: cancelItemToProject
   consumes:
     - application/json
   produces:
@@ -18,7 +18,7 @@ put:
         format: int64
     - name: item
       in: path
-      description: ID of the related item to book
+      description: ID of the related item to cancel
       required: true
       schema:
         type: integer

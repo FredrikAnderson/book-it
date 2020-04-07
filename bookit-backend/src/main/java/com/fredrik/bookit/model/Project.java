@@ -58,5 +58,9 @@ public class Project {
     public void bookItem(Item item) {
     	bookedItems.add(item);
     }
-    
+
+    public void cancelItem(Item item) {
+    	bookedItems.remove(item);
+    }
+
 }

@@ -1,11 +1,12 @@
 <!-- <div style="display: flex; justify-content: center;"> -->
 <br>
 <div style="text-align: center;">
-<h2>Book an Item for a Project</h2>
+<h2 *ngIf="!project">Book an Item for a Project</h2>
+<h2 *ngIf="project">Book an Item for Project: {{ project.name }}</h2>
 <!-- <p>projects-book-item works!</p> -->
 <!-- <app-projects-list></app-projects-list> -->
 
-<app-project-edit type="nooperations"></app-project-edit> 
+<app-project-edit type="nooperations" *ngIf="!project"></app-project-edit> 
 
 <app-items-list type="select"></app-items-list>
 

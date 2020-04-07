@@ -1,6 +1,5 @@
 package com.fredrik.bookit.booking.app;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +13,6 @@ import com.fredrik.bookit.infra.ProjectRepository;
 import com.fredrik.bookit.model.Item;
 import com.fredrik.bookit.model.Project;
 import com.fredrik.bookit.model.mapper.ProjectMapper;
-import com.fredrik.bookit.web.rest.model.ItemDTO;
 import com.fredrik.bookit.web.rest.model.ProjectDTO;
 
 @Named
@@ -92,9 +90,18 @@ public class ProjectServiceBean implements ProjectService {
 	}
 
 	@Override
-	public void cancelBookingItemToProject(ProjectDTO proj, ItemDTO item) {
-		// TODO Auto-generated method stub
-		
+	public ProjectDTO cancelItemToProject(Long projId, Long itemId) {
+		Project project = projRepo.getOne(projId);
+
+		Item item = itemRepo.getOne(itemId);
+
+		project.cancelItem(item);
+//		item.getProject().add(project);
+
+		Project savedProj = projRepo.save(project);
+
+		ProjectDTO dto = projMapper.mapEntityToDTO(savedProj);
+		return dto;				
 	}
     
 }

@@ -37,6 +37,8 @@ paths:
     $ref: './paths/projects-by-id.yaml'
   /projects/{id}/book/{item}:
     $ref: './paths/projects-booking.yaml'
+  /projects/{id}/cancel/{item}:
+    $ref: './paths/projects-cancel.yaml'
   /resources:
     $ref: './paths/resources.yaml'
   /resources/{id}:

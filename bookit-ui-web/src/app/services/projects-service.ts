@@ -12,6 +12,8 @@ export class ProjectsServiceService {
     apiURL = "http://localhost:8888/api";
     
     constructor(private http : HttpClient) { 
+
+        this.apiURL = window.location.protocol + "//" + window.location.hostname + ":8888/api"; 
         
     }
     
@@ -81,6 +83,14 @@ export class ProjectsServiceService {
             );
       }
 
+    cancelItemForProject(itemId : string, projId : string) : Observable<any> {
+        return this.http.delete<any>(this.apiURL + "/projects/" + projId + "/cancel/" + itemId)
+            .pipe(
+                    tap( data => console.log("book item " + itemId + " for project: " + projId + ", returned: " + data)),          
+                    retry(1), 
+                    catchError(this.handleError)
+            );
+      }
 
     
     //Error handling 
