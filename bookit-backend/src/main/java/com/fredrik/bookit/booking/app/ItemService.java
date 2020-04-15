@@ -14,6 +14,8 @@ public interface ItemService {
 
     ItemDTO findByName(String itemName);
 
+    ItemDTO findByPublicId(String publicId);
+
 	ItemDTO save(ItemDTO body);
 
 	void delete(Long id);

@@ -25,6 +25,14 @@ export class ProjectItemsListComponent implements OnInit {
     selectedItem : Item = null;
 
     constructor(private projectService : ProjectsServiceService) { 
+        
+        this.projectService.currentProject.subscribe( proj => {
+            console.log("Current project changed to: " + JSON.stringify(proj));
+            
+            if (proj) {    
+                this.setProject(proj);
+            }
+        });
     }
     
     ngOnInit(): void {
@@ -40,7 +48,7 @@ export class ProjectItemsListComponent implements OnInit {
     }
     
     setProject(project : Project) {
-        console.log("setProject: " + project.id);
+//        console.log("setProject: " + project.id);
 
 //        let item2 : Item;
 //        

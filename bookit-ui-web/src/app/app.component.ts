@@ -13,14 +13,13 @@ export class AppComponent {
     showUsers: boolean = false;
     showItems: boolean = false;
     showProjects: boolean = false;
+    showBookItem: boolean = false;
 
     loggedInUser : boolean = false;
     user : User = null;
     
     constructor(
         private userService: UsersServiceService ) {
-
-        console.log("app comp () called");
         
         this.userService.currentUser.subscribe( currentUser => {
             console.log("Current user changed to: " + JSON.stringify(currentUser));
@@ -32,7 +31,7 @@ export class AppComponent {
     public update() {
 
         // User logged in
-        if ( this.user ) {
+        if ( this.user && this.user != null) {
             this.loggedInUser = true;
                         
         } else {
@@ -41,22 +40,30 @@ export class AppComponent {
         }
 
         this.updateUIForUser();
-        
-        console.log("app comp after cont. init called");
     }
     
     updateUIForUser() {
+//        console.log("user: " + this.user + ", loggedIn: " + this.loggedInUser);
         
-        if (this.user && this.user.role.includes('admin')) {
-            this.showUsers = true;
-            this.showItems = true;
-            this.showProjects = true;            
+        if (this.user && this.user != null) {
+            if (this.user.role.includes('admin')) {
+                this.showUsers = true;
+                this.showItems = true;
+                this.showProjects = true;            
+                this.showBookItem = true;            
+            } else {
+                this.showUsers = false;
+                this.showItems = false;
+                this.showProjects = false;
+                this.showBookItem = true;            
+            }
         } else {
+            
             this.showUsers = false;
             this.showItems = false;
             this.showProjects = false;
+            this.showBookItem = false;                        
         }
-        
     }
 
 }

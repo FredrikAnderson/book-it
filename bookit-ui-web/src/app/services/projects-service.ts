@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { tap, map, retry, catchError } from 'rxjs/operators';
 import { Project } from '../shared/project';
 
@@ -10,6 +10,8 @@ import { Project } from '../shared/project';
 export class ProjectsServiceService {
 
     apiURL = "http://localhost:8888/api";
+
+    public currentProject = new BehaviorSubject<Project>(null);
     
     constructor(private http : HttpClient) { 
 
@@ -22,6 +24,12 @@ export class ProjectsServiceService {
       headers: new HttpHeaders({
         'Content-Type': 'application/json'
       })
+    }
+
+    public setCurrentProject(project : Project) {
+//        console.log("Current project changed to: " + JSON.stringify(project));
+
+        this.currentProject.next(project);        
     }
 
     public saveProject(project : Project) : Observable<Project> {

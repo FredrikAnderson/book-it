@@ -1,0 +1,99 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+	
+	
+	<changeSet author="yt52878 (generated)" id="1586340861933-1">
+		<createSequence sequenceName="hibernate_sequence" />
+	</changeSet>
+	<changeSet author="yt52878 (generated)" id="1586340861933-2">
+		<createTable tableName="appuser">
+			<column name="userid" type="VARCHAR(255)">
+				<constraints primaryKey="true"
+					primaryKeyName="appuser_pkey" />
+			</column>
+			<column name="email" type="VARCHAR(255)" />
+			<column name="name" type="VARCHAR(255)" />
+			<column name="role" type="VARCHAR(255)" />
+		</createTable>
+	</changeSet>
+	<changeSet author="yt52878 (generated)" id="1586340861933-3">
+		<createTable tableName="item">
+			<column name="id" type="BIGINT">
+				<constraints primaryKey="true"
+					primaryKeyName="item_pkey" />
+			</column>
+			<column name="inventory" type="VARCHAR(255)" />
+			<column name="public_id" type="VARCHAR(255)" />
+			<column name="properties_id" type="BIGINT" />
+		</createTable>
+	</changeSet>
+	<changeSet author="yt52878 (generated)" id="1586340861933-4">
+		<createTable tableName="item_properties">
+			<column name="id" type="BIGINT">
+				<constraints primaryKey="true"
+					primaryKeyName="item_properties_pkey" />
+			</column>
+			<column name="description" type="VARCHAR(255)" />
+			<column name="height" type="FLOAT8" />
+			<column name="length" type="FLOAT8" />
+			<column name="name" type="VARCHAR(255)" />
+			<column name="price" type="FLOAT8" />
+			<column name="weight" type="FLOAT8" />
+			<column name="width" type="FLOAT8" />
+		</createTable>
+	</changeSet>
+	<changeSet author="yt52878 (generated)" id="1586340861933-5">
+		<createTable tableName="project">
+			<column name="id" type="BIGINT">
+				<constraints primaryKey="true" primaryKeyName="project_pkey" />
+			</column>
+			<column name="end_date" type="date" />
+			<column name="name" type="VARCHAR(255)" />
+			<column name="start_date" type="date" />
+		</createTable>
+	</changeSet>
+	<changeSet author="yt52878 (generated)" id="1586340861933-6">
+		<createTable tableName="project_booked_items">
+			<column name="project_id" type="BIGINT">
+				<constraints primaryKey="true" primaryKeyName="project_booked_items_pkey" />
+			</column>
+			<column name="item_id" type="BIGINT">
+				<constraints primaryKey="true" primaryKeyName="project_booked_items_pkey" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet author="yt52878 (generated)" id="1586340861933-7">
+		<createTable tableName="resource">
+			<column name="id" type="BIGINT">
+				<constraints primaryKey="true" primaryKeyName="resource_pkey" />
+			</column>
+			<column name="name" type="VARCHAR(255)" />
+		</createTable>
+	</changeSet>
+	<changeSet author="yt52878 (generated)" id="1586340861933-8">
+		<addForeignKeyConstraint
+			baseColumnNames="properties_id" baseTableName="item"
+			constraintName="fk9vngr1gf0xhc4269k82iultjs" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="item_properties"
+			validate="true" />
+	</changeSet>
+	<changeSet author="yt52878 (generated)" id="1586340861933-9">
+		<addForeignKeyConstraint
+			baseColumnNames="project_id" baseTableName="project_booked_items"
+			constraintName="fka1dlcgo1xqju5oh8gsi8mwxke" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="project" validate="true" />
+	</changeSet>
+	<changeSet author="yt52878 (generated)" id="1586340861933-10">
+		<addForeignKeyConstraint
+			baseColumnNames="item_id" baseTableName="project_booked_items"
+			constraintName="fkm6ejvse08w9yhhuwm4hw0u4q3" deferrable="false"
+			initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+			referencedColumnNames="id" referencedTableName="item" validate="true" />
+	</changeSet>
+</databaseChangeLog>

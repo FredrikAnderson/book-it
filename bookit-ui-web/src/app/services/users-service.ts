@@ -12,7 +12,6 @@ export class UsersServiceService {
     apiURL = "http://localhost:8888/api";
 
     public currentUser = new BehaviorSubject<User>(null);
-//    public currentUser = this.userSubject.asObservable();
     
     //Http Options
     httpOptions = {

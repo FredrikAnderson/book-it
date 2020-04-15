@@ -14,12 +14,6 @@ import { DataSource } from '@angular/cdk/table';
 } )
 export class ProjectsListComponent implements OnInit {
 
-    @ViewChild( ProjectItemsListComponent )
-    private projectItemsListComponent: ProjectItemsListComponent;
-
-    @ViewChild( ProjectsBookItemComponent )
-    private projectsBookItemComponent: ProjectsBookItemComponent;
-
     displayedColumns: string[] = ['id', 'name', 'startdate', 'enddate'];
 
     projects = new MatTableDataSource<Project>();
@@ -68,9 +62,10 @@ export class ProjectsListComponent implements OnInit {
         }
         
         // 
-        this.projectItemsListComponent.setProject(this.selectedProject);
+        this.router.navigate( ['/project/' + project.id ] );
 
-        this.projectsBookItemComponent.setProject(this.selectedProject);
+//        this.projectItemsListComponent.setProject(this.selectedProject);
+//        this.projectsBookItemComponent.setProject(this.selectedProject);
     }
 
       public onRowBackgroundColor(project : Project) {

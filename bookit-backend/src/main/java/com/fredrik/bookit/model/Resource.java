@@ -15,13 +15,12 @@ public class Resource {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-	
-    private String name;
+	private Long id;
 
-    
-    public Resource(String name) {
-    	this.name = name;
-    }
-    
+	private String name;
+
+	public Resource(String name) {
+		this.name = name;
+	}
+
 }

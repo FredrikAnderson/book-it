@@ -27,11 +27,18 @@ export class ProjectsBookItemComponent implements OnInit {
             private route: ActivatedRoute,
             private router: Router,
             private projectService: ProjectsServiceService
-            ) { }
+            ) {}
 
     ngOnInit(): void {
         if (this.type.includes('select-item')) {
             this.project = new Project();
+            
+            this.projectService.currentProject.subscribe( proj => {
+                if (proj) {    
+                    console.log("Current project changed to: " + JSON.stringify(proj));
+                    this.setProject(proj);
+                }
+            });        
         }
         console.log("Type: " + this.type + ", proj: " + this.project);
     }

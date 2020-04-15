@@ -22,5 +22,8 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
 	@Query("select ip from ItemProperties ip where lower(ip.name) like lower(concat('%', :name, '%'))")
 	List<ItemProperties> findBy(String name);
-	
+
+	@Query("select it from Item it where it.publicId = :publicId")
+	Item findByPublicId(String publicId);
+
 }

@@ -25,8 +25,10 @@
    		<org.apache.maven.plugins.version>3.6.0</org.apache.maven.plugins.version>
    		<java.version>1.8</java.version>
 
+		<!-- Liquibase -->
+<!-- 		<liquibase.version>3.6.3</liquibase.version> -->
 		<!-- Lombok -->
-		<lombok.version>1.18.4</lombok.version>
+<!-- 		<lombok.version>1.18.4</lombok.version> -->
 		<!-- Mapstruct -->
         <org.mapstruct.version>1.2.0.Final</org.mapstruct.version>
 
@@ -73,6 +75,18 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- PostgreSQL -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+        </dependency>
+
+		<!-- Liquibase -->
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+        </dependency>
+        
 		<!-- Lombok -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -271,5 +285,123 @@
 		</plugins>
 	</build>
 
+	<profiles>
+		<!-- Runs liquibase on an environment. 
+		  Could be triggered together with env property, like localdev, dev, test or qa 
+		  Example: 
+			mvn install -Pliquibase -Doperation=status
+			mvn install -Pliquibase -Doperation=status
+				
+		  See also: http://www.liquibase.org/documentation/maven/index.html
+		  -->
+		<profile>
+		  <id>liquibase</id>
+		  <build>
+			<plugins>
+			<!--
+			  <plugin>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>3.0.2</version>
+					<executions>
+						<execution>
+							<id>copy-resources</id>
+							<phase>process-resources</phase>
+							<goals>
+								<goal>copy-resources</goal>
+							</goals>
+							<configuration>
+								<outputDirectory>${basedir}/target/test-classes/liquibase</outputDirectory>
+								<filtering>false</filtering>
+								<resources>
+									<resource>
+										<directory>${basedir}/../tm-config/src/main/resources/liquibase</directory>
+										<includes>
+										  <include>*changelog*.xml</include>
+										</includes>
+									</resource>
+									<resource>
+										<directory>${basedir}/../tm-domain-user/src/main/resources/liquibase</directory>      
+										<includes>
+										  <include>*changelog*.xml</include>
+										</includes>
+									</resource>
+									<resource>
+										<directory>${basedir}/../tm-domain-common/src/main/resources/liquibase</directory>      
+										<includes>
+										  <include>*changelog*.xml</include>
+										</includes>
+									</resource>
+									<resource>
+										<directory>${basedir}/../tm-domain-product/src/main/resources/liquibase</directory>        
+										<includes>
+										  <include>*changelog*.xml</include>
+										</includes>
+									</resource>
+									<resource>
+										<directory>${basedir}/../tm-domain-testmgt/src/main/resources/liquibase</directory>
+										<includes>
+										  <include>*changelog*.xml</include>
+										</includes>
+									</resource>
+									<resource>
+										<directory>${basedir}/../tm-domain-testobject/src/main/resources/liquibase</directory>        
+										<includes>
+										  <include>*changelog*.xml</include>
+										</includes>
+									</resource>
+								</resources>
+							</configuration>
+						</execution>
+					</executions>
+			  </plugin>
+	--> 
+			  <plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>properties-maven-plugin</artifactId>
+				<version>1.0.0</version>
+				<executions>
+				  <execution>
+					<phase>initialize</phase>
+					<goals>
+					  <goal>read-project-properties</goal>
+					</goals>
+					<configuration>
+					  <files>
+						<file>src/main/resources/application.properties</file>
+					  </files>
+					</configuration>
+				  </execution>
+				</executions>
+			  </plugin>
+			  
+			  <plugin>
+				<groupId>org.liquibase</groupId>
+				<artifactId>liquibase-maven-plugin</artifactId>
+				<version>${liquibase.version}</version>
+				<configuration>
+				  <url>${spring.datasource.url}</url>
+	<!--               <defaultSchemaName>${datasource.username}</defaultSchemaName> -->
+				  <driver>org.postgresql.Driver</driver>
+				  <username>${spring.datasource.username}</username>
+				  <password>${spring.datasource.password}</password>
+				  <changeLogDir>${basedir}/target/test-classes/</changeLogDir>
+				  <changeLogFile>liquibase/changelog-master.xml</changeLogFile>
+				  <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
+				  <!-- <contexts>${env}</contexts> -->
+				  <verbose>true</verbose>
+				</configuration>
+				<executions>
+				  <execution>
+					<phase>install</phase>
+					<goals>
+					  <goal>${operation}</goal>
+					</goals>
+				  </execution>
+				</executions>
+			  </plugin>
+			</plugins>
+		  </build>
+		</profile>
+	</profiles>
 
 </project>

@@ -55,7 +55,58 @@
 </node>
 <node CREATED="1567004816422" ID="ID_1070861586" MODIFIED="1567004822177" TEXT="Infrastructure">
 <node CREATED="1567004839579" ID="ID_311720670" MODIFIED="1567004844914" TEXT="Database">
-<node CREATED="1567004823436" ID="ID_308772388" MODIFIED="1567004828594" TEXT="Postgres DB"/>
+<node CREATED="1567004823436" ID="ID_308772388" MODIFIED="1586852532262" TEXT="Postgres DB">
+<richcontent TYPE="NOTE"><html>
+  <head>
+    
+  </head>
+  <body>
+    <p>
+      
+    </p>
+    <p>
+      jdbc:postgresql://127.0.0.1:5432/postgres
+    </p>
+    <p>
+      
+    </p>
+    <p>
+      create user bookit with password 'bookit4ever!'
+    </p>
+    <p>
+      
+    </p>
+    <p>
+      Create database
+    </p>
+    <p>
+      ==============
+    </p>
+    <p>
+      create schema bookit authorization bookit
+    </p>
+    <p>
+      
+    </p>
+    <p>
+      alter user bookit set search_path to 'bookit'
+    </p>
+    <p>
+      
+    </p>
+    <p>
+      Drop database
+    </p>
+    <p>
+      ============
+    </p>
+    <p>
+      drop schema bookit cascade
+    </p>
+  </body>
+</html>
+</richcontent>
+</node>
 <node CREATED="1567004829886" ID="ID_374533942" MODIFIED="1567004837162" TEXT="H2 In-memory for testing"/>
 </node>
 <node CREATED="1567004859070" ID="ID_828887291" MODIFIED="1567004876897" TEXT="Docker running Java"/>

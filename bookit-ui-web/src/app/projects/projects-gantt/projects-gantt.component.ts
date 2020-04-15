@@ -23,12 +23,6 @@ export class ProjectsGanttComponent implements OnInit {
 //    @ViewChild('chart')
 //    chart: GoogleChartComponent;
 
-    @ViewChild( ProjectItemsListComponent )
-    private projectItemsListComponent: ProjectItemsListComponent;
-
-    @ViewChild( ProjectsBookItemComponent )
-    private projectsBookItemComponent: ProjectsBookItemComponent;
-
     type = 'Timeline';
     title = "Fredrik testar";
 
@@ -121,9 +115,11 @@ export class ProjectsGanttComponent implements OnInit {
       const row = event[0].row;
       console.log("Selected item, row: " + row + ", " + this.data[row][0]);
 
-      this.projectItemsListComponent.setProject(this.getProject(row));      
+      this.router.navigate( ['/project/' + this.getProject(row).id ] );
 
-      this.projectsBookItemComponent.setProject(this.getProject(row));
+//      this.projectItemsListComponent.setProject(this.getProject(row));      
+//      this.projectsBookItemComponent.setProject(this.getProject(row));
+      
 }
   
   getProject(projId : number) : Project {

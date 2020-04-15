@@ -1,6 +1,6 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { switchMap } from 'rxjs/operators';
+// import { switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { FormGroup, FormControl } from '@angular/forms';
 import { Project } from '../../shared/project';
@@ -15,7 +15,7 @@ export class ProjectEditComponent implements OnInit {
 
     // Possible values: operations, nooperations
     @Input('type') type : string = "operations";
-
+    
     projectForm = new FormGroup( {
         id: new FormControl( '' ),
         name: new FormControl( '' ),
@@ -32,6 +32,14 @@ export class ProjectEditComponent implements OnInit {
     constructor( private route: ActivatedRoute,
         private router: Router,
         private projectService: ProjectsServiceService ) {
+        
+        this.projectService.currentProject.subscribe( proj => {
+            if (proj) {    
+                console.log("Current project changed to: " + JSON.stringify(proj));
+                this.project = proj;
+            }
+        });        
+
     }
 
     ngOnInit(): void {
@@ -55,7 +63,7 @@ export class ProjectEditComponent implements OnInit {
 
                 this.updateModelAndUpdateView( data );
             } );
-        }
+        }        
     }
     
     resetForm() {
@@ -78,6 +86,8 @@ export class ProjectEditComponent implements OnInit {
         this.projectForm.get( 'name' ).setValue( this.project.name );
         this.projectForm.get( 'startDate' ).setValue( this.project.startDate );
         this.projectForm.get( 'endDate' ).setValue( this.project.endDate );
+
+        this.projectService.setCurrentProject(this.project);
     }
 
     updateModelFromView() {

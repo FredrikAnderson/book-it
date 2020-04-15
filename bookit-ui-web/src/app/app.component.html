@@ -14,7 +14,7 @@
 	        &nbsp;&nbsp;&nbsp;
 	        <a class="nav-link" routerLink="projects-gantt" *ngIf="showProjects">Projects, Gantt</a>
 	        &nbsp;&nbsp;&nbsp;
-	        <a class="nav-link" routerLink="projects-book-item">Book Item for Project</a>
+	        <a class="nav-link" routerLink="projects-book-item" *ngIf="showBookItem">Book Item for Project</a>
 
 <!--     	&emsp;&emsp;&emsp; -->
 <!--     	<div class="horizontalgap" align="right" style="width:400"> -->
@@ -22,7 +22,7 @@
 <!-- 		</div> -->
 <!-- 	    	<div class="horizontalgap" align="right"> -->
 	        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	        
-	        <a class="nav-link" routerLink="logout">Logout</a>
+	        <a class="nav-link" routerLink="logout" *ngIf="loggedInUser">Logout</a>
 	        &nbsp;&nbsp;&nbsp;
 	        <b *ngIf="loggedInUser">
 		    	Hi {{ user.name }}!

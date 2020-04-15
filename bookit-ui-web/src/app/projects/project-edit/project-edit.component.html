@@ -40,3 +40,7 @@
 <!-- <p> Form Value: {{ projectForm.value }} </p> -->
 </form>
 </div>
+
+<app-project-items-list *ngIf="showId"></app-project-items-list>
+
+<app-projects-book-item type="select-item" *ngIf="showId"></app-projects-book-item>

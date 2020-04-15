@@ -40,9 +40,18 @@ public class ItemServiceBean implements ItemService {
 
 	@Override
 	public ItemDTO findByName(String itemName) {
+//		itemRepo.find
 		Item byName = null; // itemRepo.findByName(itemName);		
 		
 		ItemDTO dto = itemMapper.mapEntityToDTO(byName);
+		return dto;
+	}
+
+	@Override
+	public ItemDTO findByPublicId(String publicId) {
+		Item byPublicId = itemRepo.findByPublicId(publicId);		
+		
+		ItemDTO dto = itemMapper.mapEntityToDTO(byPublicId);
 		return dto;
 	}
 

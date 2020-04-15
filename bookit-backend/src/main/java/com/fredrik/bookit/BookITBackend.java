@@ -2,6 +2,8 @@ package com.fredrik.bookit;
 
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -113,16 +115,16 @@ public class BookITBackend implements CommandLineRunner {
 //		log.info("");
 
 		// save a couple of customers
-		projRepo.save(new Project(0L, "Proj #1", LocalDate.now().minusDays(1), LocalDate.now().plusDays(5)));
-		projRepo.save(new Project(0L, "Project testing", LocalDate.now().minusDays(2), LocalDate.now().plusMonths(2)));
-		projRepo.save(new Project(0L, "Project three", LocalDate.now().minusMonths(2), LocalDate.now().plusDays(10)));
+		projRepo.save(new Project(1L, "Proj #1", LocalDate.now().minusDays(1), LocalDate.now().plusDays(5)));
+		projRepo.save(new Project(2L, "Project testing", LocalDate.now().minusDays(2), LocalDate.now().plusMonths(2)));
+		projRepo.save(new Project(3L, "Project three", LocalDate.now().minusMonths(2), LocalDate.now().plusDays(10)));
 
-
+		
 		// save a couple of items
 		ItemProperties props = ItemProperties.builder()
 			.name("Hammare")
 			.description("Hammare, vanlig")
-//			.id()
+			.id(1L)
 			.height(1.0)
 			.width(2.0)
 			.length(3.0)
@@ -130,22 +132,33 @@ public class BookITBackend implements CommandLineRunner {
 			.price(39.95)
 			.build();
 		
-		Item entity = new Item(0L, "EAN 1234", props, "Hylla 2A");
-		ItemDTO itemDTO = itemMapper.mapEntityToDTO(entity);
-		ItemDTO savedDto = itemService.save(itemDTO);
+		Item entity = null;
+		ItemDTO itemDTO = null;
+		ItemDTO savedDto = null;
 		
-		entity = new Item(0L, "EAN 4321", props, "Hylla 2B");
-		itemDTO = itemMapper.mapEntityToDTO(entity);
-		savedDto = itemService.save(itemDTO);
+		if (Objects.isNull(itemService.findByPublicId("EAN 1234"))) {
+		
+			entity = new Item(1L, "EAN 1234", props, "Hylla 2A");
+			itemDTO = itemMapper.mapEntityToDTO(entity);
+			savedDto = itemService.save(itemDTO);			
+		}
+		if (Objects.isNull(itemService.findByPublicId("EAN 4321"))) {
 
-		entity = new Item(0L, "EAN 5555", props, "Hylla 2C");
-		itemDTO = itemMapper.mapEntityToDTO(entity);
-		savedDto = itemService.save(itemDTO);
+			entity = new Item(2L, "EAN 4321", props, "Hylla 2B");
+			itemDTO = itemMapper.mapEntityToDTO(entity);
+			savedDto = itemService.save(itemDTO);
+		}
+		if (Objects.isNull(itemService.findByPublicId("EAN 5555"))) {
 
+			entity = new Item(3L, "EAN 5555", props, "Hylla 2C");
+			itemDTO = itemMapper.mapEntityToDTO(entity);
+			savedDto = itemService.save(itemDTO);
+		}
+		
 		ItemProperties storStol = ItemProperties.builder()
 				.name("Stor stol")
 				.description("Stol, stor")
-//				.id()
+				.id(2L)
 				.height(1.0)
 				.width(0.5)
 				.length(0.8)
@@ -153,10 +166,12 @@ public class BookITBackend implements CommandLineRunner {
 				.price(39.95)
 				.build();
 
-		entity = new Item(0L, "EAN 98765", storStol, "Hylla 5B");
-		itemDTO = itemMapper.mapEntityToDTO(entity);
-		savedDto = itemService.save(itemDTO);
-				
+		if (Objects.isNull(itemService.findByPublicId("EAN 98765"))) {
+			entity = new Item(4L, "EAN 98765", storStol, "Hylla 5B");
+			itemDTO = itemMapper.mapEntityToDTO(entity);
+			savedDto = itemService.save(itemDTO);
+		}
+		
 		User myself = new User();
 		myself.setUserid("me");
 		myself.setName("Fredrik Anderson");
