@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { Router } from '@angular/router';
 import { Item } from '../../shared/item';
 import { ItemsServiceService } from '../../services/items-service';
 import { MatTableDataSource } from '@angular/material/table';
@@ -21,7 +22,8 @@ export class ItemsListComponent implements OnInit {
     // Only for type, select
     selectedItem : Item;
 
-    constructor(private itemService : ItemsServiceService) { }
+    constructor(private router: Router,
+            private itemService : ItemsServiceService) {}
     
     ngOnInit(): void {
       this.getItems();
@@ -35,11 +37,15 @@ export class ItemsListComponent implements OnInit {
     getItems() {
       this.items = new MatTableDataSource<Item>();
       this.itemService.getItems().subscribe((data : any) => {
-          console.log(data);
+          console.log("Got items: " + data);
           this.items = new MatTableDataSource(data);  
       });      
     }
-        
+
+    public onNewItem() {
+        this.router.navigate( ['/item/new'] );
+    }
+
     public onRowClicked(item : Item) {
     
       console.log("clicked id: " + item.id + " I am type: " + this.type);      

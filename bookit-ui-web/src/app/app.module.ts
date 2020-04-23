@@ -10,6 +10,7 @@ import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -29,6 +30,7 @@ import { ProjectsGanttComponent } from './projects/projects-gantt/projects-gantt
 import { ProjectEditComponent } from './projects/project-edit/project-edit.component';
 import { ProjectsBookItemComponent } from './projects/projects-book-item/projects-book-item.component';
 import { ProjectItemsListComponent } from './projects/project-items-list/project-items-list.component';
+import { ItemEditComponent } from './items/item-edit/item-edit.component';
 
 
 export const MY_DATE_FORMATS = {
@@ -54,7 +56,8 @@ export const MY_DATE_FORMATS = {
     ProjectsGanttComponent,
     ProjectsBookItemComponent,
     LoginComponent,
-    ProjectItemsListComponent
+    ProjectItemsListComponent,
+    ItemEditComponent
   ],
   imports: [
     BrowserModule,
@@ -65,6 +68,7 @@ export const MY_DATE_FORMATS = {
     MatTableModule,
     MatFormFieldModule,
     MatInputModule,
+    MatAutocompleteModule,
     MatButtonModule,
     MatNativeDateModule,
     MatDatepickerModule,

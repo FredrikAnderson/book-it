@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { UsersListComponent } from './users/users-list/users-list.component';
 import { UserEditComponent } from './users/user-edit/user-edit.component';
 import { ItemsListComponent } from './items/items-list/items-list.component';
+import { ItemEditComponent } from './items/item-edit/item-edit.component';
 import { ProjectsListComponent } from './projects/projects-list/projects-list.component';
 import { ProjectsGanttComponent } from './projects/projects-gantt/projects-gantt.component';
 import { ProjectEditComponent } from './projects/project-edit/project-edit.component';
@@ -15,6 +16,7 @@ const routes: Routes = [
     {   path: 'users',              component: UsersListComponent           },
     {   path: 'user/:id',           component: UserEditComponent            },
     {   path: 'items',              component: ItemsListComponent           },
+    {   path: 'item/:id',           component: ItemEditComponent            },
     {   path: 'projects',           component: ProjectsListComponent        },
     {   path: 'projects-gantt',     component: ProjectsGanttComponent       },
     {   path: 'project/:id',        component: ProjectEditComponent         },

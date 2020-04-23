@@ -1,0 +1,79 @@
+<!-- <p>item-edit works!</p> -->
+
+<div style="text-align: center;">
+<h2>Item</h2>
+</div>
+
+<!-- <div style="text-align: center;"> -->
+<div style="display: flex; justify-content: center;">
+
+<form [formGroup]="itemForm" class="form">
+
+<!-- <mat-form-field class="form-element" *ngIf="showId"> -->
+<!-- 	<input matInput type="text" placeholder="Id" formControlName="id" readonly="true" *ngIf="showId"> -->
+<!-- </mat-form-field> -->
+
+<mat-form-field class="form-element">
+    <input type="text" placeholder="Pick one" aria-label="Number"
+           matInput [formControl]="itemNameForm" [matAutocomplete]="auto">
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onItemNameChanged($event)">
+      <mat-option *ngFor="let option of filteredOptions | async" [value]="option" >{{option}}</mat-option>
+    </mat-autocomplete>
+</mat-form-field>
+
+<mat-form-field class="form-element">
+	<input matInput type="text" placeholder="Name" formControlName="name">
+</mat-form-field>
+
+<mat-form-field class="form-element">
+	<input matInput type="text" placeholder="Inventory" formControlName="inventory">
+</mat-form-field>
+
+<mat-form-field class="form-element">
+	<input matInput type="text" placeholder="Description" formControlName="description">
+</mat-form-field>
+
+<mat-form-field class="form-element">
+	<input matInput type="number" placeholder="Width" formControlName="width">
+</mat-form-field>
+
+<mat-form-field class="form-element">
+	<input matInput type="number" placeholder="Height" formControlName="height">
+</mat-form-field>
+
+<mat-form-field class="form-element">
+	<input matInput type="number" placeholder="Length" formControlName="length">
+</mat-form-field>
+
+<mat-form-field class="form-element">
+	<input matInput type="number" placeholder="Weight" formControlName="weight">
+</mat-form-field>
+
+<mat-form-field class="form-element">
+	<input matInput type="number" placeholder="Price" formControlName="price">
+</mat-form-field>
+
+<!-- <mat-form-field class="form-element"> -->
+<!-- 	<mat-label>Start Date</mat-label> -->
+<!-- 	<input matInput [matDatepicker]="startDatePicker" formControlName="startDate"> -->
+<!-- 	<mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle> -->
+<!-- 	<mat-datepicker #startDatePicker></mat-datepicker>	 -->
+<!-- </mat-form-field> -->
+
+<!-- <mat-form-field class="form-element"> -->
+<!-- 	<mat-label>End Date</mat-label> -->
+<!-- 	<input matInput [matDatepicker]="endDatePicker" formControlName="endDate"> -->
+<!-- 	<mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle> -->
+<!-- 	<mat-datepicker #endDatePicker></mat-datepicker> -->
+<!-- </mat-form-field> -->
+
+<p *ngIf="showSaveBtn">
+<!-- 	&nbsp;&nbsp;&nbsp; -->
+	<button mat-raised-button color="primary" (click)="onSaveItem()" *ngIf="showSaveBtn">Save</button>
+	&nbsp;&nbsp;&nbsp;
+  	<button mat-raised-button color="primary" (click)="onDeleteItem()" *ngIf="showDeleteBtn">Delete</button>
+</p>
+
+<!-- <p> Form Value: {{ projectForm.value }} </p> -->
+</form>
+</div>
