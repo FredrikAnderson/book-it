@@ -275,6 +275,42 @@
 			  </executions>
 			</plugin>		
 
+			<!-- -->
+			<plugin>
+				<groupId>pl.project13.maven</groupId>
+				<artifactId>git-commit-id-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>getgit-info</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>revision</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<!-- human-readable part of the version number -->
+					<dateFormat>yyyyMMdd-HHmm</dateFormat>
+
+					<!-- If you'd like to tell the plugin where your .git directory is, 
+						use this setting, otherwise we'll perform a search trying to figure out the 
+						right directory. -->
+					<!-- It's better to add it explicitly IMHO. -->
+					<dotGitDirectory>${project.basedir}/../.git</dotGitDirectory>
+
+					<!-- false is default here, it prints some more information during the 
+						build -->
+					<verbose>false</verbose>
+
+					<!-- This is false by default, forces the plugin to generate the git.properties 
+						file. Note that the functional meaning of git.build.time becomes different -->
+					<!-- in a very subtle way (see later in this README) Generating file: 
+						target/classes/git.properties -->
+					<generateGitPropertiesFile>true</generateGitPropertiesFile>
+
+				</configuration>
+			</plugin>
+
 			<plugin>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-resources-plugin</artifactId>
