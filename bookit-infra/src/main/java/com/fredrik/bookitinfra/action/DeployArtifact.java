@@ -163,8 +163,7 @@ public final class DeployArtifact {
 
 		copyFile(session, localFile);
 		
-		System.out.println("Starting BookIT");
-		execute(session, "./start_bookit.sh", Duration.ofMillis(45 * 1000));
+		execute(session, "./start_bookit.sh", Duration.ofMillis(50 * 1000));
 	}
 
 	private static void copyFile(Session session, File localFile) throws JSchException {
@@ -318,6 +317,13 @@ public final class DeployArtifact {
 		exec.connect();	
 		
 		while (!exec.isEOF() && (Duration.between(timeoutAt, LocalTime.now()).toMillis() < 0)) {
+			while (in.available() > 0) {
+				byte[] tmp = new byte[1024];
+				int i = in.read(tmp, 0, 1024);
+				if (i < 0)
+					break;
+				System.out.print(new String(tmp, 0, i));
+			}
 			try {
 				Thread.sleep(1000);
 			} catch (Exception ee) {
@@ -327,10 +333,11 @@ public final class DeployArtifact {
 //		System.out.print(output);
 		
 		int availableBytes = in.available();
-		byte[] tmp = new byte[availableBytes];
-		int i = in.read(tmp, 0, availableBytes);
-		System.out.print(new String(tmp, 0, i));
-
+		if (availableBytes > 0) {
+			byte[] tmp = new byte[availableBytes];
+			int i = in.read(tmp, 0, availableBytes);
+			System.out.print(new String(tmp, 0, i));
+		}
 		System.out.println("exit-status: " + exec.getExitStatus());
 				
 //		byte[] tmp = new byte[1024];
