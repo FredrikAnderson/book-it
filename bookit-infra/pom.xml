@@ -1,0 +1,740 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ~ Copyright 2017 Volvo Group IT ~ ~ Licensed under the Volvo IT Corporate 
+	Source License (the "License"); ~ you may not use this file except in compliance 
+	with the License. ~ You may obtain a copy of the License at ~ ~ http://java.volvo.com/licenses/CORPORATE-SOURCE-LICENSE 
+	~ ~ Unless required by applicable law or agreed to in writing, software ~ 
+	distributed under the License is distributed on an "AS IS" BASIS, ~ WITHOUT 
+	WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. ~ See the 
+	License for the specific language governing permissions and ~ limitations 
+	under the License. -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.fredrik</groupId>
+	<artifactId>bookit-infra</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<name>bookit-infra</name>
+	<description>BookIT infra-support</description>
+
+	<!-- <packaging>pom</packaging> -->
+
+	<properties>
+		<postgresql.version>9.3-1102-jdbc4</postgresql.version>
+		<postgresql.deploy.name>postgresql-driver-93-${project.parent.artifactId}</postgresql.deploy.name>
+		<wmq.version>8.0.0.2</wmq.version>
+		<wmq.deploy.name>wmq.jmsra-${project.parent.artifactId}.rar</wmq.deploy.name>
+
+		<activemq-rar.version>5.7.0.fuse-71-047</activemq-rar.version>
+		<activemq-rar.deploy.name>activemq-ra-${project.parent.artifactId}.rar</activemq-rar.deploy.name>
+
+		<fabric8.mode>openshift</fabric8.mode>
+		<fabric8.build.strategy>docker</fabric8.build.strategy>
+
+		<jib.console>plain</jib.console>
+
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+
+		<sonar.skip>true</sonar.skip>
+	</properties>
+
+	<build>
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.0.2</version>
+				<executions>
+					<!-- <execution> -->
+					<!-- <id>copy</id> -->
+					<!-- <phase>generate-resources</phase> -->
+					<!-- <goals> -->
+					<!-- <goal>copy</goal> -->
+					<!-- </goals> -->
+					<!-- <configuration> -->
+					<!-- <artifactItems> -->
+					<!-- <artifactItem> -->
+					<!-- <groupId>com.volvo.tm</groupId> -->
+					<!-- <artifactId>tm-uiservice</artifactId> -->
+					<!-- <version>${project.parent.version}</version> -->
+					<!-- <type>war</type> -->
+					<!-- <destFileName>tm-uiservice.war</destFileName> -->
+					<!-- </artifactItem> -->
+					<!-- <artifactItem> -->
+					<!-- <groupId>com.volvo.tm</groupId> -->
+					<!-- <artifactId>tm-web</artifactId> -->
+					<!-- <version>${project.parent.version}</version> -->
+					<!-- <type>war</type> -->
+					<!-- <destFileName>tm-web.war</destFileName> -->
+					<!-- </artifactItem> -->
+					<!-- <artifactItem> -->
+					<!-- <groupId>com.volvo.tm</groupId> -->
+					<!-- <artifactId>tm-root</artifactId> -->
+					<!-- <version>${project.parent.version}</version> -->
+					<!-- <type>war</type> -->
+					<!-- <destFileName>tm-root.war</destFileName> -->
+					<!-- </artifactItem> -->
+					<!-- <artifactItem> -->
+					<!-- <groupId>com.volvo.tm</groupId> -->
+					<!-- <artifactId>tm-uiservice-capacity</artifactId> -->
+					<!-- <version>${project.parent.version}</version> -->
+					<!-- <type>war</type> -->
+					<!-- <destFileName>tm-uiservice-capacity.war</destFileName> -->
+					<!-- </artifactItem> -->
+					<!-- </artifactItems> -->
+					<!-- <outputDirectory>${project.build.directory}/wars</outputDirectory> -->
+					<!-- <overWriteReleases>false</overWriteReleases> -->
+					<!-- <overWriteSnapshots>true</overWriteSnapshots> -->
+					<!-- </configuration> -->
+					<!-- </execution> -->
+					<!-- <execution> -->
+					<!-- <id>unpack</id> -->
+					<!-- <phase>generate-resources</phase> -->
+					<!-- <goals> -->
+					<!-- <goal>unpack</goal> -->
+					<!-- </goals> -->
+					<!-- <configuration> -->
+					<!-- <artifactItems> -->
+					<!-- <artifactItem> -->
+					<!-- <groupId>com.volvo.tm</groupId> -->
+					<!-- <artifactId>tm-uiservice</artifactId> -->
+					<!-- <version>${project.parent.version}</version> -->
+					<!-- <type>war</type> -->
+					<!-- <overWrite>true</overWrite> -->
+					<!-- <outputDirectory>${project.build.directory}/dependency</outputDirectory> -->
+					<!-- </artifactItem> -->
+					<!-- </artifactItems> -->
+					<!-- </configuration> -->
+					<!-- </execution> -->
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>infra</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.6.0</version>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>java</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<mainClass>com.fredrik.bookitinfra.action.InfraManagement</mainClass>
+							<arguments>
+								<arguments>${env}</arguments>
+								<arguments>${swversion}</arguments>
+							</arguments>
+						</configuration>
+					</plugin>
+
+				</plugins>
+			</build>
+		</profile>
+
+		<!-- Runs liquibase on an environment. Could be triggered together with 
+			env property, like localdev, dev, test or qa Example: mvn install -Pliquibase-postgres 
+			-Denv=localdev -Doperation=status mvn install -Pliquibase-postgres -Denv=dev 
+			-Doperation=status See also: http://www.liquibase.org/documentation/maven/index.html -->
+		<profile>
+			<id>liquibase</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>3.0.2</version>
+						<executions>
+							<execution>
+								<id>copy-resources</id>
+								<!-- here the phase you need -->
+								<phase>process-resources</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${basedir}/target/test-classes/liquibase</outputDirectory>
+									<filtering>false</filtering>
+									<resources>
+										<resource>
+											<directory>${basedir}/../tm-config/src/main/resources/liquibase</directory>
+											<includes>
+												<include>*changelog*.xml</include>
+											</includes>
+										</resource>
+										<resource>
+											<directory>${basedir}/../tm-domain-user/src/main/resources/liquibase</directory>
+											<includes>
+												<include>*changelog*.xml</include>
+											</includes>
+										</resource>
+										<resource>
+											<directory>${basedir}/../tm-domain-common/src/main/resources/liquibase</directory>
+											<includes>
+												<include>*changelog*.xml</include>
+											</includes>
+										</resource>
+										<resource>
+											<directory>${basedir}/../tm-domain-product/src/main/resources/liquibase</directory>
+											<includes>
+												<include>*changelog*.xml</include>
+											</includes>
+										</resource>
+										<resource>
+											<directory>${basedir}/../tm-domain-testmgt/src/main/resources/liquibase</directory>
+											<includes>
+												<include>*changelog*.xml</include>
+											</includes>
+										</resource>
+										<resource>
+											<directory>${basedir}/../tm-domain-testobject/src/main/resources/liquibase</directory>
+											<includes>
+												<include>*changelog*.xml</include>
+											</includes>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>properties-maven-plugin</artifactId>
+						<version>1.0.0</version>
+						<executions>
+							<execution>
+								<phase>initialize</phase>
+								<goals>
+									<goal>read-project-properties</goal>
+								</goals>
+								<configuration>
+									<files>
+										<file>../tm-config/src/main/resources/properties/env/${env}.properties</file>
+									</files>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>org.liquibase</groupId>
+						<artifactId>liquibase-maven-plugin</artifactId>
+						<version>${liquibase.version}</version>
+						<configuration>
+							<url>${datasource.url}</url>
+							<!-- <defaultSchemaName>${datasource.username}</defaultSchemaName> -->
+							<driver>org.postgresql.Driver</driver>
+							<username>${datasource.username}</username>
+							<password>${datasource.password}</password>
+							<changeLogDir>${basedir}/target/test-classes/</changeLogDir>
+							<changeLogFile>liquibase/changelog-master.xml</changeLogFile>
+							<promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
+							<contexts>${env}</contexts>
+							<verbose>true</verbose>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>install</phase>
+								<goals>
+									<goal>${operation}</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<!-- Deploys an postgresql jdbc driver on a JBoss server. Should be triggered 
+			together with one of the profiles localdev, dev, test or qa Example: mvn 
+			install -Pdeploy-postgres-driver,localdev mvn install -Pdeploy-postgres-driver,dev 
+			mvn install -Pdeploy-postgres-driver,test mvn install -Pdeploy-postgres-driver,qa -->
+		<profile>
+			<id>deploy-postgres-driver</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.wildfly.plugins</groupId>
+						<artifactId>wildfly-maven-plugin</artifactId>
+						<version>1.1.0.Final</version>
+						<configuration>
+							<hostname>${jboss_host}</hostname>
+							<port>9999</port>
+							<!-- Note: If username/password is not given here, the plugin will 
+								prompt the user for this during runtime -->
+							<!-- <username></username> <password></password> -->
+						</configuration>
+						<executions>
+							<!-- Deploy the db driver -->
+							<execution>
+								<id>deploy-driver</id>
+								<phase>install</phase>
+								<configuration>
+									<groupId>org.postgresql</groupId>
+									<artifactId>postgresql</artifactId>
+									<name>${postgresql.deploy.name}</name>
+								</configuration>
+								<goals>
+									<goal>deploy-artifact</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<!-- Deploys the server war-file. Example: mvn install -Pdeploy-postgres-driver,localdev 
+			mvn install -Pdeploy-postgres-driver,dev mvn install -Pdeploy-postgres-driver,test 
+			mvn install -Pdeploy-postgres-driver,qa -->
+		<profile>
+			<id>deploy-tm</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.wildfly.plugins</groupId>
+						<artifactId>wildfly-maven-plugin</artifactId>
+						<version>1.1.0.Final</version>
+						<configuration>
+							<hostname>${jboss_host}</hostname>
+							<port>9999</port>
+							<!-- Note: If username/password is not given here, the plugin will 
+								prompt the user for this during runtime -->
+							<!-- <username></username> <password></password> -->
+						</configuration>
+						<executions>
+							<!-- Deploy the UI interface -->
+							<execution>
+								<id>deploy-uiservice</id>
+								<phase>install</phase>
+								<configuration>
+									<groupId>com.volvo.tm</groupId>
+									<artifactId>tm-uiservice</artifactId>
+									<name>tm-uiservice.war</name>
+									<runtimeName>tm-uiservice.war</runtimeName>
+									<!-- <force>true</force> -->
+								</configuration>
+								<goals>
+									<goal>deploy-artifact</goal>
+								</goals>
+							</execution>
+							<!-- Deploy the UI web -->
+							<execution>
+								<id>deploy-web</id>
+								<phase>install</phase>
+								<configuration>
+									<groupId>com.volvo.tm</groupId>
+									<artifactId>tm-web</artifactId>
+									<name>tm-web.war</name>
+									<runtimeName>tm-web.war</runtimeName>
+									<!-- <force>true</force> -->
+								</configuration>
+								<goals>
+									<goal>deploy-artifact</goal>
+								</goals>
+							</execution>
+							<!-- Deploy the UI web -->
+							<execution>
+								<id>deploy-root</id>
+								<phase>install</phase>
+								<configuration>
+									<groupId>com.volvo.tm</groupId>
+									<artifactId>tm-root</artifactId>
+									<name>tm-root.war</name>
+									<runtimeName>tm-root.war</runtimeName>
+									<!-- <force>true</force> -->
+								</configuration>
+								<goals>
+									<goal>deploy-artifact</goal>
+								</goals>
+							</execution>
+							<!-- Deploy the UI service capacity -->
+							<!-- <execution> -->
+							<!-- <id>deploy-uiservice-capacity</id> -->
+							<!-- <phase>install</phase> -->
+							<!-- <configuration> -->
+							<!-- <groupId>com.volvo.tm</groupId> -->
+							<!-- <artifactId>tm-uiservice-capacity</artifactId> -->
+							<!-- <name>tm-uiservice-capacity.war</name> -->
+							<!-- <runtimeName>tm-uiservice-capacity.war</runtimeName> -->
+							<!-- <force>true</force> -->
+							<!-- </configuration> -->
+							<!-- <goals> -->
+							<!-- <goal>deploy-artifact</goal> -->
+							<!-- </goals> -->
+							<!-- </execution> -->
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>docker-build</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>io.fabric8</groupId>
+						<artifactId>fabric8-maven-plugin</artifactId>
+						<version>3.5.30</version>
+						<executions>
+							<execution>
+								<id>docker-build</id>
+								<goals>
+									<goal>build</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<images>
+								<image>
+									<name>testmanager/testmanager</name>
+									<alias>dockerfile</alias>
+									<build>
+										<!-- <filter>@</filter> -->
+										<dockerFileDir>${project.basedir}</dockerFileDir>
+										<assembly>
+											<descriptorRef>artifact</descriptorRef>
+											<inline>
+												<dependencySets>
+													<dependencySet>
+														<includes>
+															<include>com.volvo.tm.uiservice:tm-uiservice</include>
+														</includes>
+														<outputDirectory>.</outputDirectory>
+														<outputFileNameMapping>tm-uiservice.war</outputFileNameMapping>
+													</dependencySet>
+													<dependencySet>
+														<includes>
+															<include>com.volvo.tm.web:tm-web</include>
+														</includes>
+														<outputDirectory>.</outputDirectory>
+														<outputFileNameMapping>tm-web.war</outputFileNameMapping>
+													</dependencySet>
+												</dependencySets>
+											</inline>
+										</assembly>
+									</build>
+									<run>
+										<ports>
+											<port>8080:8080</port>
+										</ports>
+									</run>
+								</image>
+							</images>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>delete-env</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.6.0</version>
+						<executions>
+							<execution>
+								<phase>install</phase>
+								<goals>
+									<goal>java</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<mainClass>com.volvo.tm.servers.action.DeleteEnv</mainClass>
+							<arguments>
+								<arguments>${env}</arguments>
+								<arguments>${passwd}</arguments>
+							</arguments>
+						</configuration>
+					</plugin>
+
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>create-env</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.6.0</version>
+						<executions>
+							<execution>
+								<phase>install</phase>
+								<goals>
+									<goal>java</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<mainClass>com.volvo.tm.servers.action.CreateEnv</mainClass>
+							<arguments>
+								<arguments>${env}</arguments>
+								<arguments>${swversion}</arguments>
+							</arguments>
+						</configuration>
+					</plugin>
+
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>deploy-to-openshift</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.6.0</version>
+						<executions>
+							<execution>
+								<phase>install</phase>
+								<goals>
+									<goal>java</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<mainClass>com.volvo.tm.servers.action.DeployToOpenshift</mainClass>
+							<arguments>
+								<arguments>${env}</arguments>
+								<arguments>${swversion}</arguments>
+								<arguments>${passwd}</arguments>
+							</arguments>
+						</configuration>
+					</plugin>
+
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>build-docker-image</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.6.0</version>
+						<executions>
+							<execution>
+								<phase>install</phase>
+								<goals>
+									<goal>java</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<mainClass>com.volvo.tm.servers.action.BuildDockerImage</mainClass>
+							<arguments>
+								<arguments>${swversion}</arguments>
+							</arguments>
+						</configuration>
+					</plugin>
+
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>build-docker-image-jib</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.google.cloud.tools</groupId>
+						<artifactId>jib-maven-plugin</artifactId>
+						<version>1.0.2</version>
+						<configuration>
+							<!-- Adding files to src/main/jib with structure like /home/jboss 
+								would copy into image to /home/jboss. Should copy: cli script, war-files, 
+								TM-testdata, TM start script -->
+							<!-- -->
+							<!-- Copies files from 'target/jib-root' instead of 'src/main/jib' -->
+							<extraDirectory>
+								<path>${project.basedir}/target/jib-root</path>
+								<permissions>
+									<!-- <permission> -->
+									<!-- <file>/path/on/container/to/fileA</file> -->
+									<!-- <mode>755</mode> Read/write/execute for owner, read/execute 
+										for group/other -->
+									<!-- </permission> -->
+									<!-- <permission> -->
+									<!-- <file>/path/to/another/file</file> -->
+									<!-- <mode>644</mode> Read/write for owner, read-only for group/other -->
+									<!-- </permission> -->
+								</permissions>
+							</extraDirectory>
+							<!-- -->
+							<allowInsecureRegistries>true</allowInsecureRegistries>
+							<from>
+								<image>mavenqa.got.volvo.net:18443/jboss-eap-7/eap70-openshift:latest</image>
+							</from>
+							<container>
+								<useCurrentTimestamp>true</useCurrentTimestamp>
+								<user>185:0</user>
+								<appRoot>/home/jboss/server</appRoot>
+								<workingDirectory>/home/jboss</workingDirectory>
+								<!-- <environment> <container>oci</container> <JBOSS_IMAGE_NAME>jboss-eap-7/eap70-openshift</JBOSS_IMAGE_NAME> 
+									<JBOSS_IMAGE_VERSION>1.7</JBOSS_IMAGE_VERSION> <HOME>/home/jboss</HOME> <JAVA_HOME>/usr/lib/jvm/java-1.8.0</JAVA_HOME> 
+									<JAVA_VENDOR>openjdk</JAVA_VENDOR> <JAVA_VERSION>1.8.0</JAVA_VERSION> <LAUNCH_JBOSS_IN_BACKGROUND>true</LAUNCH_JBOSS_IN_BACKGROUND> 
+									<JBOSS_PRODUCT>eap</JBOSS_PRODUCT> <JBOSS_EAP_VERSION>7.0.9.GA</JBOSS_EAP_VERSION> 
+									<PRODUCT_VERSION>7.0.9.GA</PRODUCT_VERSION> <JBOSS_HOME>/opt/eap</JBOSS_HOME> 
+									</environment> -->
+								<ports>8080/tcp,8082/tcp</ports>
+								<entrypoint>sh,/home/jboss/server/start_testmanager.sh</entrypoint>
+							</container>
+							<to>
+								<image>mavenqa.got.volvo.net:18444/tm/testmanager-jib</image>
+								<auth>
+									<username>cs-ws-s-docker</username>
+									<password>N9K7b9J7</password>
+								</auth>
+							</to>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>install</phase>
+								<goals>
+									<!-- Docker build and push to repo -->
+									<!-- <goal>build</goal> -->
+									<!-- Docker build and import into local docker repo -->
+									<goal>dockerBuild</goal>
+									<!-- <goal>buildTar</goal> -->
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+
+		<profile>
+			<id>versions</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.6.0</version>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>java</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<mainClass>com.volvo.tm.servers.action.TMVersions</mainClass>
+						</configuration>
+					</plugin>
+
+				</plugins>
+			</build>
+		</profile>
+
+	</profiles>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>2.9.8</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-yaml</artifactId>
+			<version>2.9.8</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<!-- <version>3.8.1</version> -->
+		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>org.apache.commons</groupId> -->
+		<!-- <artifactId>commons-dbcp2</artifactId> -->
+		<!-- <version>${apache.commons.dbcp2}</version> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.projectlombok</groupId> -->
+		<!-- <artifactId>lombok</artifactId> -->
+		<!-- <optional>true</optional> -->
+		<!-- </dependency> -->
+
+
+		<!-- Postgresql driver needed for the jboss-as-maven-plugin and liquibase-maven-plugin -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>${postgresql.version}</version>
+		</dependency>
+		<!-- Postgresql driver needed for the jboss-as-maven-plugin and liquibase-maven-plugin -->
+
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.5.0-b01</version>
+		</dependency>
+
+		<!-- <dependency> -->
+		<!-- <groupId>commons-io</groupId> -->
+		<!-- <artifactId>commons-io</artifactId> -->
+		<!-- <version>2.0.1</version> -->
+		<!-- </dependency> -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.8.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.jgit</groupId>
+			<artifactId>org.eclipse.jgit</artifactId>
+			<version>4.11.6.201812241910-r</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.6.3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.jcraft</groupId>
+			<artifactId>jsch</artifactId>
+			<version>0.1.55</version>
+		</dependency>
+	</dependencies>
+
+</project>

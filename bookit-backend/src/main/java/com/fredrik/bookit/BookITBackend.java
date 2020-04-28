@@ -98,27 +98,29 @@ public class BookITBackend implements CommandLineRunner {
 
 	UserMapper userMapper = Mappers.getMapper(UserMapper.class);
 
+	
+	public boolean containsProjectName(final List<Project> list, final String name) {
+	    return list.stream().map(Project::getName).filter(name::equals).findFirst().isPresent();
+	}
+	
 	@Transactional
 	private void loadInitData() {
 
 		// save a couple of customers
-//		repository.save(new Resource("Jack"));
-//		repository.save(new Resource("Chloe"));
-//		repository.save(new Resource("Kim"));
-//
-//		// fetch all customers
-//		log.info("Resources found with findAll():");
-//		log.info("-------------------------------");
-//		for (Resource res : repository.findAll()) {
-//			log.info(res.toString());
-//		}
-//		log.info("");
-
-		// save a couple of customers
-		projRepo.save(new Project(1L, "Proj #1", LocalDate.now().minusDays(1), LocalDate.now().plusDays(5)));
-		projRepo.save(new Project(2L, "Project testing", LocalDate.now().minusDays(2), LocalDate.now().plusMonths(2)));
-		projRepo.save(new Project(3L, "Project three", LocalDate.now().minusMonths(2), LocalDate.now().plusDays(10)));
-
+		List<Project> all = projRepo.findAll();
+		
+		String projName = "Proj #1";
+		if (!containsProjectName(all, projName)) {
+			projRepo.save(new Project(projName, LocalDate.now().minusDays(1), LocalDate.now().plusDays(5)));			
+		}
+		projName = "Project testing";
+		if (!containsProjectName(all, projName)) {
+			projRepo.save(new Project(projName, LocalDate.now().minusDays(1), LocalDate.now().plusDays(5)));
+		}
+		projName = "Project three";
+		if (!containsProjectName(all, projName)) {
+			projRepo.save(new Project("Project three", LocalDate.now().minusMonths(2), LocalDate.now().plusDays(10)));
+		}
 		
 		// save a couple of items
 		ItemProperties props = ItemProperties.builder()
@@ -181,6 +183,16 @@ public class BookITBackend implements CommandLineRunner {
 		UserDTO userDTO = userMapper.mapEntityToDTO(myself);
 		userDTO = userService.save(userDTO);
 
+		User magnus = new User();
+		magnus.setUserid("Magnus");
+		magnus.setName("Magnus Jarkvist");
+		magnus.setEmail("magnus@meproduction.se");
+		magnus.setRole("admin");
+		
+		userDTO = userMapper.mapEntityToDTO(magnus);
+		userDTO = userService.save(userDTO);
+
+		
 		User booker = new User();
 		booker.setUserid("booker");
 		booker.setName("Mr Booker");

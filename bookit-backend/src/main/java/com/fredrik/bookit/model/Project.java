@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 public class Project {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 	
     private String name;
@@ -48,8 +48,7 @@ public class Project {
     	this.name = name;
     }    
 
-    public Project(Long id, String name, LocalDate start, LocalDate end) {
-    	this.id   		= id;
+    public Project(String name, LocalDate start, LocalDate end) {
     	this.name 		= name;
     	this.startDate 	= start;
     	this.endDate	= end;
