@@ -11,6 +11,7 @@ import javax.transaction.Transactional;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -79,7 +80,7 @@ public class BookITBackend implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		log.info("Command runner");
 
-		loadInitData();
+//		loadInitData();
 	}
 
 //	@Inject
@@ -91,8 +92,11 @@ public class BookITBackend implements CommandLineRunner {
 	@Inject
 	ItemService itemService;
 
-	ItemMapper itemMapper = Mappers.getMapper(ItemMapper.class);
-
+//	ItemMapper itemMapper = Mappers.getMapper(ItemMapper.class);
+//	Mapper itemMapper; 
+	@Autowired
+	ItemMapper itemMapper;
+	
 	@Inject
 	UserService userService;
 
@@ -104,7 +108,8 @@ public class BookITBackend implements CommandLineRunner {
 	}
 	
 	@Transactional
-	private void loadInitData() {
+	@Bean
+	public void loadInitData() {
 
 		// save a couple of customers
 		List<Project> all = projRepo.findAll();

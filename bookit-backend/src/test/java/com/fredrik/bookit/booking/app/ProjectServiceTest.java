@@ -2,71 +2,77 @@ package com.fredrik.bookit.booking.app;
 
 import static org.junit.Assert.assertEquals;
 
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.fredrik.bookit.hello.IntegrationTest;
-import com.fredrik.bookit.model.Item;
-import com.fredrik.bookit.model.ItemProperties;
-import com.fredrik.bookit.model.mapper.ItemMapper;
 import com.fredrik.bookit.web.rest.model.ItemDTO;
+import com.fredrik.bookit.web.rest.model.ProjectDTO;
 
 import lombok.extern.slf4j.Slf4j;
 
 @RunWith(SpringRunner.class)
 @IntegrationTest
 @Slf4j
-public class ItemServiceTest {
+public class ProjectServiceTest {
 
 //	ItemMapper itemMapper = Mappers.getMapper(ItemMapper.class);
-//	Mapper itemMapper;
-	
-	@Autowired
-	ItemMapper itemMapper;
-	
+
+	@Inject 
+	private ProjectService projectService;
+
 	@Inject 
 	private ItemService itemService;
-	
+
 	@Test 
-	public void saveItems_correctly() {
-		// Given
-		int nrOfItemProperties = itemService.nrOfItemProperties();
-		// save a couple of items
-		ItemProperties props = ItemProperties.builder()
-			.name("Affisch")
-			.description("Stor affisch")
-//			.id()
-			.height(1.0)
-			.width(2.0)
-			.length(3.0)
-			.build();
-
-		Item entity = new Item(0L, "EAN 1234", props, "Hylla 2A");
-		ItemDTO itemDTO = itemMapper.mapEntityToDTO(entity);
+	public void twoTimeOverlappingProjects_bookSameItemToBoth_lastProjectShouldNotBookItem() {
+		// Arrange/Given
+		List<ProjectDTO> projects = projectService.getProjects();
+		int sizeBefore = projects.size();
 		
-		// When
-		ItemDTO savedDto = itemService.save(itemDTO);
+		ProjectDTO p1 = new ProjectDTO();
+		p1.setName("P1");
+		p1.setStartDate(LocalDate.of(2020, 04, 01));
+		p1.setEndDate(LocalDate.of(2020, 05, 01));
+		p1.setBookedItems(Lists.emptyList());
+		p1 = projectService.saveProject(p1);
 
-		entity = new Item(0L, "EAN 4321", props, "Hylla 2B");
-		itemDTO = itemMapper.mapEntityToDTO(entity);
-		savedDto = itemService.save(itemDTO);
+		ProjectDTO p2 = new ProjectDTO();
+		p2.setName("P2");
+		p2.setStartDate(LocalDate.of(2020, 04, 15));
+		p2.setEndDate(LocalDate.of(2020, 05, 15));
+		p2.setBookedItems(Lists.emptyList());
+		p2 = projectService.saveProject(p2);
 
-		entity = new Item(0L, "EAN 5555", props, "Hylla 2C");
-		itemDTO = itemMapper.mapEntityToDTO(entity);
-		savedDto = itemService.save(itemDTO);
-
-		// Then
-		log.info("All init data, done.");
-		int nrOfItemPropertiesAfter = itemService.nrOfItemProperties();
-
-		assertEquals(1, nrOfItemPropertiesAfter - nrOfItemProperties); 		
+		projects = projectService.getProjects();
+		int sizeAfter = projects.size();
 		
+		// Then 2 projects should have been saved
+		assertEquals(2, sizeAfter - sizeBefore); 		
+		
+		ItemDTO itemDTO = itemService.findAll().get(0);		
+		
+		// Act/When
+		p1 = projectService.bookItemToProject(p1.getId(), itemDTO.getId());
+		try {
+			p2 = projectService.bookItemToProject(p2.getId(), itemDTO.getId());
+		} catch (Throwable thr) {
+			log.info ("Correctly got an exception trying to book same time: ", thr);
+		}
+
+		itemDTO = itemService.findOne(itemDTO.getId());		
+		
+		// Assert/Then
+		assertEquals(1, itemDTO.getProjects().size()); 		
+				
 	}
 
 	@Test 
@@ -87,13 +93,13 @@ public class ItemServiceTest {
 //		ItemDTO itemDTO = itemMapper.mapEntityToDTO(entity);
 		
 		// When
-		List<ItemDTO> list = itemService.findBy("ham");
-
-		assertEquals(1, list.size()); 		
-
-		list = itemService.findBy("gam");
-
-		assertEquals(0, list.size()); 		
+//		List<ItemDTO> list = projectService.findBy("ham");
+//
+//		assertEquals(1, list.size()); 		
+//
+//		list = projectService.findBy("gam");
+//
+//		assertEquals(0, list.size()); 		
 		
 	}
 

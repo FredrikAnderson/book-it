@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -36,13 +37,13 @@ public class Project {
     private LocalDate endDate;
 
     @EqualsAndHashCode.Exclude
-    @ManyToMany
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE } )
     @JoinTable(
     		name = "project_booked_items", 
-    		joinColumns = @JoinColumn(name = "project_id"), 
-    		inverseJoinColumns = @JoinColumn(name = "item_id"))
-    private Set<Item> bookedItems = new HashSet<Item>();
-
+    		joinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id"), 
+    		inverseJoinColumns = @JoinColumn(name = "item_id", referencedColumnName = "id"))
+    @Builder.Default
+    private Set<Item> bookedItems = new HashSet<>();
     
     public Project(String name) {
     	this.name = name;
@@ -56,10 +57,12 @@ public class Project {
 
     public void bookItem(Item item) {
     	bookedItems.add(item);
+    	item.getProjects().add(this);
     }
 
     public void cancelItem(Item item) {
     	bookedItems.remove(item);
+    	item.getProjects().remove(this);
     }
 
 }

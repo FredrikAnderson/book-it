@@ -30,7 +30,7 @@
 		<!-- Lombok -->
 <!-- 		<lombok.version>1.18.4</lombok.version> -->
 		<!-- Mapstruct -->
-        <org.mapstruct.version>1.2.0.Final</org.mapstruct.version>
+        <org.mapstruct.version>1.3.1.Final</org.mapstruct.version>
 
 	</properties>
 
@@ -52,17 +52,17 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		
-<!-- 		<dependency> -->
-<!-- 			<groupId>net.bull.javamelody</groupId> -->
-<!-- 			<artifactId>javamelody-spring-boot-starter</artifactId> -->
-<!-- 			<version>1.79.0</version> -->
-<!-- 		</dependency> -->
-
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<scope>runtime</scope>
+			<groupId>net.bull.javamelody</groupId>
+			<artifactId>javamelody-spring-boot-starter</artifactId>
+			<version>1.79.0</version>
 		</dependency>
+
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.springframework.boot</groupId> -->
+<!-- 			<artifactId>spring-boot-devtools</artifactId> -->
+<!-- 			<scope>runtime</scope> -->
+<!-- 		</dependency> -->
 		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -127,11 +127,17 @@
 <!-- 	      <version>1.5.21</version> -->
 <!-- 	    </dependency> -->
 	    
-		<dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct-jdk8</artifactId>
-            <version>${org.mapstruct.version}</version>
-        </dependency>
+			<dependency>
+	            <groupId>org.mapstruct</groupId>
+	            <artifactId>mapstruct</artifactId>
+	            <version>${org.mapstruct.version}</version>
+	        </dependency>
+
+<!-- 		<dependency> -->
+<!--             <groupId>org.mapstruct</groupId> -->
+<!--             <artifactId>mapstruct-jdk8</artifactId> -->
+<!--             <version>${org.mapstruct.version}</version> -->
+<!--         </dependency> -->
       <dependency>
         <groupId>com.google.guava</groupId>
         <artifactId>guava</artifactId>
@@ -142,6 +148,13 @@
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.fredrik</groupId>
+			<artifactId>bookit-support</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		
 	</dependencies>
 
 	<dependencyManagement>
@@ -220,6 +233,7 @@
 				<executions>
 					<execution>
 						<id>generate-jaxrs-from-openapi</id>
+					    <phase>generate-sources</phase>
 						<goals>
 							<goal>generate</goal>
 						</goals>
@@ -274,6 +288,35 @@
 			    </execution>
 			  </executions>
 			</plugin>		
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+<!-- 				<version>1.6.0</version> -->
+				<executions>
+					<execution>
+						<id>additional-generation-from-openAPI-to-Json</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<mainClass>com.fredrik.bookit.support.OpenAPIToJsonSupport</mainClass>
+<!-- 					<arguments> -->
+<!-- 						<arguments>${env}</arguments> -->
+<!-- 						<arguments>${swversion}</arguments> -->
+<!-- 					</arguments> -->
+					<systemProperties>
+						<systemProperty>
+							<key>project.basedir</key>
+							<value>${project.basedir}</value>
+						</systemProperty>
+					</systemProperties>
+				</configuration>
+			</plugin>
+
 
 			<!-- -->
 			<plugin>

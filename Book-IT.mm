@@ -120,6 +120,33 @@
 <node CREATED="1568549649870" ID="ID_1903599218" MODIFIED="1568549657643" TEXT="In Progress">
 <node CREATED="1568549658843" ID="ID_1389628654" MODIFIED="1568549675147" TEXT="Add generated OpenAPI skeleton target to build path"/>
 </node>
+<node CREATED="1588413190732" ID="ID_466316914" MODIFIED="1588413281402" TEXT="Jackson cyclic bi-driectional issue">
+<richcontent TYPE="NOTE"><html>
+  <head>
+    
+  </head>
+  <body>
+    <p>
+      <a href="https://stackoverflow.com/questions/10065002/jackson-serialization-of-entities-with-birectional-relationships-avoiding-cyc">https://stackoverflow.com/questions/10065002/jackson-serialization-of-entities-with-birectional-relationships-avoiding-cyc</a>
+    </p>
+    <p>
+      <a href="https://www.logicbig.com/tutorials/misc/jackson/json-identity-info-annotation.html">https://www.logicbig.com/tutorials/misc/jackson/json-identity-info-annotation.html</a>
+    </p>
+    <p>
+      
+    </p>
+    <p>
+      
+    </p>
+    <p>
+      <font face="SansSerif">Add</font>
+    </p>
+    <pre class="lang-java prettyprint prettyprinted" style="margin-top: 0px; margin-right: 0px; margin-bottom: 0; margin-left: 0px; padding-top: 12px; padding-bottom: 12px; padding-right: 8px; padding-left: 8px; border-top-style: none; border-top-width: 0px; border-right-style: none; border-right-width: 0px; border-bottom-style: none; border-bottom-width: 0px; border-left-style: none; border-left-width: 0px; font-style: normal; font-weight: 400; line-height: inherit; font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, sans-serif; font-size: 13px; vertical-align: baseline; display: block; color: rgb(36, 39, 41); letter-spacing: normal; text-align: left; text-indent: 0px; text-transform: none; word-spacing: 0px"><code style="margin-top: 0px; margin-right: 0px; margin-bottom: 0px; margin-left: 0px; padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 0px; border-top-style: none; border-top-width: 0px; border-right-style: none; border-right-width: 0px; border-bottom-style: none; border-bottom-width: 0px; border-left-style: none; border-left-width: 0px; font-style: inherit; font-variant: inherit; font-weight: normal; line-height: inherit; font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, sans-serif; font-size: 13px; vertical-align: baseline; white-space: inherit"><font face="SansSerif" size="13px" color="black">@JsonIdentityInfo(generator=</font><font face="SansSerif" size="13px" color="rgb(43, 145, 175)">ObjectIdGenerators</font><font face="SansSerif" size="13px" color="black">.</font><font face="SansSerif" size="13px" color="rgb(43, 145, 175)">PropertyGenerator</font><font face="SansSerif" size="13px" color="black">.class, property=&quot;id&quot;)</font></code></pre>
+    <font face="SansSerif">to ProjectDTO and ItemDTO and then it works.<br class="Apple-interchange-newline" face="SansSerif" /></font>
+  </body>
+</html>
+</richcontent>
+</node>
 </node>
 </node>
 </map>

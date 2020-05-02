@@ -3,15 +3,27 @@ package com.fredrik.bookit.model.mapper;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.mapstruct.factory.Mappers;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.junit4.SpringRunner;
 
+import com.fredrik.bookit.hello.IntegrationTest;
 import com.fredrik.bookit.model.Item;
 import com.fredrik.bookit.model.ItemProperties;
 import com.fredrik.bookit.web.rest.model.ItemDTO;
 
+import lombok.extern.slf4j.Slf4j;
+
+@RunWith(SpringRunner.class)
+@IntegrationTest
+@Slf4j
 public class ItemMapperTest {
 
-	ItemMapper itemMapper = Mappers.getMapper(ItemMapper.class);
+//	ItemMapper itemMapper = Mappers.getMapper(ItemMapper.class);
+//	Mapper itemMapper;
+	
+	@Autowired
+	ItemMapper itemMapper;
 	
 	@Test
 	public void fullItemToItemProperties_correctly() {

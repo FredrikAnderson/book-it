@@ -35,7 +35,7 @@ public class Item {
     
     @EqualsAndHashCode.Exclude
     @ManyToMany(mappedBy = "bookedItems")    
-    private Set<Project> project = new HashSet<>();
+    private Set<Project> projects = new HashSet<>();
     
     public Item(ItemProperties properties) {
     	this.properties = properties;

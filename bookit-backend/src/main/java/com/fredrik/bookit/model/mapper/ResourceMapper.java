@@ -6,9 +6,7 @@ import com.fredrik.bookit.model.Resource;
 import com.fredrik.bookit.web.rest.model.ResourceDTO;
 
 
-@Mapper
-public interface ResourceMapper {
+@Mapper(componentModel = "spring")
+public interface ResourceMapper extends BaseMapper<ResourceDTO, Resource> {
 
-	ResourceDTO toResourceDTO(Resource resource);
-    
 }

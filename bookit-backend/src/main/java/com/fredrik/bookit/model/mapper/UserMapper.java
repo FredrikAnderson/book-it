@@ -5,11 +5,7 @@ import org.mapstruct.Mapper;
 import com.fredrik.bookit.model.User;
 import com.fredrik.bookit.web.rest.model.UserDTO;
 
-@Mapper
-public interface UserMapper {
-
-	UserDTO mapEntityToDTO(User entity);
-
-	User mapDTOToEntity(UserDTO dto);
+@Mapper(componentModel = "spring")
+public interface UserMapper extends BaseMapper<UserDTO, User> {
 
 }

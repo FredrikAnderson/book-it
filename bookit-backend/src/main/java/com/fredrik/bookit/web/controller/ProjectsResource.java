@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.fredrik.bookit.booking.app.ProjectService;
 import com.fredrik.bookit.web.rest.api.ProjectsApi;
@@ -75,9 +76,14 @@ public class ProjectsResource implements ProjectsApi {
 	@Override
 	public ResponseEntity<ProjectDTO> bookItemToProject(Long id, Long item) {
 
-		ProjectDTO projectDTO = projectService.bookItemToProject(id, item);
+		try {
+			ProjectDTO projectDTO = projectService.bookItemToProject(id, item);
+			return ResponseEntity.ok(projectDTO);
 
-		return ResponseEntity.ok(projectDTO);
+		} catch (RuntimeException rexcep) {
+			throw new ResponseStatusException(
+			           HttpStatus.NOT_ACCEPTABLE , rexcep.getMessage(), rexcep.getCause());
+		}
 	}
 
 	@Override

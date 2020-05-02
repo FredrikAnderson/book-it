@@ -9,15 +9,13 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fredrik.bookit.infra.ItemRepository;
 import com.fredrik.bookit.model.Item;
 import com.fredrik.bookit.model.ItemProperties;
-import com.fredrik.bookit.model.Project;
 import com.fredrik.bookit.model.mapper.ItemMapper;
 import com.fredrik.bookit.web.rest.model.ItemDTO;
-import com.fredrik.bookit.web.rest.model.ProjectDTO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,8 +26,12 @@ public class ItemServiceBean implements ItemService {
 	@Inject 
 	ItemRepository itemRepo;
 
-	ItemMapper itemMapper = Mappers.getMapper(ItemMapper.class);
+//	ItemMapper itemMapper = Mappers.getMapper(ItemMapper.class);
+//	Mapper itemMapper;
 
+	@Autowired
+	ItemMapper itemMapper;	
+	
 	@Override
 	public ItemDTO findOne(Long id) {
 		Optional<Item> byId = itemRepo.findById(id);
@@ -109,10 +111,9 @@ public class ItemServiceBean implements ItemService {
 	
 	private List<ItemDTO> mapEntitiesToDtos(List<Item> items) {
 		List<ItemDTO> itemDtos = new ArrayList<>();
-		ItemMapper mapper = Mappers.getMapper(ItemMapper.class);
 		
 		for (Item item : items) {
-			ItemDTO itemDto = mapper.mapEntityToDTO(item);
+			ItemDTO itemDto = itemMapper.mapEntityToDTO(item);
 			
 			itemDtos.add(itemDto);
 		}

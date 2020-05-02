@@ -11,6 +11,7 @@
 	<description>Book IT</description>
 
 	<modules>
+        <module>bookit-support</module>
         <module>bookit-ui-web</module>
         <module>bookit-backend</module>
         <module>bookit-ui-javafx</module>

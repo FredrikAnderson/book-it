@@ -107,7 +107,12 @@ export class ProjectsServiceService {
        if(error.error instanceof ErrorEvent) {
          // Get client-side error
          errorMessage = error.error.message;
+       } else if(error.error.message != null) {
+           errorMessage = error.error.message;
+       
        } else {
+//           console.log("Body", error.error.message);
+           
          // Get server-side error
          errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
        }
