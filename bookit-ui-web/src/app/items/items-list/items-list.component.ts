@@ -37,7 +37,6 @@ export class ItemsListComponent implements OnInit {
     getItems() {
       this.items = new MatTableDataSource<Item>();
       this.itemService.getItems().subscribe((data : any) => {
-          console.log("Got items: " + data);
           this.items = new MatTableDataSource(data);  
       });      
     }

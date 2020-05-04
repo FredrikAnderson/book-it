@@ -54,11 +54,13 @@ public class OpenAPIToJsonSupport {
 				if (!foundImport && line.contains("import")) {
 					toLines.add("import com.fasterxml.jackson.annotation.JsonIdentityInfo;");
 					toLines.add("import com.fasterxml.jackson.annotation.ObjectIdGenerators;");
+					toLines.add("import com.voodoodyne.jackson.jsog.JSOGGenerator;");
 					foundImport = true;
 				}				
 				// Add JsonIdentityInfo
 				if (line.contains("public class")) {
-					toLines.add("@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property=\"" + identifier + "\")");
+//					toLines.add("@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property=\"" + identifier + "\")");
+					toLines.add("@JsonIdentityInfo(generator=JSOGGenerator.class)");
 				}
 				toLines.add(line);
 			}

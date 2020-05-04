@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { tap, map, retry, catchError } from 'rxjs/operators';
+import JSOG from 'jsog';
 import { Project } from '../shared/project';
 
 @Injectable({
@@ -57,7 +58,9 @@ export class ProjectsServiceService {
     getProjects() : Observable<Project> {
       return this.http.get<any>(this.apiURL + "/projects")
           .pipe(
-                  map( response => response.items),
+//                  tap( response => console.log("Got : ", JSOG.decode(response.items) )),
+//                  tap( response => console.log("Got : ", JSOG.parse(response.items) )),
+                  map( response => JSOG.decode(response.items) ),
                   tap(data => console.log("Got projects: ", data)),
                   retry(1), 
                   catchError(this.handleError)
@@ -107,8 +110,8 @@ export class ProjectsServiceService {
        if(error.error instanceof ErrorEvent) {
          // Get client-side error
          errorMessage = error.error.message;
-       } else if(error.error.message != null) {
-           errorMessage = error.error.message;
+//       } else if(error.error.message != null) {
+//           errorMessage = error.error.message;
        
        } else {
 //           console.log("Body", error.error.message);

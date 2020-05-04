@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { map, retry, catchError } from 'rxjs/operators';
+import { map, tap, retry, catchError } from 'rxjs/operators';
+import JSOG from 'jsog';
 import { Item } from '../shared/item';
 
 @Injectable( {
@@ -31,9 +32,10 @@ export class ItemsServiceService {
         
         return this.http.get<any>( requestUrl )
             .pipe(
-            map( response => response.items ),
-            retry( 1 ),
-            catchError( this.handleError )
+                    map( response => JSOG.decode(response.items) ),
+                    tap(data => console.log("Got items: ", data)),
+                    retry( 1 ),
+                    catchError( this.handleError )
             );
     }
 
