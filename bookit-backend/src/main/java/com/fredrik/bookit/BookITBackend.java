@@ -1,7 +1,6 @@
 package com.fredrik.bookit;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,6 +16,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -46,7 +46,6 @@ public class BookITBackend implements CommandLineRunner {
 
 	public static void main(String[] args) {
 		SpringApplication app = new SpringApplication(BookITBackend.class);
-		app.setDefaultProperties(Collections.singletonMap("server.port", 8888));
 		
 		app.run(args);			 
 	}
@@ -81,6 +80,7 @@ public class BookITBackend implements CommandLineRunner {
 		log.info("Command runner");
 
 //		loadInitData();
+		log.info("Command runner - done.");
 	}
 
 //	@Inject
@@ -107,9 +107,11 @@ public class BookITBackend implements CommandLineRunner {
 	    return list.stream().map(Project::getName).filter(name::equals).findFirst().isPresent();
 	}
 	
-	@Transactional
 	@Bean
+	@Profile( { "junit", "localdev", "dev", "test" } )
+	@Transactional
 	public void loadInitData() {
+		log.info("Loading init data.");
 
 		// save a couple of customers
 		List<Project> all = projRepo.findAll();
@@ -232,7 +234,7 @@ public class BookITBackend implements CommandLineRunner {
 		userDTO = userMapper.mapEntityToDTO(user);
 		userDTO = userService.save(userDTO);
 
-		log.info("All init data, done.");
+		log.info("Loading of data, done.");
 	}
 
 }

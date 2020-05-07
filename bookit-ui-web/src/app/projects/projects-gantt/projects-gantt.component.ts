@@ -71,7 +71,7 @@ export class ProjectsGanttComponent implements OnInit {
             hAxis: { minValue : new Date(2020, 4, 1), maxValue: new Date(2020, 4, 25), format: 'dd MMM' },
             colors: ['green'],
             width: 1400,
-            height: 210,
+            height: 450,
             fontSize: 20,
 //            fontName: 'Courier',
     };

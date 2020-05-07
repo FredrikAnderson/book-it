@@ -97,7 +97,7 @@ public final class DeployArtifact {
 //				e.printStackTrace();
 //			}
 
-		} else if (env.equals("test")) {
+		} else if (env.equals("testar")) {
 
 			JSch jsch = new JSch();
 			Session session = null;
@@ -122,7 +122,9 @@ public final class DeployArtifact {
 				session.disconnect();
 			}
 
-		} else if (env.equals("prod")) {
+		} else if (env.equals("test") ||
+					env.equals("qa") || 
+					env.equals("prod")) {
 
 			JSch jsch = new JSch();
 			Session session = null;
@@ -135,7 +137,7 @@ public final class DeployArtifact {
 				session.setConfig(config);
 				session.connect();
 				
-				deployArtifactOverSFtp(session);
+				deployArtifactOverSFtp(env, session);
 				
 			} catch (JSchException e) {
 				e.printStackTrace();
@@ -152,28 +154,31 @@ public final class DeployArtifact {
 //		notifyAboutDeployment(oc.getEnv(), oc.getVersion());
 	}
 
-	private static void deployArtifactOverSFtp(Session session) throws SftpException, JSchException, IOException {
+	private static void deployArtifactOverSFtp(String env, Session session) throws SftpException, JSchException, IOException {
 
 		File localDir = CommonUtil.resolveDirWithFile("bookit-backend");
 //		String pwd = sftp.pwd();
 //		System.out.println("Pwd: " + pwd);
 		File localFile = new File(localDir, "target/bookit-backend-0.1-SNAPSHOT.jar");
 
-		execute(session, "./stop_bookit.sh");
+		execute(session, "cd bookit_" + env);
 
-		copyFile(session, localFile);
+		execute(session, "cd bookit_" + env + " && ./stop_bookit.sh");
+
+		copyFile(session, localFile, "bookit_" + env, localFile.getName());
 		
-		execute(session, "./start_bookit.sh", Duration.ofMillis(50 * 1000));
+		execute(session, "cd bookit_" + env + " && ./start_bookit.sh", Duration.ofMillis(50 * 1000));
 	}
 
-	private static void copyFile(Session session, File localFile) throws JSchException {
+	private static void copyFile(Session session, File localFile, String destDir, String destFilename) throws JSchException {
 		ChannelSftp sftp = null;
 		try {
 			sftp = (ChannelSftp) session.openChannel("sftp");		
 			sftp.connect();
 			
-			System.out.println("Copying file: " + localFile.getName());
-			sftp.put(new FileInputStream(localFile), localFile.getName(), ChannelSftp.OVERWRITE);
+			String destFile = destDir + "/" + destFilename;
+			System.out.println("Copying file: " + localFile.getName() + " to " + destFile);
+			sftp.put(new FileInputStream(localFile), destFile, ChannelSftp.OVERWRITE);
 			
 		} catch (SftpException e) {
 			e.printStackTrace();
@@ -311,6 +316,7 @@ public final class DeployArtifact {
 		exec.setInputStream(null);
 		exec.setErrStream(System.err);
 
+		System.out.println("Executing: " + command);
 		InputStream in = exec.getInputStream();
 		LocalTime startTime = LocalTime.now();
 		LocalTime timeoutAt = startTime.plus(timeout);

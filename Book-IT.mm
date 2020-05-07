@@ -55,7 +55,7 @@
 </node>
 <node CREATED="1567004816422" ID="ID_1070861586" MODIFIED="1567004822177" TEXT="Infrastructure">
 <node CREATED="1567004839579" ID="ID_311720670" MODIFIED="1567004844914" TEXT="Database">
-<node CREATED="1567004823436" ID="ID_308772388" MODIFIED="1586852532262" TEXT="Postgres DB">
+<node CREATED="1567004823436" ID="ID_308772388" MODIFIED="1588678093758" TEXT="Postgres DB">
 <richcontent TYPE="NOTE"><html>
   <head>
     
@@ -74,6 +74,9 @@
       create user bookit with password 'bookit4ever!'
     </p>
     <p>
+      create user bookit_test with password 'bookit4ever!'
+    </p>
+    <p>
       
     </p>
     <p>
@@ -86,10 +89,16 @@
       create schema bookit authorization bookit
     </p>
     <p>
+      create schema bookit_test authorization bookit_test
+    </p>
+    <p>
       
     </p>
     <p>
       alter user bookit set search_path to 'bookit'
+    </p>
+    <p>
+      alter user bookit_test set search_path to 'bookit_test'
     </p>
     <p>
       
