@@ -39,7 +39,11 @@ public final class InfraManagement {
 		if (!Objects.isNull(System.getProperty("testing"))) {
 			testing();
 		}
-		
+
+		if (!Objects.isNull(System.getProperty("versions"))) {
+			AppInstanceVersions.getAppInstanceVersions();
+		}
+
 		// Deploy artifact stuff early
 		if (!Objects.isNull(System.getProperty("deploy-to-infra"))) {
 			DeployArtifact.deployToInfra(env, passwd);

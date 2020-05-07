@@ -20,6 +20,8 @@
 	</parent>
 
 	<properties>
+		<version.number>@project.version@</version.number>
+	
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
    		<org.apache.maven.plugins.version>3.6.0</org.apache.maven.plugins.version>
@@ -231,7 +233,20 @@
                     </compilerArgs>
                 </configuration>
             </plugin>
-		
+            
+            <plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>build-info</id>
+						<goals>
+							<goal>build-info</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+            
 			<plugin>
 				<groupId>org.openapitools</groupId>
 				<artifactId>openapi-generator-maven-plugin</artifactId>
