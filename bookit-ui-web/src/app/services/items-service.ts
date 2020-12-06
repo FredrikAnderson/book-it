@@ -4,44 +4,72 @@ import { Observable, throwError } from 'rxjs';
 import { map, tap, retry, catchError } from 'rxjs/operators';
 import JSOG from 'jsog';
 import { Item } from '../shared/item';
+import { Utils } from '../shared/utils';
 
 @Injectable( {
     providedIn: 'root'
 } )
 export class ItemsServiceService {
 
-    apiURL = "http://localhost:8888/api";
+    apiURL = 'http://localhost:8888/api';
 
-    constructor( private http: HttpClient ) {
-        this.apiURL = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/api";
+    constructor(private http: HttpClient) {
+        this.apiURL = Utils.getApiUrl();
     }
 
-    //Http Options
+    // Http Options
     httpOptions = {
         headers: new HttpHeaders( {
             'Content-Type': 'application/json'
         } )
+    };
+
+    saveItem( item: Item ): Observable<any> {
+
+        // 		console.log( "should save item: ", item);
+
+        if ( item.id  === undefined || item.id === '' ) {
+            // Post, new
+            return this.http.post<Item>( this.apiURL + '/items/', item )
+                .pipe(
+                tap( data => console.log( 'posted item: ', data ) ),
+                retry( 1 ),
+                catchError( this.handleError )
+                );
+        }
+
+// else {
+//            // Put, update
+//            return this.http.put<User>( this.apiURL + "/users/" + user.userid, user )
+//                .pipe(
+//                tap( data => console.log( "updated user: ", data ) ),
+//                retry( 1 ),
+//                catchError( this.handleError )
+//                );
+//        }
+
     }
 
     // HttpClient API get() method => Get Items list
-    getItems(name : string = null): Observable< Item[] > {
-        let requestUrl = this.apiURL + "/items";
+    getItems(name: string = null): Observable< Item[] > {
+        let requestUrl = this.apiURL + '/items';
         if (name != null) {
-            requestUrl = this.apiURL + "/items&name=" + name;
+            requestUrl = this.apiURL + '/items&name=' + name;
         }
-        
+
         return this.http.get<any>( requestUrl )
             .pipe(
                     map( response => JSOG.decode(response.items) ),
-                    tap(data => console.log("Got items: ", data)),
+                    tap(data => console.log('Got items: ', data)),
                     retry( 1 ),
                     catchError( this.handleError )
             );
     }
 
     getItem( id ): Observable<Item> {
-        return this.http.get<Item>( this.apiURL + "/items/" + id )
+        return this.http.get<Item>( this.apiURL + '/items/' + id )
             .pipe(
+            tap(data => console.log('Got item: ', data)),
             retry( 1 ),
             catchError( this.handleError )
             );

@@ -95,7 +95,7 @@ export class ProjectsBookItemComponent implements OnInit {
 
             console.log("Saved project ", JSON.stringify(savedProj));
 
-            window.alert( "For Project: " + savedProj.name + ", you have now booked item: " + itemId );
+            // window.alert( "For Project: " + savedProj.name + ", you have now booked item: " + itemId );
 
             // TODO
 //            this.router.navigate( ['/projects-book-item'] );                

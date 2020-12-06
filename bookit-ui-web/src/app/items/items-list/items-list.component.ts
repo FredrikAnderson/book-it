@@ -46,21 +46,16 @@ export class ItemsListComponent implements OnInit {
     }
 
     public onRowClicked(item : Item) {
-    
-      console.log("clicked id: " + item.id + " I am type: " + this.type);      
-      
-//      window.alert("Should show edit page for item with id: " + item.id);
+      console.log('clicked id: ' + item.id + ' I am type: ' + this.type);
 
-      if (this.type.includes('select')) {
-          if (this.selectedItem === item) {
-              // Unselect
-              this.selectedItem = null;
-          } else {
-              // Select
-              this.selectedItem = item;              
-          }          
-      }
-    }
+//      window.alert("Should show edit page for item with id: " + item.id);
+		if (this.type == 'list') {
+	      this.router.navigate(['/item/' + item.id]);
+	    } 
+		if (this.type == 'select') {
+			this.selectedItem = item;
+		}
+	}
 
     public onRowBackgroundColor(item : Item) {
         

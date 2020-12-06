@@ -38,8 +38,8 @@ export class ItemEditComponent implements OnInit {
     items : Item[] = [];
 
     itemNameForm = new FormControl();
-    options: string[] = ['One', 'Two', 'Three'];
-    filteredOptions: Observable<string[]>;
+    options: Item[] = []; // 'One', 'Two', 'Three'];
+    filteredOptions: Observable<Item[]>;
 
     constructor( private route: ActivatedRoute,
         private router: Router,
@@ -47,37 +47,30 @@ export class ItemEditComponent implements OnInit {
 
     ngOnInit(): void {
         const itemId = this.route.snapshot.paramMap.get( 'id' );
-        console.log( "Item id: " + itemId );
+        console.log('Item id: ' + itemId );
 
         //        if (this.type.includes('nooperations')) {
         //            this.showId = false;
         //            this.showSaveBtn = false;
-        //            this.showDeleteBtn = false;            
+        //            this.showDeleteBtn = false;
         //        }
 
         // New project
-//        if ( itemId == null || itemId.includes( 'new' ) ) {
-//
-//            this.updateModelAndUpdateView( new Item() );
-//
-//        } else {
-//            // Existing project
-//            this.itemService.getItem( itemId ).subscribe( data => {
-//
-//                this.updateModelAndUpdateView( data );
-//            } );
-//        }
+       if (itemId == null || itemId.includes('new')) {
 
-        this.itemService.getItems().subscribe( data => {
+            this.updateModelAndUpdateView( new Item() );
+
+            this.itemService.getItems().subscribe( data => {
 
             console.log("got items: " + data);
             this.items = data;
-            
-            this.options = this.items.map( function(item) {
-                return item['name'] + " Inv:" + item['inventory'];                
-            } )
+
+//            this.options = this.items.map( function(item) {
+//                return item['name'] + " Inv:" + item['inventory'];                
+//            } )
 //            this.options =  ( data );
-            
+			this.options = this.items;  
+          
             console.log("options: " + this.options);
 
         } );
@@ -85,14 +78,60 @@ export class ItemEditComponent implements OnInit {
         this.filteredOptions = this.itemNameForm.valueChanges
             .pipe(
             startWith( '' ),
-            map( value => this._filter( value ) )
+			map(value => typeof value === 'string' ? value : value.name),
+        	map(name => name ? this._filter(name) : this.options.slice())
+//            map( value => this._filter( value ) )
             );
+
+       } else {
+           // Existing item
+           this.itemService.getItem( itemId ).subscribe( data => {
+
+               this.updateModelAndUpdateView( data );
+           } );
+       }
+
     }
 
-    private _filter(value: string): string[] {
+	public onDisplayItem(item: Item): string {
+    	return item && item.name ? item.name + " Inv:" + item.inventory: '';
+  	}
+
+    public onItemNameChanged(event: MatAutocompleteSelectedEvent) {
+        console.log("onSelectionChanged: " + event.option.value.name + ", " + event.option.value.width + " id: " + + event.option.id);
+        
+		this.updateModelAndUpdateView(event.option.value);
+    }
+    
+    public onSaveItem() {
+        this.updateModelFromView();
+
+        // this.router.navigate( ['/items'] );
+
+        this.itemService.saveItem( this.item ).subscribe(( data: Item) => {
+            this.item = data;
+
+            this.router.navigate( ['/items'] );
+        } );
+    }
+
+    public onDeleteItem() {
+//        this.router.navigate( ['/items'] );
+
+		const id = this.item.id;
+        //        const id = this.itemForm.get( 'id' ).value;
+        window.alert("Should delete project. " + id);
+
+        this.itemService.deleteItem( id ).subscribe(( data: any ) => {
+        	this.router.navigate( ['/items'] );
+        } );
+    }
+
+    private _filter(value: string): Item[] {
             const filterValue = value.toLowerCase();
 
-            return this.options.filter(option => option.toLowerCase().includes(filterValue));
+//            return this.options.filter(option => option.toLowerCase().includes(filterValue));
+            return this.options.filter(option => option.name.toLowerCase().includes(filterValue));
           }
 
     updateModelAndUpdateView( item: Item ) {
@@ -101,7 +140,7 @@ export class ItemEditComponent implements OnInit {
     }
 
     updateViewFromModel() {
-        //      console.log("updateView: " + this.project.id + ", " + this.project.startDate);
+        this.debugData();
 
         //        this.itemForm.get( 'id' ).setValue( this.item.id );
         this.itemForm.get( 'name' ).setValue( this.item.name );
@@ -113,54 +152,15 @@ export class ItemEditComponent implements OnInit {
         this.itemForm.get( 'weight' ).setValue( this.item.weight );
         this.itemForm.get( 'price' ).setValue( this.item.price );
 
-        // TODO
-        //        this.itemService.setCurrentProject(this.item);
     }
 
     updateModelFromView() {
         this.item = Object.assign( {}, this.itemForm.value );
 
         //        this.timesToUTC();        
+		this.debugData();
     }
     
-    public onItemNameChanged(event: MatAutocompleteSelectedEvent) {
-        console.log("onSelectionChanged: " + event.option.value + " id: " + + event.option.id);
-        
-        
-    }
-    
-    public onSaveItem() {
-        this.updateModelFromView();
-
-        this.router.navigate( ['/items'] );
-
-        //        this.saveItem().subscribe(( data: Item) => {
-        //            this.item = data;
-        //            
-        //            this.router.navigate( ['/items'] );
-        //        } );
-    }
-
-    public saveItem(): Observable<Item> {
-        //      console.warn(this.projectForm.value);
-        this.updateModelFromView();
-
-        // TODO
-        return null; // this.itemService.saveItem( this.item );
-    }
-
-    public onDeleteItem() {
-        this.router.navigate( ['/items'] );
-
-        //        const id = this.itemForm.get( 'id' ).value;
-        //    window.alert("Should delete project. " + id);
-
-
-        //        this.itemService.deleteItem( id ).subscribe(( data: any ) => {
-        //            this.router.navigate( ['/items'] );
-        //        } );
-    }
-
     debugData() {
         //        console.log("Component Type: ", this.type);
         console.log( "Model, Item: ", this.item );

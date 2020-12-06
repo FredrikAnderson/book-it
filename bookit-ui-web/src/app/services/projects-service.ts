@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { tap, map, retry, catchError } from 'rxjs/operators';
 import JSOG from 'jsog';
 import { Project } from '../shared/project';
+import { Utils } from '../shared/utils';
 
 @Injectable({
   providedIn: 'root'
@@ -15,8 +16,7 @@ export class ProjectsServiceService {
     public currentProject = new BehaviorSubject<Project>(null);
     
     constructor(private http : HttpClient) { 
-        this.apiURL = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/api";
-
+		this.apiURL = Utils.getApiUrl();
     }
     
     //Http Options

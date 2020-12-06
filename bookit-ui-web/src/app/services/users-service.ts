@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { tap, map, retry, catchError } from 'rxjs/operators';
 import { User } from '../shared/user';
+import { Utils } from '../shared/utils';
 
 @Injectable( {
     providedIn: 'root'
@@ -20,8 +21,8 @@ export class UsersServiceService {
         } )
     }
 
-    constructor( private http: HttpClient ) {
-        this.apiURL = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/api";
+    constructor(private http : HttpClient) { 
+		this.apiURL = Utils.getApiUrl();
 
         this.setCurrentUser(JSON.parse(window.localStorage.getItem('currentUser')));  
         
