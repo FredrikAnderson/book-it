@@ -1,10 +1,9 @@
 package com.anderson.bookit.ui;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
-import org.joda.time.Instant;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -75,7 +74,7 @@ public class FilterComboBox<T> extends ComboBox<T> {
 					Thread.sleep(800);
 				} catch (InterruptedException e1) {
 				}					
-				Instant now = Instant.now().minus(790);
+				Instant now = Instant.now().minusMillis(790);
 				if (lastTypedTime.isAfter(now)) {
 					// Then user has typed something					
 					return null;
